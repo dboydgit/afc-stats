@@ -44,6 +44,11 @@ export default function Team(props) {
         setShowPlayers(!showPlayers);
     }
 
+    const saveTeam = () => {
+        props.saveTeams();
+        toggleShowPlayers();
+    }
+
     return (
         <div className='team-card'>
             <div className='team-name'>
@@ -65,7 +70,7 @@ export default function Team(props) {
                         setTeams={props.setTeams}
                     />
                     <button className='btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
-                    <button className='btn' onClick={() => props.saveTeams()}>Save Changes</button>
+                    <button className='btn' onClick={saveTeam}>Save Changes</button>
                 </div>
                 }
         </div>

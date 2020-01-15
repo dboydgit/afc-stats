@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 import Header from './Header';
 
 export default function Home(props) {
-
-    let history = useHistory();
 
     const [userVal, setUserVal] = useState('');
 
@@ -19,11 +17,6 @@ export default function Home(props) {
     // update state on form change
     const handleChange = (e) => {
         setUserVal(e.target.value);
-    }
-
-    // go to page name
-    const goToPage = (e) => {
-        history.push(e.target.name);
     }
 
     return (
@@ -43,18 +36,18 @@ export default function Home(props) {
                     <div>
                         <p>{`Welcome, ${props.userID}`}</p>
                         <div className="home-btn-group">
-                            <button
+                            <Link
                                 className='btn'
-                                name='/stats'
-                                onClick={goToPage}>New Game</button>
-                            <button
+                                to='/stats'>New Game
+                            </Link>
+                            <Link
                                 className='btn'
-                                name='/teams'
-                                onClick={goToPage}>Teams</button>
-                            <button
+                                to='/teams'>Teams
+                            </Link>
+                            <Link
                                 className='btn'
-                                name='/games'
-                                onClick={goToPage}>Past Games</button>
+                                to='/games'>Past Games
+                            </Link>
                         </div>
                     </div>
                 }

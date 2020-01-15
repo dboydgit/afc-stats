@@ -24,7 +24,9 @@ export default function Teams(props) {
 
     const [teamName, setTeamName] = useState('');
     const [teamGM, setTeamGM] = useState('');
-    const [teamPlayers] = useState([
+    const [showAddTeam, setShowAddTeam] = useState(false);
+
+    const teamPlayers = [
         'Player1',
         'Player2',
         'Player3',
@@ -35,8 +37,7 @@ export default function Teams(props) {
         'Player8',
         'Player9',
         'Player10'
-    ]);
-    const [showAddTeam, setShowAddTeam] = useState(false);
+    ];
 
     const handleInputChange = (e) => {
         switch (e.target.name) {
@@ -87,10 +88,11 @@ export default function Teams(props) {
         setShowAddTeam(false);
     }
 
-    const saveTeams = (teams = props.teams) => {
-        console.log('Saving Teams')
+    const saveTeams = () => {
+        console.log('Saving Teams');
+        let newTeams = [...props.teams];
         db.get('team-doc').then(doc => {
-            doc.teams = teams;
+            doc.teams = newTeams;
             return db.put(doc);
         }).then(res => console.log(res))
         .catch(e => console.log(e))
@@ -101,7 +103,11 @@ export default function Teams(props) {
         let newTeams = [...props.teams];
         newTeams.splice(teamInd, 1);
         props.setTeams(newTeams);
-        saveTeams(newTeams);
+        db.get('team-doc').then(doc => {
+            doc.teams = newTeams;
+            return db.put(doc);
+        }).then(res => console.log(res))
+        .catch(e => console.log(e))
     }
 
     return (

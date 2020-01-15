@@ -60,6 +60,7 @@ input:focus {
   border: none;
   color: white;
   max-width: 15rem;
+  text-decoration: none;
 }
 
 .btn:hover {
