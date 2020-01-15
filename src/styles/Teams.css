@@ -18,7 +18,7 @@
     width: 80%;
     padding: 0.5rem;
     margin: 0.5rem;
-    background-color: #fafafa;
+    background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);}
 
@@ -41,6 +41,7 @@
 .card-link {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .card-link > i {
