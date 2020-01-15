@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
@@ -10,6 +10,7 @@ import './styles/App.css';
 import PouchDB from 'pouchdb';
 import Home from './Components/Home';
 import Stats from './Components/Stats';
+import Subs from './Components/Subs';
 import Teams from './Components/Teams';
 import Games from './Components/Games';
 
@@ -95,6 +96,13 @@ function App() {
             localDB={localDB}
           /> : <Redirect to='/' />}
         </Route>
+        <Route path='/subs'>
+          {userID ?
+          <Subs
+            userID={userID}
+            localDB={localDB}
+          /> : <Redirect to='/' />}
+        </Route>
         <Route path='/teams'>
           {userID ?
           <Teams 
@@ -110,6 +118,7 @@ function App() {
       <div className='bottom-nav'>
         <NavLink className='nav-link' to='/' exact activeClassName='nav-active'>Home</NavLink>
         <NavLink className='nav-link' to='/stats' activeClassName='nav-active'>Stats</NavLink>
+        <NavLink className='nav-link' to='/subs' activeClassName='nav-active'>Subs</NavLink>
         <NavLink className='nav-link' to='/teams' activeClassName='nav-active'>Teams</NavLink>
         <NavLink className='nav-link' to='/games' activeClassName='nav-active'>Games</NavLink>
       </div>
