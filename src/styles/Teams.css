@@ -1,0 +1,56 @@
+.add-team-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.team-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.team-card {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    background-color: #fafafa;
+    border-radius: 4px;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);}
+
+.team-name {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    font-size: x-large;
+}
+
+.card-info {
+    margin-top: 0.5rem;;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+
+.card-link {
+    display: flex;
+    align-items: center;
+}
+
+.card-link > i {
+    margin: 0.5rem;
+}
+
+.player-list {
+    margin-top: 0.5rem 0;
+}
+
+.nmt {
+    margin-top: 0;
+}

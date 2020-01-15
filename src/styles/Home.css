@@ -1,0 +1,28 @@
+.home-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#home-input {
+    font-size: 1rem;
+}
+
+.home-btn-group {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 180px;
+}

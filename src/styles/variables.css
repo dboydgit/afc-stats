@@ -1,0 +1,10 @@
+:root {
+    /* Colors */
+    --primary: #2962ff;
+    --primary-dark: #0039cb;
+    --primary-light: #768fff;
+    --secondary: #ffd600;
+    --secondary-dark: #c7a500;
+    --secondary-light: #ffff52;
+    --delete: #c62828
+  }
