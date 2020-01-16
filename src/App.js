@@ -18,7 +18,7 @@ function App() {
 
   const DB_HOST = process.env.NODE_ENV === 'development' ?
     'http://localhost:5984' :
-    'https://db-todo.duckdns.org/db';
+    'https://db-couchdb.duckdns.org';
 
   // set state
   const [loadingDB, setLoadingDB] = useState(true);
