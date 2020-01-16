@@ -1,14 +1,19 @@
 @import './variables.css';
 @import './material.css';
 
+html, body, #root {
+  height: 100%;
+}
+
 .App {
   background-color: var(--main-bg);
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: center;
-  height: calc(100vh - 3rem);
   text-align: center;
-  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+  min-height: calc(100% - 3rem);
 }
 
 .bottom-nav {
