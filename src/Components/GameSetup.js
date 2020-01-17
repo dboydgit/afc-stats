@@ -15,8 +15,17 @@ export default function GameSetup(props) {
         teamNames.push(<option value={team.name} key={team.name}>{team.name}</option>);
     }
 
-    const submitFinish = (e) => {
-        e.preventDefault();
+    const isValidTime = (timeStr) => {
+        let formTime = parseInt(timeStr);
+        if (formTime >= 1 && formTime <= 120) return true;
+        else return false;
+    }
+
+    const submitFinish = () => {
+        if (!isValidTime(time)) {
+            setError('Time should be between 1 - 120 mins')
+            return;
+        }
         if (!dark || !light || !statTeam || !offence) {
             setError('Please choose all options');
             return;
