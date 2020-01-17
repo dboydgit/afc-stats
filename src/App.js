@@ -114,6 +114,11 @@ function App() {
               teams={teams}
               showSetup={showSetup}
               finishSetup={finishSetup}
+              gameLength={gameLength}
+              darkTeam={darkTeam}
+              lightTeam={lightTeam}
+              statTeam={statTeam}
+              offence={offence}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>

@@ -43,15 +43,15 @@ export default function GameSetup(props) {
             <select name='stat-team' value={statTeam}
                 onChange={(e) => setStatTeam(e.target.value)}>
                 <option></option>
-                <option>{`${dark} (dark)`}</option>
-                <option>{`${light} (light)`}</option>
+                <option>{`${dark}`}</option>
+                <option>{`${light}`}</option>
             </select>
             <label htmlFor='offence-team'>Team on Offence</label>
             <select name='offence-team' value={offence}
                 onChange={(e) => setOffence(e.target.value)}>
                 <option></option>
-                <option>{`${dark} (dark)`}</option>
-                <option>{`${light} (light)`}</option>
+                <option>{`${dark}`}</option>
+                <option>{`${light}`}</option>
             </select>
             <button className='btn' onClick={submitFinish}>Finish Setup</button>
             {error &&
