@@ -26,6 +26,13 @@ function App() {
   const [remoteDB] = useState(new PouchDB(`${DB_HOST}/ultimate-stats`));
   const [localDB] = useState(new PouchDB('ultimate-stats'));
   const [teams, setTeams] = useState([]);
+  const [gameLength, setGameLength] = useState(25);
+  const [darkTeam, setDarkTeam] = useState('');
+  const [lightTeam, setLightTeam] = useState('');
+  const [gameHistory, setGameHistory] = useState([]);
+  const [showSetup, setShowSetup] = useState(true);
+  const [statTeam, setStatTeam] = useState('');
+  const [offence, setOffence] = useState(true);
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -79,6 +86,16 @@ function App() {
     };
   }, [loadingDB, localDB, remoteDB])
 
+  // finish the game setup and set state for stat taking
+  const finishSetup = (time, dark, light, statTeam, offence) => {
+    setGameLength(parseInt(time));
+    setDarkTeam(dark);
+    setLightTeam(light);
+    setStatTeam(statTeam);
+    setOffence(offence);
+    setShowSetup(false);
+  }
+
   return (
     <Router>
       <Switch>
@@ -91,26 +108,28 @@ function App() {
         </Route>
         <Route path='/stats'>
           {userID ?
-          <Stats
-            userID={userID}
-            localDB={localDB}
-            teams={teams}
-          /> : <Redirect to='/' />}
+            <Stats
+              userID={userID}
+              localDB={localDB}
+              teams={teams}
+              showSetup={showSetup}
+              finishSetup={finishSetup}
+            /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>
           {userID ?
-          <Subs
-            userID={userID}
-            localDB={localDB}
-          /> : <Redirect to='/' />}
+            <Subs
+              userID={userID}
+              localDB={localDB}
+            /> : <Redirect to='/' />}
         </Route>
         <Route path='/teams'>
           {userID ?
-          <Teams 
-            teams={teams}
-            setTeams={setTeams}
-            localDB={localDB}
-          /> : <Redirect to='/' />}
+            <Teams
+              teams={teams}
+              setTeams={setTeams}
+              localDB={localDB}
+            /> : <Redirect to='/' />}
         </Route>
         <Route path='/games'>
           <Games />
