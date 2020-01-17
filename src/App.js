@@ -94,6 +94,7 @@ function App() {
           <Stats
             userID={userID}
             localDB={localDB}
+            teams={teams}
           /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>

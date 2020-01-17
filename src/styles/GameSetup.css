@@ -1,0 +1,23 @@
+.game-setup {
+    width: 80%;
+    align-items: center;
+}
+
+.form-err {
+    color: var(--delete);
+    
+}
+
+#setup-title {
+    color: var(--primary);
+    margin-bottom: 0;
+}
+
+label {
+    margin-top: 1rem;
+}
+
+select {
+    height: 2rem;
+    min-width: 50%;
+}

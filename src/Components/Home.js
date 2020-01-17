@@ -38,7 +38,11 @@ export default function Home(props) {
                         <div className="home-btn-group">
                             <Link
                                 className='btn'
-                                to='/stats'>New Game
+                                to='/stats'>Stats
+                            </Link>
+                            <Link
+                                className='btn'
+                                to='/subs'>Subs
                             </Link>
                             <Link
                                 className='btn'

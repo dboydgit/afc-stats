@@ -42,7 +42,7 @@ html, body, #root {
   color: black !important;
 }
 
-input {
+input, select {
   border-radius: 4px;
   height: 1.5rem;
   border: 1px solid var(--primary-light);
@@ -50,6 +50,7 @@ input {
   text-align: center;
   margin: 0.25rem;
   max-width: 15rem;
+  background-color: white;
 }
 
 input:focus {
@@ -76,6 +77,17 @@ input:focus {
 .btn-del, .btn-del:hover {
   background-color: var(--delete);
 }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);}
+
 
 
 /* Rules for sizing the icon. */

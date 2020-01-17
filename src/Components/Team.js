@@ -50,7 +50,7 @@ export default function Team(props) {
     }
 
     return (
-        <div className='team-card'>
+        <div className='card team-card'>
             <div className='team-name'>
                 <span>{`${props.team.name}`}</span>
             </div>
