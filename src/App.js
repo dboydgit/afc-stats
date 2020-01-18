@@ -8,12 +8,12 @@ import {
 } from "react-router-dom";
 import './styles/App.css';
 import PouchDB from 'pouchdb';
-import Timer from 'timer.js';
 import Home from './Components/Home';
 import Stats from './Components/Stats';
 import Subs from './Components/Subs';
 import Teams from './Components/Teams';
 import Games from './Components/Games';
+import Timer from 'easytimer.js';
 
 function App() {
 
@@ -28,7 +28,7 @@ function App() {
   const [localDB] = useState(new PouchDB('ultimate-stats'));
   const [teams, setTeams] = useState([]);
   const [allGameHistory, setAllGameHistory] = useState([]);
-  const [gameLength, setGameLength] = useState(25);
+  const [gameLength, setGameLength] = useState(1);
   const [darkTeam, setDarkTeam] = useState("Dark Team"); //test str
   const [lightTeam, setLightTeam] = useState("Light Team"); // test str
   const [showSetup, setShowSetup] = useState(false); //set false for testing
@@ -40,9 +40,10 @@ function App() {
   });
   const [gameHistory, setGameHistory] = useState([]);
   const [gameTime, setGameTime] = useState('');
-
-  // set up game timer
-  const gameTimer = new Timer();
+  const [gameTimer] = useState(new Timer({
+    countdown: true,
+    startValues: {minutes: gameLength}
+  }));
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -58,12 +59,6 @@ function App() {
     })
   }, [remoteDB])
 
-  // handle remote document update
-  const handleRemoteUpdate = (doc) => {
-    // TODO update the state on remote update.
-    console.log(doc)
-  }
-
   // get data from the DB when ready
   useEffect(() => {
     if (!remoteDB) return;
@@ -71,10 +66,11 @@ function App() {
     getData();
   }, [remoteDB, getData])
 
-  // set the game clock to initial value when gameLength changes
-  useEffect(() => {
-    setGameTime(`${gameLength}:00`)
-  }, [gameLength])
+  // handle remote document update
+  const handleRemoteUpdate = (doc) => {
+    // TODO update the state on remote update.
+    console.log(doc)
+  }
 
   // Effect for handling remote DB changes
   useEffect(() => {
@@ -101,6 +97,14 @@ function App() {
       console.log('Sync Cancelled');
     };
   }, [loadingDB, localDB, remoteDB])
+
+  // set the game clock to initial value when gameLength changes
+  useEffect(() => {
+    setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
+    gameTimer.addEventListener("secondsUpdated", (e) => {
+      setGameTime(gameTimer.getTimeValues().toString(['minutes', 'seconds']))
+    })
+  }, [gameLength, gameTimer])
 
   // finish the game setup and set state for stat taking
   const finishSetup = (time, dark, light, statTeam, offence) => {
@@ -140,6 +144,12 @@ function App() {
               gameHistory={gameHistory}
               setGameHistory={setGameHistory}
               gameTime={gameTime}
+              startTimer={() => gameTimer.start()}
+              pauseTimer={() => gameTimer.pause()}
+              resetTimer={() => {
+                gameTimer.reset()
+                setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
+              }}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>
@@ -158,7 +168,9 @@ function App() {
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/games'>
-          <Games />
+          <Games 
+            allGameHistory={allGameHistory}
+          />
         </Route>
       </Switch>
       <div className='bottom-nav'>

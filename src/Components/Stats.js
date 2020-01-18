@@ -25,6 +25,10 @@ export default function Stats(props) {
                         lightTeam={props.lightTeam}
                         score={props.score}
                         gameTime={props.gameTime}
+                        gameLength={props.gameLength}
+                        startTimer={props.startTimer}
+                        pauseTimer={props.pauseTimer}
+                        resetTimer={props.resetTimer}
                     />
                     <p>{`${props.gameLength} minute game between`}</p>
                     <p>{`${props.darkTeam} (Dark) vs ${props.lightTeam} (Light)`}</p>

@@ -13,15 +13,24 @@
 
 .game-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-evenly;
+    align-items: stretch;
 }
 
 .game-clock {
-    padding: 0.5rem;
+    padding: 0 0.5rem;
     font-weight: bold;
     font-size: x-large;
     color:var(--primary);
+}
+
+.timer-controls{
+    display: flex;
+    justify-content: space-between;
+}
+
+.timer-control {
+    cursor: pointer;
 }
 
 .score-card {
