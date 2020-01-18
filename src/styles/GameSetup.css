@@ -1,6 +1,7 @@
 .game-setup {
     width: 80%;
     align-items: center;
+    margin-top: 2rem;
 }
 
 .form-err {

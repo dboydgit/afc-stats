@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import './styles/App.css';
 import PouchDB from 'pouchdb';
+import Timer from 'timer.js';
 import Home from './Components/Home';
 import Stats from './Components/Stats';
 import Subs from './Components/Subs';
@@ -26,13 +27,22 @@ function App() {
   const [remoteDB] = useState(new PouchDB(`${DB_HOST}/ultimate-stats`));
   const [localDB] = useState(new PouchDB('ultimate-stats'));
   const [teams, setTeams] = useState([]);
+  const [allGameHistory, setAllGameHistory] = useState([]);
   const [gameLength, setGameLength] = useState(25);
-  const [darkTeam, setDarkTeam] = useState('');
-  const [lightTeam, setLightTeam] = useState('');
-  const [gameHistory, setGameHistory] = useState([]);
-  const [showSetup, setShowSetup] = useState(true);
-  const [statTeam, setStatTeam] = useState('');
+  const [darkTeam, setDarkTeam] = useState("Dark Team"); //test str
+  const [lightTeam, setLightTeam] = useState("Light Team"); // test str
+  const [showSetup, setShowSetup] = useState(false); //set false for testing
+  const [statTeam, setStatTeam] = useState('testDark'); //test str
   const [offence, setOffence] = useState(true);
+  const [score, setScore] = useState({
+    'dark': 0,
+    'light': 0
+  });
+  const [gameHistory, setGameHistory] = useState([]);
+  const [gameTime, setGameTime] = useState('');
+
+  // set up game timer
+  const gameTimer = new Timer();
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -43,6 +53,7 @@ function App() {
       setLoadingDB(false);
       res.rows.forEach(row => {
         if (row.doc._id === 'team-doc') setTeams(row.doc.teams);
+        if (row.doc._id === 'game-history') setAllGameHistory(row.doc.games);
       })
     })
   }, [remoteDB])
@@ -59,6 +70,11 @@ function App() {
     remoteDB.info();
     getData();
   }, [remoteDB, getData])
+
+  // set the game clock to initial value when gameLength changes
+  useEffect(() => {
+    setGameTime(`${gameLength}:00`)
+  }, [gameLength])
 
   // Effect for handling remote DB changes
   useEffect(() => {
@@ -119,6 +135,11 @@ function App() {
               lightTeam={lightTeam}
               statTeam={statTeam}
               offence={offence}
+              score={score}
+              setScore={setScore}
+              gameHistory={gameHistory}
+              setGameHistory={setGameHistory}
+              gameTime={gameTime}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>

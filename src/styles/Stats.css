@@ -2,5 +2,49 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 2rem;
+}
+
+.game-stats {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.game-clock {
+    padding: 0.5rem;
+    font-weight: bold;
+    font-size: x-large;
+    color:var(--primary);
+}
+
+.score-card {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    padding: 0.5rem;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, .08), 0 0 6px rgba(0, 0, 0, .05);
+}
+
+#team-name {
+    max-width: 80%;
+    word-break: break-word;
+}
+
+.score {
+    padding: 0 1rem;
+    font-size: x-large;
+}
+
+.dark {
+    background-color: black;
+    color: white;
 }
