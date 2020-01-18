@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 
 export default function GameInfo(props) {
-
-    const [paused, setPaused] = useState(false);
 
     return (
         <div className='game-info'>
@@ -17,20 +15,20 @@ export default function GameInfo(props) {
                     <i className='material-icons timer-control'
                         onClick={() => {
                             props.startTimer();
-                            setPaused(false);
+                            props.setPaused(false);
                             console.log('start timer')
                         }}>play_arrow</i>
-                    {!paused && <i className='material-icons timer-control'
+                    {!props.paused && <i className='material-icons timer-control'
                         onClick={() => {
                             props.pauseTimer();
-                            setPaused(true);
+                            props.setPaused(true);
                             console.log('pause timer')
                         }}>pause</i>}
-                    {paused && <i className='material-icons timer-control'
+                    {props.paused && <i className='material-icons timer-control'
                         onClick={() => {
                             props.resetTimer();
                             props.pauseTimer();
-                            setPaused(false);
+                            props.setPaused(false);
                             console.log('reset timer')
                         }}>replay</i>}
                 </div>

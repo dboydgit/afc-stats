@@ -29,6 +29,8 @@ export default function Stats(props) {
                         startTimer={props.startTimer}
                         pauseTimer={props.pauseTimer}
                         resetTimer={props.resetTimer}
+                        paused={props.paused}
+                        setPaused={props.setPaused}
                     />
                     <p>{`${props.gameLength} minute game between`}</p>
                     <p>{`${props.darkTeam} (Dark) vs ${props.lightTeam} (Light)`}</p>

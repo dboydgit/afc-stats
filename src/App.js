@@ -44,6 +44,7 @@ function App() {
     countdown: true,
     startValues: {minutes: gameLength}
   }));
+  const [paused, setPaused] = useState(false);
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -150,6 +151,8 @@ function App() {
                 gameTimer.reset()
                 setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
               }}
+              paused={paused}
+              setPaused={setPaused}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>
