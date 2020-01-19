@@ -33,6 +33,8 @@ function App() {
   const [lightTeam, setLightTeam] = useState("Light Team"); // test str
   const [showSetup, setShowSetup] = useState(false); //set false for testing
   const [statTeam, setStatTeam] = useState('testDark'); //test str
+  // hardcode for testing
+  const [statPlayers, setStatPlayers] = useState(["Eric","Player2","Player3","Player4","Player5","Player6","Player7","Player8","Player9","Player10"]);
   const [offence, setOffence] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -115,6 +117,8 @@ function App() {
     setStatTeam(statTeam);
     setOffence(offence);
     setShowSetup(false);
+    let findTeam = teams.find(team => team.name === statTeam)
+    setStatPlayers(findTeam.players)
   }
 
   return (
@@ -153,6 +157,7 @@ function App() {
               }}
               paused={paused}
               setPaused={setPaused}
+              statPlayers={statPlayers}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>
