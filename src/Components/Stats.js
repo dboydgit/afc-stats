@@ -10,7 +10,7 @@ const OffenceButtons = (props) => {
         <div className='stat-btns'>
             <button
                 className='btn stat-btn'
-                onClick={(e) => props.handleStatClick(e, props.player)}>Touch</button>
+                onClick={(e) => props.handleStatClick(e, props.player, false)}>Touch</button>
             <button
                 className='btn stat-btn'
                 onClick={(e) => props.handleStatClick(e, props.player)}>Point</button>
@@ -74,7 +74,9 @@ export default function Stats(props) {
     //     return 'Reloading will delete any ongoing game...'
     // }
 
-    const handleStatClick = (e, player) => {
+    const handleStatClick = (e, player, turnover=true) => {
+        toast.dismiss();
+        if (turnover) props.toggleOffence();
         let action = e.target.innerText;
         // set the score for point, GSO
         let newScore = {...props.score};
@@ -92,14 +94,45 @@ export default function Stats(props) {
             statTeam: props.statTeam,
             [`${props.darkTeam}_score`]: newScore.dark,
             [`${props.lightTeam}_score`]: newScore.light,
-            action: e.target.innerText,
-            player: player
+            action: action,
+            player: player, 
+            turnover: turnover,
         }
-        let realTime = new Date()
+
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
-            time: ${realTime}`)
+            time: ${historyEntry.realTime}`)
         let newHistory = [...props.gameHistory];
+        // get the last entry and set player if available
+        let lastEntry = newHistory[newHistory.length - 1] || '';
+        let lastPlayer = '';
+        if (lastEntry && props.offence) lastPlayer = lastEntry.player;
+        toast.success(`Last Entry - ${action} by ${player} ${lastPlayer ? 'from ' + lastPlayer : ''}`)
         newHistory.push(historyEntry);
+        props.setGameHistory(newHistory);
+    }
+
+    const handleUndo = () => {
+        toast.dismiss();
+        let newHistory = [...props.gameHistory];
+        let newScore = {...props.score};
+        let lastEntry = newHistory.pop();
+        if (!lastEntry) {
+            toast.info('Nothing to undo');
+            return;
+        }
+        // undo turnover and change buttons
+        if (lastEntry.turnover) props.toggleOffence();
+        // undo points and change score
+        if (lastEntry.action === 'Point') {
+            props.statTeam === props.darkTeam ? newScore.dark-- : newScore.light--;
+        }
+        if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-MARK') {
+            props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
+        }
+        // show undo action
+        toast.info(`UNDO: ${lastEntry.action} by ${lastEntry.player}`);    
+        // set new state
+        props.setScore(newScore);
         props.setGameHistory(newHistory);
     }
 
@@ -128,10 +161,7 @@ export default function Stats(props) {
                         <div className='game-options'>
                             <button className='btn opt-btn'>Exit Game</button>
                             <button className='btn opt-btn'
-                                onClick={() => {
-                                    toast.dismiss()
-                                    toast.info('Undo... action')
-                                }}>
+                                onClick={handleUndo}>
                                 Undo<i className='material-icons md-18'>undo</i>
                             </button>
                         </div>

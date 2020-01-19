@@ -129,6 +129,10 @@ function App() {
     setStatPlayers(findTeam.players)
   }
 
+  const toggleOffence = () => {
+    setOffence(!offence);
+  }
+
   return (
     <Router>
       <Switch>
@@ -166,6 +170,7 @@ function App() {
               paused={paused}
               setPaused={setPaused}
               statPlayers={statPlayers}
+              toggleOffence={toggleOffence}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>
