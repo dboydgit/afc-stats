@@ -76,7 +76,31 @@ export default function Stats(props) {
 
     const handleStatClick = (e, player) => {
         let action = e.target.innerText;
-        console.log(`${player}: ${action}: gameClock: ${props.gameTime}`)
+        // set the score for point, GSO
+        let newScore = {...props.score};
+        if (action === 'Point') {
+            props.statTeam === props.darkTeam ? newScore.dark++ : newScore.light++;
+        }
+        if (action === 'GSO' || action === 'GSO-MARK') {
+            props.statTeam === props.darkTeam ? newScore.light++ : newScore.dark++;
+        }
+        props.setScore(newScore);
+        // add action to game history
+        let historyEntry = {
+            realTime: new Date().toString(),
+            gameTime: props.gameTime,
+            statTeam: props.statTeam,
+            [`${props.darkTeam}_score`]: newScore.dark,
+            [`${props.lightTeam}_score`]: newScore.light,
+            action: e.target.innerText,
+            player: player
+        }
+        let realTime = new Date()
+        console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
+            time: ${realTime}`)
+        let newHistory = [...props.gameHistory];
+        newHistory.push(historyEntry);
+        props.setGameHistory(newHistory);
     }
 
     return (
