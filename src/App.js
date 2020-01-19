@@ -14,6 +14,14 @@ import Subs from './Components/Subs';
 import Teams from './Components/Teams';
 import Games from './Components/Games';
 import Timer from 'easytimer.js';
+import { ToastContainer, cssTransition } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const Slide = cssTransition({
+  enter: 'toast-in',
+  exit: 'toast-out',
+  duration: [500,100]
+})
 
 function App() {
 
@@ -34,7 +42,7 @@ function App() {
   const [showSetup, setShowSetup] = useState(false); //set false for testing
   const [statTeam, setStatTeam] = useState('testDark'); //test str
   // hardcode for testing
-  const [statPlayers, setStatPlayers] = useState(["Eric","Player2","Player3","Player4","Player5","Player6","Player7","Player8","Player9","Player10"]);
+  const [statPlayers, setStatPlayers] = useState(["Eric", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8", "Player9", "Player10"]);
   const [offence, setOffence] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -44,7 +52,7 @@ function App() {
   const [gameTime, setGameTime] = useState('');
   const [gameTimer] = useState(new Timer({
     countdown: true,
-    startValues: {minutes: gameLength}
+    startValues: { minutes: gameLength }
   }));
   const [paused, setPaused] = useState(false);
 
@@ -176,7 +184,7 @@ function App() {
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/games'>
-          <Games 
+          <Games
             allGameHistory={allGameHistory}
           />
         </Route>
@@ -188,6 +196,18 @@ function App() {
         <NavLink className='nav-link' to='/teams' activeClassName='nav-active'>Teams</NavLink>
         <NavLink className='nav-link' to='/games' activeClassName='nav-active'>Games</NavLink>
       </div>
+      <ToastContainer
+        position='bottom-right'
+        transition={Slide}
+        autoClose={false}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnVisibilityChange={false}
+        draggable={false}
+        pauseOnHover={false}
+      />
     </Router>
   );
 }

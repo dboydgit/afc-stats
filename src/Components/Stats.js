@@ -2,24 +2,41 @@ import React from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
 import '../styles/Stats.css';
+import { toast } from 'react-toastify';
 
 const OffenceButtons = (props) => {
+
     return (
         <div className='stat-btns'>
-            <button className='btn stat-btn'>Touch</button>
-            <button className='btn stat-btn'>Point</button>
-            <button className='btn stat-btn'>T-Away</button>
-            <button className='btn stat-btn'>Drop</button>
+            <button
+                className='btn stat-btn'
+                onClick={(e) => props.handleStatClick(e, props.player)}>Touch</button>
+            <button
+                className='btn stat-btn'
+                onClick={(e) => props.handleStatClick(e, props.player)}>Point</button>
+            <button
+                className='btn stat-btn'
+                onClick={(e) => props.handleStatClick(e, props.player)}>T-Away</button>
+            <button
+                className='btn stat-btn'
+                onClick={(e) => props.handleStatClick(e, props.player)}>Drop</button>
         </div>
     )
 }
 
 const DefenceButtons = (props) => {
+
     return (
         <div className='stat-btns'>
-            <button className='btn stat-btn'>D-Play</button>
-            <button className='btn stat-btn'>GSO</button>
-            <button className='btn stat-btn'>GSO-MARK</button>
+            <button
+                className='btn stat-btn'
+                onClick={(e) => props.handleStatClick(e, props.player)}>D-Play</button>
+            <button 
+                className='btn stat-btn' 
+                onClick={(e) => props.handleStatClick(e, props.player)}>GSO</button>
+            <button 
+                className='btn stat-btn' 
+                onClick={(e) => props.handleStatClick(e, props.player)}>GSO-MARK</button>
         </div>
     )
 }
@@ -33,8 +50,16 @@ const PlayerList = (props) => {
             >
                 <span className='player-text'>{player}</span>
             </div>
-            {props.offence && <OffenceButtons />}
-            {!props.offence && <DefenceButtons />}
+            {props.offence &&
+                <OffenceButtons
+                    player={player}
+                    handleStatClick={props.handleStatClick}
+                />}
+            {!props.offence &&
+                <DefenceButtons
+                    player={player}
+                    handleStatClick={props.handleStatClick}
+                />}
         </div>
     )
     return (
@@ -48,6 +73,11 @@ export default function Stats(props) {
     // window.onbeforeunload = () => {
     //     return 'Reloading will delete any ongoing game...'
     // }
+
+    const handleStatClick = (e, player) => {
+        let action = e.target.innerText;
+        console.log(`${player}: ${action}: gameClock: ${props.gameTime}`)
+    }
 
     return (
         <div className='App'>
@@ -73,13 +103,20 @@ export default function Stats(props) {
                         />
                         <div className='game-options'>
                             <button className='btn opt-btn'>Exit Game</button>
-                            <button className='btn opt-btn'>
+                            <button className='btn opt-btn'
+                                onClick={() => {
+                                    toast.dismiss()
+                                    toast.info('Undo... action')
+                                }}>
                                 Undo<i className='material-icons md-18'>undo</i>
                             </button>
                         </div>
                         <PlayerList
                             offence={props.offence}
                             statPlayers={props.statPlayers}
+                            statTeam={props.statTeam}
+                            darkTeam={props.darkTeam}
+                            handleStatClick={handleStatClick}
                         />
                     </div>}
             </div>

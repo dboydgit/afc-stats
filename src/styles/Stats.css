@@ -4,6 +4,10 @@
     justify-content: center;
 }
 
+#root>div.Toastify>div>div {
+    min-height: 3rem;
+}
+
 .game-stats {
     display: flex;
     flex-direction: column;
@@ -22,10 +26,10 @@
     padding: 0 0.5rem;
     font-weight: bold;
     font-size: x-large;
-    color:var(--primary);
+    color: var(--primary);
 }
 
-.timer-controls{
+.timer-controls {
     display: flex;
     justify-content: space-between;
 }
@@ -108,8 +112,14 @@
     border: solid 1px black;
 }
 
-.opt-btn > i {
+.opt-btn>i {
     margin-left: 0.5rem;
+}
+
+.opt-btn:hover {
+    color: black;
+    background-color: var(--secondary);
+    border: solid 1px black;
 }
 
 .game-options {
