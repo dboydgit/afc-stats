@@ -117,7 +117,12 @@ export default function Stats(props) {
         // get the last entry and set player if available
         let lastEntry = newHistory[newHistory.length - 1] || '';
         let lastPlayer = '';
-        if (lastEntry && props.offence) lastPlayer = lastEntry.player;
+        // set last thrower for Point and Drop
+        if (lastEntry && (action === 'Point' || action === 'Drop')) {
+            lastPlayer = lastEntry.player;
+        }
+        // set last thrower for touch (if not right after turnover)
+        if (action === 'Touch' && !lastEntry.turnover) lastPlayer = lastEntry.player;
         // set the score for point, GSO
         let newScore = { ...props.score };
         if (action === 'Point') {
@@ -155,7 +160,7 @@ export default function Stats(props) {
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
             time: ${historyEntry.time}`)
         
-        toast.success(`Last Entry - ${action} by ${player} ${lastPlayer ? 'from ' + lastPlayer : ''}`)
+        toast.success(`Last Entry: ${action} - ${player} ${lastPlayer ? 'from ' + lastPlayer : ''}`)
         newHistory.push(historyEntry);
         props.setGameHistory(newHistory);
     }
