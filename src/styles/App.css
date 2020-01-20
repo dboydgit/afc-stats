@@ -21,6 +21,7 @@ html, body, #root {
   position: fixed;
   bottom: 0;
   width: 100%;
+  max-width: 750px;
   height: 3rem;
   display: flex;
   justify-content: space-evenly;

@@ -64,7 +64,7 @@
 }
 
 .player-list {
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
 }
 
 .player-input {
@@ -101,6 +101,7 @@
     white-space: nowrap;
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .opt-btn {
@@ -125,4 +126,16 @@
 .game-options {
     display: flex;
     justify-content: space-evenly;
+}
+
+.score-badge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    padding: 2px 4px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    color: black;
+    background-color: var(--secondary);
 }

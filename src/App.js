@@ -43,6 +43,99 @@ function App() {
   const [statTeam, setStatTeam] = useState('testDark'); //test str
   // hardcode for testing
   const [statPlayers, setStatPlayers] = useState(["Eric", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8", "Player9", "Player10"]);
+  // try playerStats instead of stat players - hardcode for testing
+  const [playerStats, setPlayerStats] = useState([
+    {name: 'Eric', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player1', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player2', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player3', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player4', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player5', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player6', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player7', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player8', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+    {name: 'Player9', stats:{
+      Touch: 0,
+      Point: 0,
+      'T-Away': 0,
+      Drop: 0,
+      'D-Play': 0,
+      GSO: 0,
+      'GSO-Mark': 0
+    }},
+  ]);
   const [offence, setOffence] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -170,6 +263,8 @@ function App() {
               paused={paused}
               setPaused={setPaused}
               statPlayers={statPlayers}
+              playerStats={playerStats}
+              setPlayerStats={setPlayerStats}
               toggleOffence={toggleOffence}
             /> : <Redirect to='/' />}
         </Route>
@@ -202,7 +297,7 @@ function App() {
         <NavLink className='nav-link' to='/games' activeClassName='nav-active'>Games</NavLink>
       </div>
       <ToastContainer
-        position='bottom-right'
+        position='bottom-center'
         transition={Slide}
         autoClose={false}
         hideProgressBar

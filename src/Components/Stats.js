@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
 import '../styles/Stats.css';
@@ -6,31 +6,36 @@ import { toast } from 'react-toastify';
 
 const OffenceButtons = (props) => {
 
-    // useEffect(() => {
-    //     effect
-    //     return () => {
-    //         cleanup
-    //     };
-    // }, [input])
-
     return (
         <div className='stat-btns'>
             <button
                 className='btn stat-btn'
-                name='TOUCH'
-                onClick={(e) => props.handleStatClick(e, props.player, false)}>Touch</button>
+                name='Touch'
+                onClick={(e) => props.handleStatClick(e, props.player, false)}>
+                Touch
+                    <div className='score-badge'>{props.stats.Touch}</div>
+            </button>
             <button
                 className='btn stat-btn'
-                name='POINT'
-                onClick={(e) => props.handleStatClick(e, props.player)}>Point</button>
+                name='Point'
+                onClick={(e) => props.handleStatClick(e, props.player)}>
+                Point
+                    <div className='score-badge'>{props.stats.Point}</div>
+            </button>
             <button
                 className='btn stat-btn'
-                name='T-AWAY'
-                onClick={(e) => props.handleStatClick(e, props.player)}>T-Away</button>
+                name='T-Away'
+                onClick={(e) => props.handleStatClick(e, props.player)}>
+                T-Away
+                    <div className='score-badge'>{props.stats['T-Away']}</div>
+            </button>
             <button
                 className='btn stat-btn'
-                name='DROP'
-                onClick={(e) => props.handleStatClick(e, props.player)}>Drop</button>
+                name='Drop'
+                onClick={(e) => props.handleStatClick(e, props.player)}>
+                Drop
+                    <div className='score-badge'>{props.stats.Drop}</div>
+            </button>
         </div>
     )
 }
@@ -41,37 +46,48 @@ const DefenceButtons = (props) => {
         <div className='stat-btns'>
             <button
                 className='btn stat-btn'
-                name='D-PLAY'
-                onClick={(e) => props.handleStatClick(e, props.player)}>D-Play</button>
-            <button 
+                name='D-Play'
+                onClick={(e) => props.handleStatClick(e, props.player)}>
+                D-Play
+                    <div className='score-badge'>{props.stats['D-Play']}</div>
+            </button>
+            <button
                 className='btn stat-btn'
                 name='GSO'
-                onClick={(e) => props.handleStatClick(e, props.player)}>GSO</button>
-            <button 
+                onClick={(e) => props.handleStatClick(e, props.player)}>
+                GSO
+                    <div className='score-badge'>{props.stats.GSO}</div>
+            </button>
+            <button
                 className='btn stat-btn'
-                name='GSO-MARK'
-                onClick={(e) => props.handleStatClick(e, props.player)}>GSO-MARK</button>
+                name='GSO-Mark'
+                onClick={(e) => props.handleStatClick(e, props.player)}>
+                GSO-Mark
+                    <div className='score-badge'>{props.stats['GSO-Mark']}</div>
+            </button>
         </div>
     )
 }
 
 const PlayerList = (props) => {
-    const players = props.statPlayers;
-    const list = players.map(player =>
-        <div key={player} className='player-input'>
+    const playerStats = props.playerStats;
+    const list = playerStats.map(player =>
+        <div key={player.name} className='player-input'>
             <div
                 className={`player-name ${props.darkTeam === props.statTeam ? 'dark' : ''}`}
             >
-                <span className='player-text'>{player}</span>
+                <span className='player-text'>{player.name}</span>
             </div>
             {props.offence &&
                 <OffenceButtons
-                    player={player}
+                    player={player.name}
+                    stats={player.stats}
                     handleStatClick={props.handleStatClick}
                 />}
             {!props.offence &&
                 <DefenceButtons
-                    player={player}
+                    player={player.name}
+                    stats={player.stats}
                     handleStatClick={props.handleStatClick}
                 />}
         </div>
@@ -88,12 +104,12 @@ export default function Stats(props) {
     //     return 'Reloading will delete any ongoing game...'
     // }
 
-    const handleStatClick = (e, player, turnover=true) => {
+    const handleStatClick = (e, player, turnover = true) => {
         toast.dismiss();
         if (turnover) props.toggleOffence();
-        let action = e.target.name;
+        let action = e.currentTarget.name;
         // set the score for point, GSO
-        let newScore = {...props.score};
+        let newScore = { ...props.score };
         if (action === 'POINT') {
             props.statTeam === props.darkTeam ? newScore.dark++ : newScore.light++;
         }
@@ -109,12 +125,22 @@ export default function Stats(props) {
             [`${props.darkTeam}_score`]: newScore.dark,
             [`${props.lightTeam}_score`]: newScore.light,
             action: action,
-            player: player, 
+            player: player,
             turnover: turnover,
         }
-
+        // set new player stats
+        let newPlayerStats = [...props.playerStats];
+        newPlayerStats.forEach(el => {
+            if (el.name === player) {
+                if (action === 'Point' || action === 'Drop') el.stats.Touch++;
+                el.stats[action]++;
+                return;
+            }
+        })
+        // log entry to console
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
             time: ${historyEntry.realTime}`)
+        // set the game history
         let newHistory = [...props.gameHistory];
         // get the last entry and set player if available
         let lastEntry = newHistory[newHistory.length - 1] || '';
@@ -128,7 +154,7 @@ export default function Stats(props) {
     const handleUndo = () => {
         toast.dismiss();
         let newHistory = [...props.gameHistory];
-        let newScore = {...props.score};
+        let newScore = { ...props.score };
         // remove last entry from game history
         let lastEntry = newHistory.pop();
         if (!lastEntry) {
@@ -136,6 +162,15 @@ export default function Stats(props) {
             return;
         }
         console.log('UNDO')
+        // undo playerStats count
+        let newPlayerStats = [...props.playerStats];
+        newPlayerStats.forEach(el => {
+            if (el.name === lastEntry.player) {
+                if (lastEntry.action === 'Point' || lastEntry.action === 'Drop') el.stats.Touch--;
+                el.stats[lastEntry.action]--;
+                return;
+            }
+        })
         // undo turnover and change buttons
         if (lastEntry.turnover) props.toggleOffence();
         // undo points and change score
@@ -145,8 +180,10 @@ export default function Stats(props) {
         if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-MARK') {
             props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
         }
+        // undo playerStats - TODO!! then add playerStats
+
         // show undo action
-        toast.info(`UNDO: ${lastEntry.action} by ${lastEntry.player}`);    
+        toast.info(`UNDO: ${lastEntry.action} by ${lastEntry.player}`);
         // set new state
         props.setScore(newScore);
         props.setGameHistory(newHistory);
@@ -184,9 +221,12 @@ export default function Stats(props) {
                         <PlayerList
                             offence={props.offence}
                             statPlayers={props.statPlayers}
+                            playerStats={props.playerStats}
+                            setPlayerStats={props.setPlayerStats}
                             statTeam={props.statTeam}
                             darkTeam={props.darkTeam}
                             handleStatClick={handleStatClick}
+                            gameHistory={props.gameHistory}
                         />
                     </div>}
             </div>
