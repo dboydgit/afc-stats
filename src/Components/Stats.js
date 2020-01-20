@@ -103,7 +103,7 @@ export default function Stats(props) {
 
     // show warning on page reload attempt *comment out for testing
     // window.onbeforeunload = () => {
-    //     return 'Reloading will delete any ongoing game...'
+    //     return ''
     // }
 
     const handleStatClick = (e, player, turnover = true) => {
@@ -228,7 +228,6 @@ export default function Stats(props) {
                         </div>
                         <PlayerList
                             offence={props.offence}
-                            statPlayers={props.statPlayers}
                             playerStats={props.playerStats}
                             setPlayerStats={props.setPlayerStats}
                             statTeam={props.statTeam}

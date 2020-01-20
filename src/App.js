@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const Slide = cssTransition({
   enter: 'toast-in',
   exit: 'toast-out',
-  duration: [500,100]
+  duration: [500, 100]
 })
 
 function App() {
@@ -37,115 +37,12 @@ function App() {
   const [teams, setTeams] = useState([]);
   const [allGameHistory, setAllGameHistory] = useState([]);
   const [gameLength, setGameLength] = useState(1);
-  const [darkTeam, setDarkTeam] = useState("Dark Team"); //test str
-  const [lightTeam, setLightTeam] = useState("Light Team"); // test str
-  const [showSetup, setShowSetup] = useState(false); //set false for testing
-  const [statTeam, setStatTeam] = useState('testDark'); //test str
-  // hardcode for testing
-  const [statPlayers, setStatPlayers] = useState(["Eric", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8", "Player9", "Player10"]);
+  const [darkTeam, setDarkTeam] = useState(""); //test str Dark Team
+  const [lightTeam, setLightTeam] = useState(""); // test str Light Team
+  const [showSetup, setShowSetup] = useState(true); //set false for testing
+  const [statTeam, setStatTeam] = useState(''); //test str testDark
   // try playerStats instead of stat players - hardcode for testing
-  const [playerStats, setPlayerStats] = useState([
-    {name: 'Eric', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player1', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player2', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player3', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player4', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player5', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player6', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player7', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player8', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-    {name: 'Player9', stats:{
-      Touch: 0,
-      Assist: 0,
-      Point: 0,
-      'T-Away': 0,
-      Drop: 0,
-      'D-Play': 0,
-      GSO: 0,
-      'GSO-Mark': 0
-    }},
-  ]);
+  const [playerStats, setPlayerStats] = useState([]);
   const [offence, setOffence] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -229,7 +126,23 @@ function App() {
     setOffence(offence);
     setShowSetup(false);
     let findTeam = teams.find(team => team.name === statTeam)
-    setStatPlayers(findTeam.players)
+    let initPlayerStats = [];
+    for (let player of findTeam.players) {
+      initPlayerStats.push({
+        name: player,
+        stats: {
+          Touch: 0,
+          Assist: 0,
+          Point: 0,
+          'T-Away': 0,
+          Drop: 0,
+          'D-Play': 0,
+          GSO: 0,
+          'GSO-Mark': 0
+        }
+      })
+    }
+    setPlayerStats(initPlayerStats);
   }
 
   const toggleOffence = () => {
@@ -272,7 +185,6 @@ function App() {
               }}
               paused={paused}
               setPaused={setPaused}
-              statPlayers={statPlayers}
               playerStats={playerStats}
               setPlayerStats={setPlayerStats}
               toggleOffence={toggleOffence}
