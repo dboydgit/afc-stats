@@ -14,6 +14,8 @@ const OffenceButtons = (props) => {
                 onClick={(e) => props.handleStatClick(e, props.player, false)}>
                 Touch
                     <div className='score-badge'>{props.stats.Touch}</div>
+                    {props.stats.Assist !== 0 && 
+                        <div className='score-badge assist'>{`${props.stats.Assist}-A`}</div>}
             </button>
             <button
                 className='btn stat-btn'
@@ -108,6 +110,12 @@ export default function Stats(props) {
         toast.dismiss();
         if (turnover) props.toggleOffence();
         let action = e.currentTarget.name;
+        // set the game history
+        let newHistory = [...props.gameHistory];
+        // get the last entry and set player if available
+        let lastEntry = newHistory[newHistory.length - 1] || '';
+        let lastPlayer = '';
+        if (lastEntry && props.offence) lastPlayer = lastEntry.player;
         // set the score for point, GSO
         let newScore = { ...props.score };
         if (action === 'POINT') {
@@ -126,26 +134,23 @@ export default function Stats(props) {
             [`${props.lightTeam}_score`]: newScore.light,
             action: action,
             player: player,
+            lastPlayer: lastPlayer,
             turnover: turnover,
         }
         // set new player stats
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === player) {
-                if (action === 'Point' || action === 'Drop') el.stats.Touch++;
+                if (action === 'Drop') el.stats.Touch++;
                 el.stats[action]++;
-                return;
             }
+            if (action === 'Point' && el.name === lastPlayer) el.stats.Assist++;
         })
+        props.setPlayerStats(newPlayerStats);
         // log entry to console
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
             time: ${historyEntry.realTime}`)
-        // set the game history
-        let newHistory = [...props.gameHistory];
-        // get the last entry and set player if available
-        let lastEntry = newHistory[newHistory.length - 1] || '';
-        let lastPlayer = '';
-        if (lastEntry && props.offence) lastPlayer = lastEntry.player;
+        
         toast.success(`Last Entry - ${action} by ${player} ${lastPlayer ? 'from ' + lastPlayer : ''}`)
         newHistory.push(historyEntry);
         props.setGameHistory(newHistory);
@@ -166,11 +171,15 @@ export default function Stats(props) {
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === lastEntry.player) {
-                if (lastEntry.action === 'Point' || lastEntry.action === 'Drop') el.stats.Touch--;
+                if (lastEntry.action === 'Drop') el.stats.Touch--;
                 el.stats[lastEntry.action]--;
                 return;
             }
+            if (lastEntry.action === 'Point' && lastEntry.lastPlayer === el.name) {
+                el.stats.Assist--;
+            }
         })
+        props.setPlayerStats(newPlayerStats);
         // undo turnover and change buttons
         if (lastEntry.turnover) props.toggleOffence();
         // undo points and change score
@@ -180,8 +189,6 @@ export default function Stats(props) {
         if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-MARK') {
             props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
         }
-        // undo playerStats - TODO!! then add playerStats
-
         // show undo action
         toast.info(`UNDO: ${lastEntry.action} by ${lastEntry.player}`);
         // set new state
@@ -213,6 +220,7 @@ export default function Stats(props) {
                         />
                         <div className='game-options'>
                             <button className='btn opt-btn'>Exit Game</button>
+                            <button className='btn opt-btn'>Finish & Save</button>
                             <button className='btn opt-btn'
                                 onClick={handleUndo}>
                                 Undo<i className='material-icons md-18'>undo</i>

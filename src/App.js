@@ -47,6 +47,7 @@ function App() {
   const [playerStats, setPlayerStats] = useState([
     {name: 'Eric', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -56,6 +57,7 @@ function App() {
     }},
     {name: 'Player1', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -65,6 +67,7 @@ function App() {
     }},
     {name: 'Player2', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -74,6 +77,7 @@ function App() {
     }},
     {name: 'Player3', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -83,6 +87,7 @@ function App() {
     }},
     {name: 'Player4', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -92,6 +97,7 @@ function App() {
     }},
     {name: 'Player5', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -101,6 +107,7 @@ function App() {
     }},
     {name: 'Player6', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -110,6 +117,7 @@ function App() {
     }},
     {name: 'Player7', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -119,6 +127,7 @@ function App() {
     }},
     {name: 'Player8', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
@@ -128,6 +137,7 @@ function App() {
     }},
     {name: 'Player9', stats:{
       Touch: 0,
+      Assist: 0,
       Point: 0,
       'T-Away': 0,
       Drop: 0,
