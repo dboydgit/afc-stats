@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
 import '../styles/Stats.css';
@@ -6,19 +6,30 @@ import { toast } from 'react-toastify';
 
 const OffenceButtons = (props) => {
 
+    // useEffect(() => {
+    //     effect
+    //     return () => {
+    //         cleanup
+    //     };
+    // }, [input])
+
     return (
         <div className='stat-btns'>
             <button
                 className='btn stat-btn'
+                name='TOUCH'
                 onClick={(e) => props.handleStatClick(e, props.player, false)}>Touch</button>
             <button
                 className='btn stat-btn'
+                name='POINT'
                 onClick={(e) => props.handleStatClick(e, props.player)}>Point</button>
             <button
                 className='btn stat-btn'
+                name='T-AWAY'
                 onClick={(e) => props.handleStatClick(e, props.player)}>T-Away</button>
             <button
                 className='btn stat-btn'
+                name='DROP'
                 onClick={(e) => props.handleStatClick(e, props.player)}>Drop</button>
         </div>
     )
@@ -30,12 +41,15 @@ const DefenceButtons = (props) => {
         <div className='stat-btns'>
             <button
                 className='btn stat-btn'
+                name='D-PLAY'
                 onClick={(e) => props.handleStatClick(e, props.player)}>D-Play</button>
             <button 
-                className='btn stat-btn' 
+                className='btn stat-btn'
+                name='GSO'
                 onClick={(e) => props.handleStatClick(e, props.player)}>GSO</button>
             <button 
-                className='btn stat-btn' 
+                className='btn stat-btn'
+                name='GSO-MARK'
                 onClick={(e) => props.handleStatClick(e, props.player)}>GSO-MARK</button>
         </div>
     )
@@ -77,10 +91,10 @@ export default function Stats(props) {
     const handleStatClick = (e, player, turnover=true) => {
         toast.dismiss();
         if (turnover) props.toggleOffence();
-        let action = e.target.innerText;
+        let action = e.target.name;
         // set the score for point, GSO
         let newScore = {...props.score};
-        if (action === 'Point') {
+        if (action === 'POINT') {
             props.statTeam === props.darkTeam ? newScore.dark++ : newScore.light++;
         }
         if (action === 'GSO' || action === 'GSO-MARK') {
@@ -115,15 +129,17 @@ export default function Stats(props) {
         toast.dismiss();
         let newHistory = [...props.gameHistory];
         let newScore = {...props.score};
+        // remove last entry from game history
         let lastEntry = newHistory.pop();
         if (!lastEntry) {
             toast.info('Nothing to undo');
             return;
         }
+        console.log('UNDO')
         // undo turnover and change buttons
         if (lastEntry.turnover) props.toggleOffence();
         // undo points and change score
-        if (lastEntry.action === 'Point') {
+        if (lastEntry.action === 'POINT') {
             props.statTeam === props.darkTeam ? newScore.dark-- : newScore.light--;
         }
         if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-MARK') {
