@@ -36,7 +36,7 @@ function App() {
   const [localDB] = useState(new PouchDB('ultimate-stats'));
   const [teams, setTeams] = useState([]);
   const [allGameHistory, setAllGameHistory] = useState([]);
-  const [gameLength, setGameLength] = useState(1);
+  const [gameLength, setGameLength] = useState(25); //1 for testing
   const [darkTeam, setDarkTeam] = useState(""); //test str Dark Team
   const [lightTeam, setLightTeam] = useState(""); // test str Light Team
   const [showSetup, setShowSetup] = useState(true); //set false for testing
@@ -50,11 +50,12 @@ function App() {
   });
   const [gameHistory, setGameHistory] = useState([]);
   const [gameTime, setGameTime] = useState('');
-  const [gameTimer] = useState(new Timer({
+  const [gameTimer, setGameTimer] = useState(new Timer({
     countdown: true,
     startValues: { minutes: gameLength }
   }));
   const [paused, setPaused] = useState(false);
+  const [testGame, setTestGame] = useState(false);
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -120,6 +121,10 @@ function App() {
   // finish the game setup and set state for stat taking
   const finishSetup = (time, dark, light, statTeam, offence) => {
     setGameLength(parseInt(time));
+    setGameTimer(new Timer({
+      countdown: true,
+      startValues: { minutes: parseInt(time) }
+    }));
     setDarkTeam(dark);
     setLightTeam(light);
     setStatTeam(statTeam);
@@ -143,6 +148,27 @@ function App() {
       })
     }
     setPlayerStats(initPlayerStats);
+  }
+
+  const resetGame = () => {
+    setGameLength(25);
+    setGameTimer(new Timer({
+      countdown: true,
+      startValues: { minutes: gameLength }
+    }));
+    setDarkTeam('');
+    setLightTeam('');
+    setStatTeam('');
+    setShowSetup(true);
+    setPlayerStats([]);
+    setGameHistory([]);
+    setGameTime('25:00');
+    setPaused(false);
+    setTestGame(false);
+    setScore({
+      'dark': 0,
+      'light': 0
+    })
   }
 
   const toggleOffence = () => {
@@ -174,6 +200,8 @@ function App() {
               offence={offence}
               score={score}
               setScore={setScore}
+              allGameHistory={allGameHistory}
+              setAllGameHistory={setAllGameHistory}
               gameHistory={gameHistory}
               setGameHistory={setGameHistory}
               gameTime={gameTime}
@@ -188,6 +216,9 @@ function App() {
               playerStats={playerStats}
               setPlayerStats={setPlayerStats}
               toggleOffence={toggleOffence}
+              testGame={testGame}
+              setTestGame={setTestGame}
+              resetGame={resetGame}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/subs'>

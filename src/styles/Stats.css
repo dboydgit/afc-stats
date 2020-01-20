@@ -123,6 +123,10 @@
     border: solid 1px black;
 }
 
+.opt-btn:disabled {
+    background-color: var(--primary-light);
+}
+
 .game-options {
     display: flex;
     justify-content: space-evenly;
@@ -144,4 +148,15 @@
     left: initial;
     right: 0px;
     background-color: lightgreen;
+}
+
+#test-notification {
+    margin: 0.25rem;
+    border-radius: 4px;
+    background-color: var(--delete);
+    color: white
+}
+
+#test-text {
+    margin: 0.25rem;
 }

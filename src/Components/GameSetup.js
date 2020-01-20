@@ -35,6 +35,10 @@ export default function GameSetup(props) {
         props.finishSetup(time, dark, light, statTeam, offenceBool);
     }
 
+    const handleCheck = (e) => {
+        e.target.checked ? props.setTestGame(true) : props.setTestGame(false);
+    }
+
     return (
         <div className='game-setup card'>
             <h3 id='setup-title'>Game Setup</h3>
@@ -62,6 +66,10 @@ export default function GameSetup(props) {
                 <option>{`${dark}`}</option>
                 <option>{`${light}`}</option>
             </select>
+            <div id='test-game-checkbox' onChange={handleCheck}>
+                <input type='checkbox'/>
+                <span>Check for test game</span>
+            </div>
             <button className='btn' onClick={submitFinish}>Finish Setup</button>
             {error &&
                 <span className='form-err'>{error}</span>}   

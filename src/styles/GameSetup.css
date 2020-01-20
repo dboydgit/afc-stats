@@ -22,3 +22,9 @@ select {
     height: 2rem;
     min-width: 50%;
 }
+
+#test-game-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}

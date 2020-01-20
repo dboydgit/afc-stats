@@ -106,6 +106,8 @@ export default function Stats(props) {
     //     return ''
     // }
 
+    let db = props.localDB;
+
     const handleStatClick = (e, player, turnover = true) => {
         toast.dismiss();
         if (turnover) props.toggleOffence();
@@ -118,16 +120,18 @@ export default function Stats(props) {
         if (lastEntry && props.offence) lastPlayer = lastEntry.player;
         // set the score for point, GSO
         let newScore = { ...props.score };
-        if (action === 'POINT') {
+        if (action === 'Point') {
             props.statTeam === props.darkTeam ? newScore.dark++ : newScore.light++;
         }
-        if (action === 'GSO' || action === 'GSO-MARK') {
+        if (action === 'GSO' || action === 'GSO-Mark') {
             props.statTeam === props.darkTeam ? newScore.light++ : newScore.dark++;
         }
         props.setScore(newScore);
         // add action to game history
+        let time = new Date();
         let historyEntry = {
-            realTime: new Date().toString(),
+            date: time.toDateString(),
+            time: time.toTimeString(),
             gameTime: props.gameTime,
             statTeam: props.statTeam,
             [`${props.darkTeam}_score`]: newScore.dark,
@@ -149,7 +153,7 @@ export default function Stats(props) {
         props.setPlayerStats(newPlayerStats);
         // log entry to console
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
-            time: ${historyEntry.realTime}`)
+            time: ${historyEntry.time}`)
         
         toast.success(`Last Entry - ${action} by ${player} ${lastPlayer ? 'from ' + lastPlayer : ''}`)
         newHistory.push(historyEntry);
@@ -196,6 +200,39 @@ export default function Stats(props) {
         props.setGameHistory(newHistory);
     }
 
+    const saveGame = () => {
+        let gameDetails = {
+            date: new Date(),
+            darkTeam: props.darkTeam,
+            lightTeam: props.lightTeam,
+            statTeam: props.statTeam,
+            gameLength: props.gameLength,
+            playerStats: props.playerStats,
+            score: props.score,
+            testGame: props.testGame,
+            statTaker: props.userID,
+            gameHistory: props.gameHistory
+        }
+        let newAllHistory = [...props.allGameHistory];
+        newAllHistory.push(gameDetails);
+        props.setAllGameHistory(newAllHistory);
+        // update the DB
+        db.get('game-history').then(doc => {
+            doc.games = newAllHistory;
+            return db.put(doc);
+        }).then(res => console.log(res))
+        .catch(err => {
+            if (err.name === 'not_found') {
+                db.put({
+                    _id: 'game-history',
+                    games: newAllHistory
+                })
+            } else {
+                console.log(err)
+            }
+        }).then(() => props.resetGame());
+    }
+
     return (
         <div className='App'>
             <div className='stats'>
@@ -203,9 +240,14 @@ export default function Stats(props) {
                     <GameSetup
                         teams={props.teams}
                         finishSetup={props.finishSetup}
+                        setTestGame={props.setTestGame}
                     />}
                 {!props.showSetup &&
                     <div className='game-stats'>
+                        {props.testGame &&
+                            <div id='test-notification'>
+                                <p id='test-text'>Test Game</p>
+                            </div>}
                         <GameInfo
                             darkTeam={props.darkTeam}
                             lightTeam={props.lightTeam}
@@ -213,15 +255,21 @@ export default function Stats(props) {
                             gameTime={props.gameTime}
                             gameLength={props.gameLength}
                             startTimer={props.startTimer}
-                            pauseTimer={props.pauseTimer}
+                            pauseTimer={props.pauseTimer}   
                             resetTimer={props.resetTimer}
                             paused={props.paused}
                             setPaused={props.setPaused}
                         />
                         <div className='game-options'>
-                            <button className='btn opt-btn'>Exit Game</button>
-                            <button className='btn opt-btn'>Finish & Save</button>
                             <button className='btn opt-btn'
+                                onClick={() => {
+                                    if (window.confirm('Cancel Game? Progress will not be saved.')) {
+                                        props.resetGame();
+                                    }
+                                }}>Exit Game</button>
+                            <button className='btn opt-btn'
+                                onClick={saveGame}>Finish & Save</button>
+                            <button className='btn opt-btn' 
                                 onClick={handleUndo}>
                                 Undo<i className='material-icons md-18'>undo</i>
                             </button>
