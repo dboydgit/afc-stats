@@ -102,9 +102,9 @@ const PlayerList = (props) => {
 export default function Stats(props) {
 
     // show warning on page reload attempt *comment out for testing
-    // window.onbeforeunload = () => {
-    //     return ''
-    // }
+    window.onbeforeunload = () => {
+        return ''
+    }
 
     let db = props.localDB;
 

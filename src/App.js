@@ -50,12 +50,18 @@ function App() {
   });
   const [gameHistory, setGameHistory] = useState([]);
   const [gameTime, setGameTime] = useState('');
-  const [gameTimer, setGameTimer] = useState(new Timer({
-    countdown: true,
-    startValues: { minutes: gameLength }
-  }));
   const [paused, setPaused] = useState(false);
   const [testGame, setTestGame] = useState(false);
+  const [gameTimer, setGameTimer] = useState(new Timer({
+    countdown: true,
+    callback: (timer) => {
+      setGameTime(timer.getTimeValues().toString(['minutes', 'seconds']))
+    }
+  }));
+
+  // gameTimer.addEventListener("secondsUpdated", (e) => {
+  //   setGameTime(gameTimer.getTimeValues().toString(['minutes', 'seconds']))
+  // })
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -113,18 +119,11 @@ function App() {
   // set the game clock to initial value when gameLength changes
   useEffect(() => {
     setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
-    gameTimer.addEventListener("secondsUpdated", (e) => {
-      setGameTime(gameTimer.getTimeValues().toString(['minutes', 'seconds']))
-    })
-  }, [gameLength, gameTimer])
+  }, [gameLength])
 
   // finish the game setup and set state for stat taking
   const finishSetup = (time, dark, light, statTeam, offence) => {
     setGameLength(parseInt(time));
-    setGameTimer(new Timer({
-      countdown: true,
-      startValues: { minutes: parseInt(time) }
-    }));
     setDarkTeam(dark);
     setLightTeam(light);
     setStatTeam(statTeam);
@@ -152,10 +151,7 @@ function App() {
 
   const resetGame = () => {
     setGameLength(25);
-    setGameTimer(new Timer({
-      countdown: true,
-      startValues: { minutes: gameLength }
-    }));
+    gameTimer.stop();
     setDarkTeam('');
     setLightTeam('');
     setStatTeam('');
@@ -205,8 +201,9 @@ function App() {
               gameHistory={gameHistory}
               setGameHistory={setGameHistory}
               gameTime={gameTime}
-              startTimer={() => gameTimer.start()}
+              startTimer={() => gameTimer.start({ startValues: { minutes: gameLength } })}
               pauseTimer={() => gameTimer.pause()}
+              stopTimer={() => gameTimer.stop()}
               resetTimer={() => {
                 gameTimer.reset()
                 setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
