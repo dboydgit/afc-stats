@@ -201,6 +201,8 @@ export default function Stats(props) {
     }
 
     const saveGame = () => {
+        toast.dismiss();
+        toast.success('Game Saved', {autoClose: 3000});
         let gameDetails = {
             date: new Date(),
             darkTeam: props.darkTeam,
@@ -264,6 +266,8 @@ export default function Stats(props) {
                             <button className='btn opt-btn'
                                 onClick={() => {
                                     if (window.confirm('Cancel Game? Progress will not be saved.')) {
+                                        toast.dismiss();
+                                        toast.error('Game Deleted', {autoClose: 3000});
                                         props.resetGame();
                                     }
                                 }}>Exit Game</button>
