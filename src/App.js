@@ -43,7 +43,7 @@ function App() {
   const [statTeam, setStatTeam] = useState(''); //test str testDark
   // try playerStats instead of stat players - hardcode for testing
   const [playerStats, setPlayerStats] = useState([]);
-  const [offence, setOffence] = useState(true);
+  const [offense, setOffense] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
     'light': 0
@@ -58,10 +58,6 @@ function App() {
       setGameTime(timer.getTimeValues().toString(['minutes', 'seconds']))
     }
   }));
-
-  // gameTimer.addEventListener("secondsUpdated", (e) => {
-  //   setGameTime(gameTimer.getTimeValues().toString(['minutes', 'seconds']))
-  // })
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -122,12 +118,12 @@ function App() {
   }, [gameLength])
 
   // finish the game setup and set state for stat taking
-  const finishSetup = (time, dark, light, statTeam, offence) => {
+  const finishSetup = (time, dark, light, statTeam, offense) => {
     setGameLength(parseInt(time));
     setDarkTeam(dark);
     setLightTeam(light);
     setStatTeam(statTeam);
-    setOffence(offence);
+    setOffense(offense);
     setShowSetup(false);
     let findTeam = teams.find(team => team.name === statTeam)
     let initPlayerStats = [];
@@ -167,8 +163,8 @@ function App() {
     })
   }
 
-  const toggleOffence = () => {
-    setOffence(!offence);
+  const toggleOffense = () => {
+    setOffense(!offense);
   }
 
   return (
@@ -193,7 +189,7 @@ function App() {
               darkTeam={darkTeam}
               lightTeam={lightTeam}
               statTeam={statTeam}
-              offence={offence}
+              offense={offense}
               score={score}
               setScore={setScore}
               allGameHistory={allGameHistory}
@@ -212,7 +208,7 @@ function App() {
               setPaused={setPaused}
               playerStats={playerStats}
               setPlayerStats={setPlayerStats}
-              toggleOffence={toggleOffence}
+              toggleOffense={toggleOffense}
               testGame={testGame}
               setTestGame={setTestGame}
               resetGame={resetGame}
@@ -235,6 +231,7 @@ function App() {
         </Route>
         <Route path='/games'>
           <Games
+            localDB={localDB}
             allGameHistory={allGameHistory}
           />
         </Route>

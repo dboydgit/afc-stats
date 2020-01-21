@@ -4,7 +4,7 @@ import GameInfo from './GameInfo';
 import '../styles/Stats.css';
 import { toast } from 'react-toastify';
 
-const OffenceButtons = (props) => {
+const OffenseButtons = (props) => {
 
     return (
         <div className='stat-btns'>
@@ -14,8 +14,8 @@ const OffenceButtons = (props) => {
                 onClick={(e) => props.handleStatClick(e, props.player, false)}>
                 Touch
                     <div className='score-badge'>{props.stats.Touch}</div>
-                    {props.stats.Assist !== 0 && 
-                        <div className='score-badge assist'>{`${props.stats.Assist}-A`}</div>}
+                {props.stats.Assist !== 0 &&
+                    <div className='score-badge assist'>{`${props.stats.Assist}-A`}</div>}
             </button>
             <button
                 className='btn stat-btn'
@@ -80,13 +80,13 @@ const PlayerList = (props) => {
             >
                 <span className='player-text'>{player.name}</span>
             </div>
-            {props.offence &&
-                <OffenceButtons
+            {props.offense &&
+                <OffenseButtons
                     player={player.name}
                     stats={player.stats}
                     handleStatClick={props.handleStatClick}
                 />}
-            {!props.offence &&
+            {!props.offense &&
                 <DefenceButtons
                     player={player.name}
                     stats={player.stats}
@@ -101,16 +101,16 @@ const PlayerList = (props) => {
 
 export default function Stats(props) {
 
-    // show warning on page reload attempt *comment out for testing
-    window.onbeforeunload = () => {
-        return ''
+    // show warning on page reload attempt during game
+    window.onbeforeunload = (e) => {
+        if (!props.showSetup) e.returnValue = 'Game will not be saved.';
     }
 
     let db = props.localDB;
 
-    const handleStatClick = (e, player, turnover = true) => {
+    const handleStatClick = (e, player='', turnover = true) => {
         toast.dismiss();
-        if (turnover) props.toggleOffence();
+        if (turnover) props.toggleOffense();
         let action = e.currentTarget.name;
         // set the game history
         let newHistory = [...props.gameHistory];
@@ -159,8 +159,8 @@ export default function Stats(props) {
         // log entry to console
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
             time: ${historyEntry.time}`)
-        
-        toast.success(`Last Entry: ${action} - ${player} ${lastPlayer ? 'from ' + lastPlayer : ''}`)
+
+        toast.success(`Last Entry: ${action}${player ? ' - ' + player: ''} ${lastPlayer ? ' from ' + lastPlayer : ''}`)
         newHistory.push(historyEntry);
         props.setGameHistory(newHistory);
     }
@@ -190,7 +190,7 @@ export default function Stats(props) {
         })
         props.setPlayerStats(newPlayerStats);
         // undo turnover and change buttons
-        if (lastEntry.turnover) props.toggleOffence();
+        if (lastEntry.turnover) props.toggleOffense();
         // undo points and change score
         if (lastEntry.action === 'POINT') {
             props.statTeam === props.darkTeam ? newScore.dark-- : newScore.light--;
@@ -207,7 +207,7 @@ export default function Stats(props) {
 
     const saveGame = () => {
         toast.dismiss();
-        toast.success('Game Saved', {autoClose: 2000});
+        toast.success('Game Saved', { autoClose: 2000 });
         let gameDetails = {
             date: new Date(),
             darkTeam: props.darkTeam,
@@ -228,16 +228,16 @@ export default function Stats(props) {
             doc.games = newAllHistory;
             return db.put(doc);
         }).then(res => console.log(res))
-        .catch(err => {
-            if (err.name === 'not_found') {
-                db.put({
-                    _id: 'game-history',
-                    games: newAllHistory
-                })
-            } else {
-                console.log(err)
-            }
-        }).then(() => props.resetGame());
+            .catch(err => {
+                if (err.name === 'not_found') {
+                    db.put({
+                        _id: 'game-history',
+                        games: newAllHistory
+                    })
+                } else {
+                    console.log(err)
+                }
+            }).then(() => props.resetGame());
     }
 
     return (
@@ -262,7 +262,7 @@ export default function Stats(props) {
                             gameTime={props.gameTime}
                             gameLength={props.gameLength}
                             startTimer={props.startTimer}
-                            pauseTimer={props.pauseTimer}   
+                            pauseTimer={props.pauseTimer}
                             resetTimer={props.resetTimer}
                             paused={props.paused}
                             setPaused={props.setPaused}
@@ -272,19 +272,19 @@ export default function Stats(props) {
                                 onClick={() => {
                                     if (window.confirm('Cancel Game? Progress will not be saved.')) {
                                         toast.dismiss();
-                                        toast.error('Game Deleted', {autoClose: 2000});
+                                        toast.error('Game Deleted', { autoClose: 2000 });
                                         props.resetGame();
                                     }
                                 }}>Exit Game</button>
                             <button className='btn opt-btn'
                                 onClick={saveGame}>Finish & Save</button>
-                            <button className='btn opt-btn' 
+                            <button className='btn opt-btn'
                                 onClick={handleUndo}>
                                 Undo<i className='material-icons md-18'>undo</i>
                             </button>
                         </div>
                         <PlayerList
-                            offence={props.offence}
+                            offense={props.offense}
                             playerStats={props.playerStats}
                             setPlayerStats={props.setPlayerStats}
                             statTeam={props.statTeam}
@@ -292,6 +292,14 @@ export default function Stats(props) {
                             handleStatClick={handleStatClick}
                             gameHistory={props.gameHistory}
                         />
+                        {!props.offense &&
+                            <button
+                                id='o-err-btn'
+                                className='btn stat-btn'
+                                name='O-Error'
+                                onClick={(e) => handleStatClick(e)}>
+                                Offensive Error
+                    </button>}
                     </div>}
             </div>
         </div>
