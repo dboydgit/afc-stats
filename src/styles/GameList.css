@@ -1,4 +1,29 @@
-.game-info {
+.game-list-card {
+    padding: 0.5rem;
+}
+
+.game-list-info {
     display: flex;
     justify-content: space-between;
+    margin: 0.2rem;
+}
+
+.game-score {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0.5rem 0;
+}
+
+.game-list-btns {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: stretch;
+}
+
+.game-list-btn {
+    display: flex;
+    align-self: center;
+    margin: 0.25rem;
+    font-size: 12px;
+    align-items: center;
 }

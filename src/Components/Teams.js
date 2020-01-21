@@ -112,6 +112,7 @@ export default function Teams(props) {
 
     return (
         <div className='App'>
+            <h1 className='page-header'>Teams</h1>
             <TeamList
                 teams={props.teams}
                 setTeams={props.setTeams}

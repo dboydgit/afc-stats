@@ -130,16 +130,14 @@ function App() {
     for (let player of findTeam.players) {
       initPlayerStats.push({
         name: player,
-        stats: {
-          Touch: 0,
-          Assist: 0,
-          Point: 0,
-          'T-Away': 0,
-          Drop: 0,
-          'D-Play': 0,
-          GSO: 0,
-          'GSO-Mark': 0
-        }
+        Touch: 0,
+        Assist: 0,
+        Point: 0,
+        'T-Away': 0,
+        Drop: 0,
+        'D-Play': 0,
+        GSO: 0,
+        'GSO-Mark': 0
       })
     }
     setPlayerStats(initPlayerStats);

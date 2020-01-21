@@ -11,32 +11,32 @@ const OffenseButtons = (props) => {
             <button
                 className='btn stat-btn'
                 name='Touch'
-                onClick={(e) => props.handleStatClick(e, props.player, false)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name, false)}>
                 Touch
-                    <div className='score-badge'>{props.stats.Touch}</div>
-                {props.stats.Assist !== 0 &&
-                    <div className='score-badge assist'>{`${props.stats.Assist}-A`}</div>}
+                    <div className='score-badge'>{props.player.Touch}</div>
+                {props.player.Assist !== 0 &&
+                    <div className='score-badge assist'>{`${props.player.Assist}-A`}</div>}
             </button>
             <button
                 className='btn stat-btn'
                 name='Point'
-                onClick={(e) => props.handleStatClick(e, props.player)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 Point
-                    <div className='score-badge'>{props.stats.Point}</div>
+                    <div className='score-badge'>{props.player.Point}</div>
             </button>
             <button
                 className='btn stat-btn'
                 name='T-Away'
-                onClick={(e) => props.handleStatClick(e, props.player)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 T-Away
-                    <div className='score-badge'>{props.stats['T-Away']}</div>
+                    <div className='score-badge'>{props.player['T-Away']}</div>
             </button>
             <button
                 className='btn stat-btn'
                 name='Drop'
-                onClick={(e) => props.handleStatClick(e, props.player)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 Drop
-                    <div className='score-badge'>{props.stats.Drop}</div>
+                    <div className='score-badge'>{props.player.Drop}</div>
             </button>
         </div>
     )
@@ -49,23 +49,23 @@ const DefenceButtons = (props) => {
             <button
                 className='btn stat-btn'
                 name='D-Play'
-                onClick={(e) => props.handleStatClick(e, props.player)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 D-Play
-                    <div className='score-badge'>{props.stats['D-Play']}</div>
+                    <div className='score-badge'>{props.player['D-Play']}</div>
             </button>
             <button
                 className='btn stat-btn'
                 name='GSO'
-                onClick={(e) => props.handleStatClick(e, props.player)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 GSO
-                    <div className='score-badge'>{props.stats.GSO}</div>
+                    <div className='score-badge'>{props.player.GSO}</div>
             </button>
             <button
                 className='btn stat-btn'
                 name='GSO-Mark'
-                onClick={(e) => props.handleStatClick(e, props.player)}>
+                onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 GSO-Mark
-                    <div className='score-badge'>{props.stats['GSO-Mark']}</div>
+                    <div className='score-badge'>{props.player['GSO-Mark']}</div>
             </button>
         </div>
     )
@@ -82,14 +82,12 @@ const PlayerList = (props) => {
             </div>
             {props.offense &&
                 <OffenseButtons
-                    player={player.name}
-                    stats={player.stats}
+                    player={player}
                     handleStatClick={props.handleStatClick}
                 />}
             {!props.offense &&
                 <DefenceButtons
-                    player={player.name}
-                    stats={player.stats}
+                    player={player}
                     handleStatClick={props.handleStatClick}
                 />}
         </div>
@@ -150,10 +148,10 @@ export default function Stats(props) {
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === player) {
-                if (action === 'Drop') el.stats.Touch++;
-                el.stats[action]++;
+                if (action === 'Drop') el.Touch++;
+                el[action]++;
             }
-            if (action === 'Point' && el.name === lastPlayer) el.stats.Assist++;
+            if (action === 'Point' && el.name === lastPlayer) el.Assist++;
         })
         props.setPlayerStats(newPlayerStats);
         // log entry to console
@@ -180,12 +178,12 @@ export default function Stats(props) {
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === lastEntry.player) {
-                if (lastEntry.action === 'Drop') el.stats.Touch--;
-                el.stats[lastEntry.action]--;
+                if (lastEntry.action === 'Drop') el.Touch--;
+                el[lastEntry.action]--;
                 return;
             }
             if (lastEntry.action === 'Point' && lastEntry.lastPlayer === el.name) {
-                el.stats.Assist--;
+                el.Assist--;
             }
         })
         props.setPlayerStats(newPlayerStats);
@@ -221,7 +219,7 @@ export default function Stats(props) {
             gameHistory: props.gameHistory
         }
         let newAllHistory = [...props.allGameHistory];
-        newAllHistory.push(gameDetails);
+        newAllHistory.unshift(gameDetails);
         props.setAllGameHistory(newAllHistory);
         // update the DB
         db.get('game-history').then(doc => {
