@@ -27,3 +27,18 @@
     font-size: 12px;
     align-items: center;
 }
+
+.stat-table-title {
+    margin: 1rem 0 0.5rem 0;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 600px) {
+    .game-list-info {
+        font-size: small;
+    }
+    .stat-table {
+        font-size: x-small;
+    }
+}

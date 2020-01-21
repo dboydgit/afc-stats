@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { CSVLink } from 'react-csv';
 import '../styles/GameList.css';
+import StatTable from './StatTable';
 
 const GameCard = (props) => {
 
     const [showStats, setShowStats] = useState(false);
 
-    let gameDate = new Date(props.game.date);
-    let fileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${props.game.darkTeam}-vs-${props.game.lightTeam}-GAME-${props.game.statTeam}.csv`
-    let statFileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${props.game.darkTeam}-vs-${props.game.lightTeam}-STATS-${props.game.statTeam}.csv`
+    let game = props.game;
+    let gameDate = new Date(game.date);
+    let fileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-GAME-${game.statTeam}.csv`
+    let statFileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-STATS-${game.statTeam}.csv`
     
     const toggleShowStats = () => setShowStats(!showStats);
     const statHeaders = [
@@ -26,27 +28,27 @@ const GameCard = (props) => {
     return (
         <div className='card game-list-card'>
             <div className='game-list-info'>
-                <span>{new Date(props.game.date).toDateString()}</span>
-                <span>{`Stat Taker: ${props.game.statTaker}`}</span>
+                <span>{new Date(game.date).toDateString()}</span>
+                <span>{`Stat Taker: ${game.statTaker}`}</span>
             </div>
             <div className='game-list-info'>
-                <span>{`Stats For: ${props.game.statTeam}`}</span>
-                {props.game.testGame && <span className='test-game'>Test Game</span>}
+                <span>{`Stats For: ${game.statTeam}`}</span>
+                {game.testGame && <span className='test-game'>Test Game</span>}
             </div>
             <div className='game-score'>
                 <div className='score-card dark'>
-                    <span id='team-name'>{props.game.darkTeam}</span>
-                    <span className='score dark'>{props.game.score.dark}</span>
+                    <span id='team-name'>{game.darkTeam}</span>
+                    <span className='score dark'>{game.score.dark}</span>
                 </div>
                 <div className='score-card light'>
-                    <span id='team-name'>{props.game.lightTeam}</span>
-                    <span className='score light'>{props.game.score.light}</span>
+                    <span id='team-name'>{game.lightTeam}</span>
+                    <span className='score light'>{game.score.light}</span>
                 </div>
             </div>
             <div className='game-list-btns'>
                 <CSVLink
                     className='btn game-list-btn'
-                    data={props.game.gameHistory}
+                    data={game.gameHistory}
                     filename={fileName}
                     target='_blank'
                 >
@@ -55,7 +57,7 @@ const GameCard = (props) => {
                 </CSVLink>
                 <CSVLink
                     className='btn game-list-btn'
-                    data={props.game.playerStats}
+                    data={game.playerStats}
                     headers={statHeaders}
                     filename={statFileName}
                     target='_blank'
@@ -76,7 +78,7 @@ const GameCard = (props) => {
                 </button>}
             </div>
             {showStats &&
-                <p>game stats here</p>
+                <StatTable stats={game.playerStats}/>
             }
         </div>
     )
