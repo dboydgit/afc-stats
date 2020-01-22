@@ -6,6 +6,17 @@ html, body, #root {
   height: 100%;
 }
 
+#root>div.Toastify>div>div {
+    min-height: 3rem;
+}
+
+#root > div.Toastify > div > div > div {
+    display: flex;
+    padding: 0 1rem;;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .App {
   background-color: var(--main-bg);
   display: flex;
@@ -68,6 +79,17 @@ input, select {
   color: white;
   max-width: 15rem;
   text-decoration: none;
+}
+
+.btn>i {
+  margin-left: 0.5rem;
+}
+
+.toast-btn {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  background-color: #9a0007;
 }
 
 .btn:hover {

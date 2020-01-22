@@ -4,10 +4,6 @@
     justify-content: center;
 }
 
-#root>div.Toastify>div>div {
-    min-height: 3rem;
-}
-
 .game-stats {
     display: flex;
     flex-direction: column;
@@ -110,10 +106,6 @@
     color: black;
     background-color: var(--secondary);
     border: solid 1px black;
-}
-
-.opt-btn>i {
-    margin-left: 0.5rem;
 }
 
 .opt-btn:hover {

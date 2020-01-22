@@ -2,6 +2,22 @@ import React, { useState } from 'react'
 import { CSVLink } from 'react-csv';
 import '../styles/GameList.css';
 import StatTable from './StatTable';
+import { toast } from 'react-toastify';
+
+const DelToast = (props) => (
+    <>
+        <span>Game Deleted...</span>
+        <button
+            className='btn toast-btn'
+            onClick={() => {
+                props.toggleDeleteGame(props.game.date);
+                props.closeToast();
+            }}
+        >
+            Undo<i className='material-icons md-18'>undo</i>
+        </button>
+    </>
+)
 
 const GameCard = (props) => {
 
@@ -80,10 +96,15 @@ const GameCard = (props) => {
             {showStats &&
                 <>
                     <StatTable stats={game.playerStats} />
-                    <button 
+                    <button
                         className='btn btn-del game-list-btn'
                         onClick={() => {
-                            props.deleteGame(game.date)
+                            props.toggleDeleteGame(game.date);
+                            toast.error(
+                                <DelToast
+                                    game={game}
+                                    toggleDeleteGame={props.toggleDeleteGame}
+                                />, {autoClose: 4000, hideProgressBar:false});
                         }}>Delete Game</button>
                 </>
             }
@@ -94,18 +115,18 @@ const GameCard = (props) => {
 const GameList = (props) => {
     const showGames = props.games.filter(game => !game.deleted);
     const games = showGames.map((game) =>
-        <GameCard key={game.date} game={game} deleteGame={props.deleteGame} />
+        <GameCard key={game.date} game={game} toggleDeleteGame={props.toggleDeleteGame} />
     )
     return <div className='team-list'>{games}</div>
 }
 
 export default function Games(props) {
 
-    const deleteGame = (gameDate) => {
+    const toggleDeleteGame = (gameDate) => {
         // update local state
         let newAllHistory = [...props.allGameHistory];
         for (let game of newAllHistory) {
-            if (game.date === gameDate) game.deleted = true;
+            if (game.date === gameDate) game.deleted = !game.deleted;
             continue;
         }
         props.setAllGameHistory(newAllHistory);
@@ -116,9 +137,9 @@ export default function Games(props) {
     return (
         <div className='App'>
             <h1 className='page-header'>Recorded Games</h1>
-            <GameList 
+            <GameList
                 games={props.allGameHistory}
-                deleteGame={deleteGame}
+                toggleDeleteGame={toggleDeleteGame}
             />
         </div>
     )
