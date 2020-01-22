@@ -13,11 +13,20 @@ const Player = (props) => {
         props.setTeams(newTeams);
     }
 
-    return <input
-        className='player-card'
-        name={props.ind}
-        value={player}
-        onChange={handlePlayerChange} />
+    return (
+        <div className='player-list-item'>
+            <i  className='material-icons player-del'
+                onClick={() => {
+                    props.deletePlayer(player);
+                }}>delete</i>
+            <input
+                className='player-card'
+                name={props.ind}
+                value={player}
+                onChange={handlePlayerChange}
+            />
+        </div>
+    )
 }
 
 const PlayerList = (props) => {
@@ -31,6 +40,7 @@ const PlayerList = (props) => {
             teams={props.teams}
             setTeams={props.setTeams}
             team={props.team}
+            deletePlayer={props.deletePlayer}
         />
     );
     return <div className='player-list'>{listItems}</div>
@@ -47,6 +57,31 @@ export default function Team(props) {
     const saveTeam = () => {
         props.saveTeams();
         toggleShowPlayers();
+    }
+
+    const addPlayer = () => {
+        // add player to teams state
+        let newTeams = [...props.teams];
+        for (let team of newTeams) {
+            if (team.name === props.team.name) {
+                team.players.push('New Player');
+                continue;
+            }
+        }
+        props.setTeams(newTeams);
+    }
+
+    const deletePlayer = (player) => {
+        // delete player from state
+        let newTeams = [...props.teams];
+        for (let team of newTeams) {
+            if (team.name === props.team.name) {
+                let ind = team.players.findIndex(el => el === player);
+                team.players.splice(ind, 1);
+                continue;
+            }
+        }
+        props.setTeams(newTeams);
     }
 
     return (
@@ -68,11 +103,13 @@ export default function Team(props) {
                         team={props.team}
                         teams={props.teams}
                         setTeams={props.setTeams}
+                        deletePlayer={deletePlayer}
                     />
-                    <button className='btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
-                    <button className='btn' onClick={saveTeam}>Save Changes</button>
+                    <button className='btn team-btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
+                    <button className='btn team-btn' onClick={addPlayer}>Add Player</button>
+                    <button className='btn team-btn' onClick={saveTeam}>Save Changes</button>
                 </div>
-                }
+            }
         </div>
     )
 }

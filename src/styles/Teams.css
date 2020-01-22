@@ -40,3 +40,17 @@
 .nmt {
     margin-top: 0;
 }
+
+.team-btn {
+    margin: 0.5rem;
+}
+
+.player-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-del {
+    color: var(--primary-dark);
+}
