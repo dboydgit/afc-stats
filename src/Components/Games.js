@@ -11,18 +11,18 @@ const GameCard = (props) => {
     let gameDate = new Date(game.date);
     let fileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-GAME-${game.statTeam}.csv`
     let statFileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-STATS-${game.statTeam}.csv`
-    
+
     const toggleShowStats = () => setShowStats(!showStats);
     const statHeaders = [
-        {label: 'Name', key: 'name'},
-        {label: 'Touches', key: 'Touch'},
-        {label: 'Points', key: 'Point'},
-        {label: 'Assists', key: 'Assist'},
-        {label: 'D-Plays', key: 'D-Play'},
-        {label: 'Drops', key: 'Drop'},
-        {label: 'Throwaways', key: 'T-Away'},
-        {label: 'GSO', key: 'GSO'},
-        {label: 'GSO-Mark', key: 'GSO-Mark'},
+        { label: 'Name', key: 'name' },
+        { label: 'Touches', key: 'Touch' },
+        { label: 'Points', key: 'Point' },
+        { label: 'Assists', key: 'Assist' },
+        { label: 'D-Plays', key: 'D-Play' },
+        { label: 'Drops', key: 'Drop' },
+        { label: 'Throwaways', key: 'T-Away' },
+        { label: 'GSO', key: 'GSO' },
+        { label: 'GSO-Mark', key: 'GSO-Mark' },
     ]
 
     return (
@@ -36,11 +36,11 @@ const GameCard = (props) => {
                 {game.testGame && <span className='test-game'>Test Game</span>}
             </div>
             <div className='game-score'>
-                <div className='score-card dark'>
+                <div className='score-card score-card-games dark'>
                     <span id='team-name'>{game.darkTeam}</span>
                     <span className='score dark'>{game.score.dark}</span>
                 </div>
-                <div className='score-card light'>
+                <div className='score-card score-card-games light'>
                     <span id='team-name'>{game.lightTeam}</span>
                     <span className='score light'>{game.score.light}</span>
                 </div>
@@ -78,24 +78,48 @@ const GameCard = (props) => {
                 </button>}
             </div>
             {showStats &&
-                <StatTable stats={game.playerStats}/>
+                <>
+                    <StatTable stats={game.playerStats} />
+                    <button 
+                        className='btn btn-del game-list-btn'
+                        onClick={() => {
+                            props.deleteGame(game.date)
+                        }}>Delete Game</button>
+                </>
             }
         </div>
     )
 }
 
 const GameList = (props) => {
-    const games = props.games.map((game) =>
-        <GameCard key={game.date} game={game} />
+    const showGames = props.games.filter(game => !game.deleted);
+    const games = showGames.map((game) =>
+        <GameCard key={game.date} game={game} deleteGame={props.deleteGame} />
     )
     return <div className='team-list'>{games}</div>
 }
 
 export default function Games(props) {
+
+    const deleteGame = (gameDate) => {
+        // update local state
+        let newAllHistory = [...props.allGameHistory];
+        for (let game of newAllHistory) {
+            if (game.date === gameDate) game.deleted = true;
+            continue;
+        }
+        props.setAllGameHistory(newAllHistory);
+        // save to the DB
+        props.saveAllGames(newAllHistory)
+    }
+
     return (
         <div className='App'>
             <h1 className='page-header'>Recorded Games</h1>
-            <GameList games={props.allGameHistory} />
+            <GameList 
+                games={props.allGameHistory}
+                deleteGame={deleteGame}
+            />
         </div>
     )
 }

@@ -14,6 +14,10 @@
     margin: 0.5rem 0;
 }
 
+.score-card-games {
+    margin: 0 0.5rem;
+}
+
 .game-list-btns {
     display: flex;
     justify-content: space-evenly;

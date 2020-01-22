@@ -107,8 +107,6 @@ export default function Stats(props) {
     const [showAddPlayer, setShowAddPlayer] = useState(false);
     const [newPlayer, setNewPlayer] = useState('');
 
-    let db = props.localDB;
-
     const handleStatClick = (e, player = '', turnover = true) => {
         toast.dismiss();
         if (turnover) props.toggleOffense();
@@ -225,20 +223,8 @@ export default function Stats(props) {
         newAllHistory.unshift(gameDetails);
         props.setAllGameHistory(newAllHistory);
         // update the DB
-        db.get('game-history').then(doc => {
-            doc.games = newAllHistory;
-            return db.put(doc);
-        }).then(res => console.log(res))
-            .catch(err => {
-                if (err.name === 'not_found') {
-                    db.put({
-                        _id: 'game-history',
-                        games: newAllHistory
-                    })
-                } else {
-                    console.log(err)
-                }
-            }).then(() => props.resetGame());
+        props.saveAllGames(newAllHistory);
+        props.resetGame();
     }
 
     const addStatPlayer = (player) => {

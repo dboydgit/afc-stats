@@ -142,6 +142,24 @@ function App() {
     setPlayerStats(initPlayerStats);
   }
 
+  // const save new game history to the db
+  const saveAllGames = (newAllHistory) => {
+    localDB.get('game-history').then(doc => {
+      doc.games = newAllHistory;
+      return localDB.put(doc);
+    }).then(res => console.log(res))
+      .catch(err => {
+        if (err.name === 'not_found') {
+          localDB.put({
+            _id: 'game-history',
+            games: newAllHistory
+          })
+        } else {
+          console.log(err)
+        }
+      })
+  }
+
   const resetGame = () => {
     setGameLength(25);
     gameTimer.stop();
@@ -178,7 +196,6 @@ function App() {
           {userID ?
             <Stats
               userID={userID}
-              localDB={localDB}
               teams={teams}
               showSetup={showSetup}
               finishSetup={finishSetup}
@@ -208,6 +225,7 @@ function App() {
               toggleOffense={toggleOffense}
               testGame={testGame}
               setTestGame={setTestGame}
+              saveAllGames={saveAllGames}
               resetGame={resetGame}
             /> : <Redirect to='/' />}
         </Route>
@@ -215,7 +233,6 @@ function App() {
           {userID ?
             <Subs
               userID={userID}
-              localDB={localDB}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/teams'>
@@ -228,8 +245,9 @@ function App() {
         </Route>
         <Route path='/games'>
           <Games
-            localDB={localDB}
             allGameHistory={allGameHistory}
+            setAllGameHistory={setAllGameHistory}
+            saveAllGames={saveAllGames}
           />
         </Route>
       </Switch>
