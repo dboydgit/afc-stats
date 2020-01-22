@@ -41,8 +41,7 @@ function App() {
   const [lightTeam, setLightTeam] = useState(""); // test str Light Team
   const [showSetup, setShowSetup] = useState(true); //set false for testing
   const [statTeam, setStatTeam] = useState(''); //test str testDark
-  // try playerStats instead of stat players - hardcode for testing
-  const [playerStats, setPlayerStats] = useState([]);
+  const [playerStats, setPlayerStats] = useState([]); // hardcode for testing
   const [offense, setOffense] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -52,7 +51,7 @@ function App() {
   const [gameTime, setGameTime] = useState('');
   const [paused, setPaused] = useState(false);
   const [testGame, setTestGame] = useState(false);
-  const [gameTimer, setGameTimer] = useState(new Timer({
+  const [gameTimer] = useState(new Timer({
     countdown: true,
     callback: (timer) => {
       setGameTime(timer.getTimeValues().toString(['minutes', 'seconds']))

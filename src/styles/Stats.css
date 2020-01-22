@@ -71,7 +71,7 @@
     margin-top: 0.5rem;
 }
 
-#o-err-btn {
+.stat-btn-after {
     align-self: center;
 }
 
@@ -131,7 +131,7 @@
     border: solid 1px black;
 }
 
-.opt-btn:disabled {
+.btn:disabled {
     background-color: var(--primary-light);
 }
 
@@ -167,4 +167,10 @@
 
 #test-text {
     margin: 0.25rem;
+}
+
+.add-player-input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

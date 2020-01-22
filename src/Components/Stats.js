@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
 import '../styles/Stats.css';
@@ -104,9 +104,12 @@ export default function Stats(props) {
         if (!props.showSetup) e.returnValue = 'Game will not be saved.';
     }
 
+    const [showAddPlayer, setShowAddPlayer] = useState(false);
+    const [newPlayer, setNewPlayer] = useState('');
+
     let db = props.localDB;
 
-    const handleStatClick = (e, player='', turnover = true) => {
+    const handleStatClick = (e, player = '', turnover = true) => {
         toast.dismiss();
         if (turnover) props.toggleOffense();
         let action = e.currentTarget.name;
@@ -158,7 +161,7 @@ export default function Stats(props) {
         console.log(`${player}: ${action}: gameClock: ${props.gameTime}: 
             time: ${historyEntry.time}`)
 
-        toast.success(`Last Entry: ${action}${player ? ' - ' + player: ''} ${lastPlayer ? ' from ' + lastPlayer : ''}`)
+        toast.success(`Last Entry: ${action}${player ? ' - ' + player : ''} ${lastPlayer ? ' from ' + lastPlayer : ''}`)
         newHistory.push(historyEntry);
         props.setGameHistory(newHistory);
     }
@@ -238,6 +241,24 @@ export default function Stats(props) {
             }).then(() => props.resetGame());
     }
 
+    const addStatPlayer = (player) => {
+        let newPlayerStats = [...props.playerStats];
+        newPlayerStats.push({
+            name: player,
+            Touch: 0,
+            Assist: 0,
+            Point: 0,
+            'T-Away': 0,
+            Drop: 0,
+            'D-Play': 0,
+            GSO: 0,
+            'GSO-Mark': 0
+        })
+        props.setPlayerStats(newPlayerStats);
+        setShowAddPlayer(false);
+        setNewPlayer('');
+    }
+
     return (
         <div className='App'>
             <div className='stats'>
@@ -292,12 +313,29 @@ export default function Stats(props) {
                         />
                         {!props.offense &&
                             <button
-                                id='o-err-btn'
-                                className='btn stat-btn'
+                                className='btn stat-btn stat-btn-after'
                                 name='O-Error'
                                 onClick={(e) => handleStatClick(e)}>
                                 Offensive Error
-                    </button>}
+                        </button>
+                        }
+                        {!showAddPlayer && <button
+                            className='btn stat-btn stat-btn-after'
+                            onClick={() => setShowAddPlayer(true)}
+                        >Add Player</button>}
+                        {showAddPlayer &&
+                            <div className='add-player-input'>
+                                <i  className='material-icons'
+                                    onClick={() => setShowAddPlayer(false)}>close</i>
+                                <input 
+                                    placeholder='player name'
+                                    onChange={(e) => setNewPlayer(e.target.value)}
+                                    value={newPlayer}></input>
+                                <button 
+                                    className='btn stat-btn stat-btn-after'
+                                    onClick={() => addStatPlayer(newPlayer)}>Save</button>
+                            </div>
+                        }
                     </div>}
             </div>
         </div>
