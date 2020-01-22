@@ -15,7 +15,11 @@ export default function StatTable(props) {
         { Header: 'GSO-Mark', accessor: 'GSO-Mark' },
     ], [])
 
-    const data = useMemo(() => props.stats, [props.stats])
+    // accomodate prior data structure for last weeks games...
+    let stats = props.stats.stats ? props.stats.stats : props.stats;
+    if (!stats.name) stats.name = props.stats.name;
+
+    const data = useMemo(() => stats, [stats])
 
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
         {
