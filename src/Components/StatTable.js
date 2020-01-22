@@ -5,14 +5,14 @@ export default function StatTable(props) {
 
     const columns = useMemo(() => [
         { Header: 'Name', accessor: 'name' },
-        { Header: 'Point', accessor: 'Point' },
-        { Header: 'Assist', accessor: 'Assist' },
-        { Header: 'Touch', accessor: 'Touch' },
-        { Header: 'TAway', accessor: 'T-Away' },
-        { Header: 'DPlay', accessor: 'D-Play' },
-        { Header: 'Drop', accessor: 'Drop' },
-        { Header: 'GSO', accessor: 'GSO' },
-        { Header: 'GSO-Mark', accessor: 'GSO-Mark' },
+        { Header: 'Point', accessor: 'Point', sortDescFirst: true},
+        { Header: 'Assist', accessor: 'Assist', sortDescFirst: true },
+        { Header: 'Touch', accessor: 'Touch', sortDescFirst: true },
+        { Header: 'TAway', accessor: 'T-Away', sortDescFirst: true },
+        { Header: 'DPlay', accessor: 'D-Play', sortDescFirst: true },
+        { Header: 'Drop', accessor: 'Drop', sortDescFirst: true },
+        { Header: 'GSO', accessor: 'GSO', sortDescFirst: true },
+        { Header: 'GSO-Mark', accessor: 'GSO-Mark', sortDescFirst: true },
     ], [])
 
     const data = useMemo(() => props.stats, [props.stats])
