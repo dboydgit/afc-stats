@@ -106,6 +106,10 @@ export default function Stats(props) {
 
     const [showAddPlayer, setShowAddPlayer] = useState(false);
     const [newPlayer, setNewPlayer] = useState('');
+    let [lastAction, setLastAction] = useState({
+        action: '',
+        player: ''
+    })
 
     const handleStatClick = (e, player = '', turnover = true) => {
         toast.dismiss();
@@ -191,10 +195,10 @@ export default function Stats(props) {
         // undo turnover and change buttons
         if (lastEntry.turnover) props.toggleOffense();
         // undo points and change score
-        if (lastEntry.action === 'POINT') {
+        if (lastEntry.action === 'Point') {
             props.statTeam === props.darkTeam ? newScore.dark-- : newScore.light--;
         }
-        if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-MARK') {
+        if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-Mark') {
             props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
         }
         // show undo action
@@ -296,6 +300,8 @@ export default function Stats(props) {
                             darkTeam={props.darkTeam}
                             handleStatClick={handleStatClick}
                             gameHistory={props.gameHistory}
+                            // use lastAction to track and disable correct buttons...
+                            lastAction={lastAction}
                         />
                         {!props.offense &&
                             <button

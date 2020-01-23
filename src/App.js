@@ -37,11 +37,12 @@ function App() {
   const [teams, setTeams] = useState([]);
   const [allGameHistory, setAllGameHistory] = useState([]);
   const [gameLength, setGameLength] = useState(25); //1 for testing
-  const [darkTeam, setDarkTeam] = useState(""); //test str Dark Team
-  const [lightTeam, setLightTeam] = useState(""); // test str Light Team
+  const [darkTeam, setDarkTeam] = useState(''); //test str Dark Team
+  const [lightTeam, setLightTeam] = useState(''); // test str Light Team
   const [showSetup, setShowSetup] = useState(true); //set false for testing
   const [statTeam, setStatTeam] = useState(''); //test str testDark
-  const [playerStats, setPlayerStats] = useState([]); // hardcode for testing
+  const [playerStats, setPlayerStats] = useState([]); 
+  // hardcode playerStats for testing {"name":"Luke","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player2","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player3","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player4","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player5","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player6","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player7","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player8","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player9","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player10","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0}
   const [offense, setOffense] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
