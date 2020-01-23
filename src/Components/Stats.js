@@ -185,7 +185,6 @@ export default function Stats(props) {
             if (el.name === lastEntry.player) {
                 if (lastEntry.action === 'Drop') el.Touch--;
                 el[lastEntry.action]--;
-                return;
             }
             if (lastEntry.action === 'Point' && lastEntry.lastPlayer === el.name) {
                 el.Assist--;
