@@ -142,6 +142,11 @@ export default function Stats(props) {
             toast.error('First action of a possession must be a touch');
             return;
         }
+        // Validate cannot drop own throw
+        if (action === 'Drop' && lastEntry.player === player) {
+            toast.error('Cannot drop own throw');
+            return;
+        }
         // set last thrower for touch (if not right after turnover)
         if (action === 'Touch' && !lastEntry.turnover) {
             if (player === lastEntry.player) {
