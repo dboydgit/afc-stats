@@ -6,10 +6,22 @@ import { toast } from 'react-toastify';
 
 const OffenseButtons = (props) => {
 
+    let mustTouch = false;
+    let noThrowaway = true;
+    let noTouch = false;
+    let noDrop = false;
+
+    if (!props.prevEntry.action || props.prevEntry.turnover) mustTouch = true;
+    if (!props.prevEntry.turnover && props.prevEntry.player === props.player.name) {
+        noTouch = true;
+        noThrowaway = false;
+        noDrop = true;
+    }
+
     return (
         <div className='stat-btns'>
             <button
-                className='btn stat-btn'
+                className={`btn stat-btn ${noTouch ? 'btn-inactive' : ''}`}
                 name='Touch'
                 onClick={(e) => props.handleStatClick(e, props.player.name, false)}>
                 Touch
@@ -18,21 +30,21 @@ const OffenseButtons = (props) => {
                     <div className='score-badge assist'>{`${props.player.Assist}-A`}</div>}
             </button>
             <button
-                className='btn stat-btn'
+                className={`btn stat-btn ${mustTouch ? 'btn-inactive' : ''}`}
                 name='Point'
                 onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 Point
                     <div className='score-badge'>{props.player.Point}</div>
             </button>
             <button
-                className='btn stat-btn'
+                className={`btn stat-btn ${mustTouch || noThrowaway ? 'btn-inactive' : ''}`}
                 name='T-Away'
                 onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 T-Away
                     <div className='score-badge'>{props.player['T-Away']}</div>
             </button>
             <button
-                className='btn stat-btn'
+                className={`btn stat-btn ${mustTouch || noDrop ? 'btn-inactive' : ''}`}
                 name='Drop'
                 onClick={(e) => props.handleStatClick(e, props.player.name)}>
                 Drop
@@ -84,6 +96,7 @@ const PlayerList = (props) => {
                 <OffenseButtons
                     player={player}
                     handleStatClick={props.handleStatClick}
+                    prevEntry={props.prevEntry}
                 />}
             {!props.offense &&
                 <DefenceButtons
@@ -106,14 +119,14 @@ export default function Stats(props) {
 
     const [showAddPlayer, setShowAddPlayer] = useState(false);
     const [newPlayer, setNewPlayer] = useState('');
-    let [lastAction, setLastAction] = useState({
+    let [prevEntry, setPrevEntry] = useState({
         action: '',
-        player: ''
+        player: '',
+        turnover: false
     })
 
     const handleStatClick = (e, player = '', turnover = true) => {
         toast.dismiss();
-        if (turnover) props.toggleOffense();
         let action = e.currentTarget.name;
         // set the game history
         let newHistory = [...props.gameHistory];
@@ -124,13 +137,29 @@ export default function Stats(props) {
         if (lastEntry && (action === 'Point' || action === 'Drop')) {
             lastPlayer = lastEntry.player;
         }
+        // Validate first action of a possession is a touch
+        if (props.offense && action !== 'Touch' && (lastEntry.turnover || !newHistory.length)) {
+            toast.error('First action of a possession must be a touch');
+            return;
+        }
         // set last thrower for touch (if not right after turnover)
-        if (action === 'Touch' && !lastEntry.turnover){
+        if (action === 'Touch' && !lastEntry.turnover) {
             if (player === lastEntry.player) {
                 toast.error("Cannot touch the disc twice in a row");
                 return;
             } else {
                 lastPlayer = lastEntry.player;
+            }
+        }
+        // Validate throwaway was by lastPlayer
+        if (action === 'T-Away') {
+            if (lastEntry.action !== 'Touch') {
+                toast.error('Throwaway can only be recorded following a touch');
+                return;
+            } else if (lastEntry.player !== player) {
+                console.log(lastEntry.player)
+                toast.error(`Only player in possession (${lastEntry.player}) can throwaway`)
+                return;
             }
         }
         // set the score for point, GSO
@@ -171,6 +200,8 @@ export default function Stats(props) {
             time: ${historyEntry.time}`)
 
         toast.success(`Last Entry: ${action}${player ? ' - ' + player : ''} ${lastPlayer ? ' from ' + lastPlayer : ''}`)
+        setPrevEntry({action: action, player: player, turnover: turnover}); 
+        if (turnover) props.toggleOffense();
         newHistory.push(historyEntry);
         props.setGameHistory(newHistory);
     }
@@ -212,6 +243,15 @@ export default function Stats(props) {
         // set new state
         props.setScore(newScore);
         props.setGameHistory(newHistory);
+        if (!newHistory.length) setPrevEntry({action:'', player:'', turnover: false});
+        else {
+            let newPrevEntry = newHistory[newHistory.length - 1];
+            setPrevEntry({
+                action: newPrevEntry.action,
+                player: newPrevEntry.player,
+                turnover: newPrevEntry.turnover
+            })
+        }
     }
 
     const saveGame = () => {
@@ -306,8 +346,8 @@ export default function Stats(props) {
                             darkTeam={props.darkTeam}
                             handleStatClick={handleStatClick}
                             gameHistory={props.gameHistory}
-                            // use lastAction to track and disable correct buttons...
-                            lastAction={lastAction}
+                            // use current entry to track and disable correct buttons...
+                            prevEntry={prevEntry}
                         />
                         {!props.offense &&
                             <button
@@ -323,13 +363,13 @@ export default function Stats(props) {
                         >Add Player</button>}
                         {showAddPlayer &&
                             <div className='add-player-input'>
-                                <i  className='material-icons'
+                                <i className='material-icons'
                                     onClick={() => setShowAddPlayer(false)}>close</i>
-                                <input 
+                                <input
                                     placeholder='player name'
                                     onChange={(e) => setNewPlayer(e.target.value)}
                                     value={newPlayer}></input>
-                                <button 
+                                <button
                                     className='btn stat-btn stat-btn-after'
                                     onClick={() => addStatPlayer(newPlayer)}>Save</button>
                             </div>
