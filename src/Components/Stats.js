@@ -125,7 +125,14 @@ export default function Stats(props) {
             lastPlayer = lastEntry.player;
         }
         // set last thrower for touch (if not right after turnover)
-        if (action === 'Touch' && !lastEntry.turnover) lastPlayer = lastEntry.player;
+        if (action === 'Touch' && !lastEntry.turnover){
+            if (player === lastEntry.player) {
+                toast.error("Cannot touch the disc twice in a row");
+                return;
+            } else {
+                lastPlayer = lastEntry.player;
+            }
+        }
         // set the score for point, GSO
         let newScore = { ...props.score };
         if (action === 'Point') {
