@@ -22,7 +22,7 @@ export default function SubPlayerList(props) {
         setOutSelected(false);
         setPlayerSelected('');
         toast.dismiss();
-        toast.success(`Swapping ${playerIn} (in) for ${playerOut} (out)`)
+        toast.success(`Subbed in ${playerIn} for ${playerOut}`)
     }
 
     const handleOut = (player) => {
@@ -30,7 +30,6 @@ export default function SubPlayerList(props) {
             setPlayerSelected(player.name);
             return;
         }
-        console.log(`${player.name} subbing out`);
         if (inSelected) {
             completeSub(playerSelected, player.name);
             return;
@@ -44,7 +43,6 @@ export default function SubPlayerList(props) {
             setPlayerSelected(player.name)
             return;
         }
-        console.log(`${player.name} subbing in`)
         if (outSelected) {
             completeSub(player.name, playerSelected);
             return;
@@ -59,8 +57,7 @@ export default function SubPlayerList(props) {
                 className={`player-name sub-name ${props.darkTeam === props.statTeam ? 'dark' : ''}`}
             >
                 <span className='player-text'>{player.name}</span>
-                <span>{timeToMinSec(player.timeOnField)}</span>
-
+                { ind >=4 && <span>{timeToMinSec(player.timeOnField)}</span>}
             </div>
             {ind < 4 &&
                 <button
