@@ -17,36 +17,40 @@ export default function SubPlayerList(props) {
         return `${mins.toString()}:${secs.toString().padStart(2, 0)}`
     }
 
-    const completeSub = () => {
+    const completeSub = (playerIn, playerOut) => {
         setInSelected(false);
         setOutSelected(false);
-        setPlayerSelected('')
+        setPlayerSelected('');
+        toast.dismiss();
+        toast.success(`Swapping ${playerIn} (in) for ${playerOut} (out)`)
     }
 
     const handleOut = (player) => {
         if (outSelected) {
-            toast.error('Complete last sub before choosing another player');
+            setPlayerSelected(player.name);
             return;
         }
         console.log(`${player.name} subbing out`);
+        if (inSelected) {
+            completeSub(playerSelected, player.name);
+            return;
+        }
         setPlayerSelected(player.name);
         setOutSelected(true);
-        if (inSelected) {
-            completeSub()
-        }
     }
 
     const handleIn = (player) => {
         if (inSelected) {
-            toast.error('Complete last sub before choosing another player');
+            setPlayerSelected(player.name)
             return;
         }
         console.log(`${player.name} subbing in`)
+        if (outSelected) {
+            completeSub(player.name, playerSelected);
+            return;
+        }
         setPlayerSelected(player.name);
         setInSelected(true);
-        if (outSelected) {
-            completeSub()
-        }
     }
 
     const list = subStats.map((player, ind) =>
@@ -60,13 +64,13 @@ export default function SubPlayerList(props) {
             </div>
             {ind < 4 &&
                 <button
-                className={`btn sub-btn ${outSelected && playerSelected !== player.name ? 'btn-inactive' : ''} ${playerSelected === player.name ? 'btn-sec' : ''}`}
+                className={`btn sub-btn ${playerSelected === player.name ? 'btn-sec' : ''}`}
                     onClick={() => handleOut(player)}
                     
                 >Sub Out</button>}
             {ind >= 4 &&
                 <button
-                    className={`btn sub-btn ${inSelected && playerSelected !== player.name ? 'btn-inactive' : ''} ${playerSelected === player.name ? 'btn-sec' : ''}`}
+                    className={`btn sub-btn ${playerSelected === player.name ? 'btn-sec' : ''}`}
                     onClick={() => handleIn(player)}>Sub In</button>}
         </div>
     )
