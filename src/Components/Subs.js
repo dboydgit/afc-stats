@@ -1,6 +1,7 @@
 import React from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
+import SubPlayerList from './SubPlayerList';
 
 export default function Subs(props) {
     return (
@@ -28,7 +29,13 @@ export default function Subs(props) {
                         setPaused={props.setPaused} 
                         forStats={false}
                     />
-                    <p>Setup complete!</p>
+                    <SubPlayerList
+                        subStats={props.subStats}
+                        setSubStats={props.setSubStats}
+                        darkTeam={props.darkTeam}
+                        lightTeam={props.lightTeam}
+                        statTeam={props.statTeam}
+                    />
                 </div>}
         </div>
     )

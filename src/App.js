@@ -36,15 +36,16 @@ function App() {
   const [localDB] = useState(new PouchDB('ultimate-stats'));
   const [teams, setTeams] = useState([]);
   const [allGameHistory, setAllGameHistory] = useState([]);
-  const [gameLength, setGameLength] = useState(25); //1 for testing
-  const [darkTeam, setDarkTeam] = useState(''); //test str Dark Team
-  const [lightTeam, setLightTeam] = useState(''); // test str Light Team
+  const [gameLength, setGameLength] = useState(1); //1 for testing
+  const [darkTeam, setDarkTeam] = useState('Dark'); //test str Dark
+  const [lightTeam, setLightTeam] = useState('Light'); // test str Light Team
   const [showStatSetup, setShowStatSetup] = useState(true); //set false for testing
-  const [showSubSetup, setShowSubSetup] = useState(true); ////set false for testing
-  const [statTeam, setStatTeam] = useState(''); //test str testDark
+  const [showSubSetup, setShowSubSetup] = useState(false); ////set false for testing
+  const [statTeam, setStatTeam] = useState('Dark'); //test str Dark or Light
   const [playerStats, setPlayerStats] = useState([]);
   // hardcode playerStats for testing {"name":"Luke","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player2","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player3","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player4","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player5","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player6","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player7","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player8","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player9","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player10","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0}
-  const [subStats, setSubStats] = useState([]);
+  const [subStats, setSubStats] = useState([{"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}]);
+  // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
   const [offense, setOffense] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -252,6 +253,7 @@ function App() {
               teams={teams}
               darkTeam={darkTeam}
               lightTeam={lightTeam}
+              statTeam={statTeam}
               finishSetup={finishSetup}
               setTestGame={setTestGame}
               showSubSetup={showSubSetup}
@@ -268,6 +270,7 @@ function App() {
               paused={paused}
               setPaused={setPaused}
               subStats={subStats}
+              setSubStats={setSubStats}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/teams'>

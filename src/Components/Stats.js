@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
-import PlayerList from './PlayerList';
+import StatPlayerList from './StatPlayerList';
 import '../styles/Stats.css';
 import { toast } from 'react-toastify';
 
@@ -199,7 +199,7 @@ export default function Stats(props) {
         <div className='App'>
             <div className='stats'>
                 {!props.showSubSetup &&
-                    <p>Currently tracking Stats.</p>}
+                    <p>Currently tracking Subs.</p>}
                 {props.showSubSetup && props.showStatSetup &&
                     <GameSetup
                         teams={props.teams}
@@ -242,7 +242,7 @@ export default function Stats(props) {
                                 Undo<i className='material-icons md-18'>undo</i>
                             </button>
                         </div>
-                        <PlayerList
+                        <StatPlayerList
                             offense={props.offense}
                             playerStats={props.playerStats}
                             setPlayerStats={props.setPlayerStats}

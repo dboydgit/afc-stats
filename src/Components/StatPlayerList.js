@@ -2,7 +2,7 @@ import React from 'react'
 import OffenseButtons from './OffenseButtons';
 import DefenceButtons from './DefenceButtons';
 
-export default function PlayerList(props) {
+export default function StatPlayerList(props) {
 
     const playerStats = props.playerStats;
 
