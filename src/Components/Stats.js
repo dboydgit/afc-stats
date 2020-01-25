@@ -9,7 +9,7 @@ export default function Stats(props) {
 
     // show warning on page reload attempt during game
     window.onbeforeunload = (e) => {
-        if (!props.showSetup) e.returnValue = 'Game will not be saved.';
+        if (!props.showStatSetup) e.returnValue = 'Game will not be saved.';
     }
 
     const [showAddPlayer, setShowAddPlayer] = useState(false);
@@ -100,7 +100,7 @@ export default function Stats(props) {
             time: ${historyEntry.time}`)
 
         toast.success(`Last Entry: ${action}${player ? ' - ' + player : ''} ${lastPlayer ? ' from ' + lastPlayer : ''}`)
-        setPrevEntry({action: action, player: player, turnover: turnover}); 
+        setPrevEntry({ action: action, player: player, turnover: turnover });
         if (turnover) props.toggleOffense();
         newHistory.push(historyEntry);
         props.setGameHistory(newHistory);
@@ -143,7 +143,7 @@ export default function Stats(props) {
         // set new state
         props.setScore(newScore);
         props.setGameHistory(newHistory);
-        if (!newHistory.length) setPrevEntry({action:'', player:'', turnover: false});
+        if (!newHistory.length) setPrevEntry({ action: '', player: '', turnover: false });
         else {
             let newPrevEntry = newHistory[newHistory.length - 1];
             setPrevEntry({
@@ -198,13 +198,16 @@ export default function Stats(props) {
     return (
         <div className='App'>
             <div className='stats'>
-                {props.showSetup &&
+                {!props.showSubSetup &&
+                    <p>Currently tracking Stats.</p>}
+                {props.showSubSetup && props.showStatSetup &&
                     <GameSetup
                         teams={props.teams}
                         finishSetup={props.finishSetup}
                         setTestGame={props.setTestGame}
+                        forStats={true}
                     />}
-                {!props.showSetup &&
+                {props.showSubSetup && !props.showStatSetup &&
                     <div className='game-stats'>
                         {props.testGame &&
                             <div id='test-notification'>
@@ -221,6 +224,7 @@ export default function Stats(props) {
                             resetTimer={props.resetTimer}
                             paused={props.paused}
                             setPaused={props.setPaused}
+                            forStats={true}
                         />
                         <div className='game-options'>
                             <button className='btn opt-btn'

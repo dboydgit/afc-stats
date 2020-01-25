@@ -26,12 +26,16 @@ export default function GameSetup(props) {
             setError('Time should be between 1 - 120 mins')
             return;
         }
-        if (!dark || !light || !statTeam || !offence) {
+        if (!dark || !light || !statTeam || (props.forStats && !offence)) {
             setError('Please choose all options');
             return;
         }
         let offenceBool;
-        statTeam === offence ? offenceBool = true : offenceBool = false;
+        if (props.forStats) {
+            statTeam === offence ? offenceBool = true : offenceBool = false;
+        } else {
+            offenceBool = 'subs';
+        }
         props.finishSetup(time, dark, light, statTeam, offenceBool);
     }
 
@@ -51,28 +55,32 @@ export default function GameSetup(props) {
             <label htmlFor='light-team'>Select Light Team</label>
             <select name='light-team' value={light}
                 onChange={(e) => setLight(e.target.value)}>{teamNames}</select>
-                     
-            <label htmlFor='stat-team'>Taking Stats For</label>
+
+            <label htmlFor='stat-team'>{`Tracking ${props.forStats ? 'Stats' : 'Subs'} For`}</label>
             <select name='stat-team' value={statTeam}
                 onChange={(e) => setStatTeam(e.target.value)}>
                 <option></option>
                 <option>{`${dark}`}</option>
                 <option>{`${light}`}</option>
             </select>
-            <label htmlFor='offence-team'>Team on Offence</label>
-            <select name='offence-team' value={offence}
-                onChange={(e) => setOffence(e.target.value)}>
-                <option></option>
-                <option>{`${dark}`}</option>
-                <option>{`${light}`}</option>
-            </select>
+            {props.forStats &&
+                <>
+                    <label htmlFor='offence-team'>Team on Offence</label>
+                    <select name='offence-team' value={offence}
+                        onChange={(e) => setOffence(e.target.value)}>
+                        <option></option>
+                        <option>{`${dark}`}</option>
+                        <option>{`${light}`}</option>
+                    </select>
+                </>
+            }
             <div id='test-game-checkbox' onChange={handleCheck}>
-                <input type='checkbox'/>
+                <input type='checkbox' />
                 <span>Check for test game</span>
             </div>
             <button className='btn' onClick={submitFinish}>Finish Setup</button>
             {error &&
-                <span className='form-err'>{error}</span>}   
+                <span className='form-err'>{error}</span>}
         </div>
     )
 }
