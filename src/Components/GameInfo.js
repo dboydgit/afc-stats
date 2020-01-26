@@ -24,7 +24,7 @@ export default function GameInfo(props) {
                             props.setPaused(true);
                             console.log('pause timer')
                         }}>pause</i>}
-                    {props.paused && <i className='material-icons timer-control'
+                    {props.score && props.paused && <i className='material-icons timer-control'
                         onClick={() => {
                             props.resetTimer();
                             props.pauseTimer();

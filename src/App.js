@@ -16,6 +16,7 @@ import Games from './Components/Games';
 import Timer from 'easytimer.js';
 import { ToastContainer, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { timeOnPoint } from './utils/timeUtils';
 
 const Slide = cssTransition({
   enter: 'toast-in',
@@ -36,16 +37,14 @@ function App() {
   const [localDB] = useState(new PouchDB('ultimate-stats'));
   const [teams, setTeams] = useState([]);
   const [allGameHistory, setAllGameHistory] = useState([]);
-  const [gameLength, setGameLength] = useState(1); //1 for testing
-  const [darkTeam, setDarkTeam] = useState('Dark'); //test str Dark
-  const [lightTeam, setLightTeam] = useState('Light'); // test str Light Team
+  const [gameLength, setGameLength] = useState(25); //1 for testing
+  const [darkTeam, setDarkTeam] = useState(''); //test str Dark
+  const [lightTeam, setLightTeam] = useState(''); // test str Light Team
   const [showStatSetup, setShowStatSetup] = useState(true); //set false for testing
-  const [showSubSetup, setShowSubSetup] = useState(false); ////set false for testing
-  const [statTeam, setStatTeam] = useState('Dark'); //test str Dark or Light
+  const [showSubSetup, setShowSubSetup] = useState(true); ////set false for testing
+  const [statTeam, setStatTeam] = useState(''); //test str Dark or Light
   const [playerStats, setPlayerStats] = useState([]);
   // hardcode playerStats for testing {"name":"Luke","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player2","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player3","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player4","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player5","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player6","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player7","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player8","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player9","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player10","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0}
-  const [subStats, setSubStats] = useState([{"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}]);
-  // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
   const [offense, setOffense] = useState(true);
   const [score, setScore] = useState({
     'dark': 0,
@@ -58,9 +57,16 @@ function App() {
   const [gameTimer] = useState(new Timer({
     countdown: true,
     callback: (timer) => {
-      setGameTime(timer.getTimeValues().toString(['minutes', 'seconds']))
+      setGameTime(timer.getTimeValues().toString(['minutes', 'seconds']));
     }
   }));
+  // state for sub page
+  const [subStats, setSubStats] = useState([]);
+  // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
+  const [subInSelected, setSubInSelected] = useState(false);
+  const [subOutSelected, setSubOutSelected] = useState(false);
+  const [subPlayerSelected, setSubPlayerSelected] = useState('');
+  const [subHistory, setSubHistory] = useState([]);
 
   const getData = useCallback(() => {
     if (!remoteDB) return;
@@ -134,7 +140,8 @@ function App() {
         initSubsStats.push({
           name: player,
           timeOnField: 0,
-          lastTimeIn: null,
+          lastTimeIn: `${time}:00`,
+          shiftLengths: [],
         })
       }
       setSubStats(initSubsStats);
@@ -196,6 +203,57 @@ function App() {
 
   const toggleOffense = () => {
     setOffense(!offense);
+  }
+
+  const initSubHistory = () => {
+    // add the first 4 players to the subHistory
+    let newSubHistory = [...subHistory];
+    let time = new Date();
+    for (let i = 0; i < 4; i++) {
+      newSubHistory.push({
+        date: time.toDateString(),
+        time: time.toTimeString(),
+        gameTime: gameTime,
+        darkTeam: darkTeam,
+        lightTeam: lightTeam,
+        statTeam: statTeam,
+        player: subStats[i].name,
+        action: 'In',
+        timeOnField: ''
+      })
+    }
+    debugger
+    setSubHistory(newSubHistory);
+  }
+
+  const addSubHistory = (playerIn, playerOut, timeOn) => {
+    // add an entry to the subHistory
+    let newSubHistory = [...subHistory];
+    let time = new Date();
+    let inEntry = {
+      date: time.toDateString(),
+      time: time.toTimeString(),
+      gameTime: gameTime,
+      darkTeam: darkTeam,
+      lightTeam: lightTeam,
+      statTeam: statTeam,
+      player: playerIn,
+      action: 'In',
+      timeOnField: ''
+    };
+    let outEntry = {
+      date: time.toDateString(),
+      time: time.toTimeString(),
+      gameTime: gameTime,
+      darkTeam: darkTeam,
+      lightTeam: lightTeam,
+      statTeam: statTeam,
+      player: playerIn,
+      action: 'Out',
+      timeOnField: timeOn
+    }
+    newSubHistory.push(outEntry, inEntry);
+    setSubHistory(newSubHistory);
   }
 
   return (
@@ -260,7 +318,10 @@ function App() {
               showStatSetup={showStatSetup}
               gameLength={gameLength}
               gameTime={gameTime}
-              startTimer={() => gameTimer.start({ startValues: { minutes: gameLength } })}
+              startTimer={() => {
+                gameTimer.start({ startValues: { minutes: gameLength } })
+                if (!subHistory.length) initSubHistory();
+              }}
               pauseTimer={() => gameTimer.pause()}
               stopTimer={() => gameTimer.stop()}
               resetTimer={() => {
@@ -271,6 +332,15 @@ function App() {
               setPaused={setPaused}
               subStats={subStats}
               setSubStats={setSubStats}
+              subInSelected={subInSelected}
+              setSubInSelected={setSubInSelected}
+              subOutSelected={subOutSelected}
+              setSubOutSelected={setSubOutSelected}
+              subPlayerSelected={subPlayerSelected}
+              setSubPlayerSelected={setSubPlayerSelected}
+              subHistory={subHistory}
+              setSubHistory={setSubHistory}
+              addSubHistory={addSubHistory}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/teams'>
