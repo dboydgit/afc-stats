@@ -16,7 +16,6 @@ import Games from './Components/Games';
 import Timer from 'easytimer.js';
 import { ToastContainer, cssTransition } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { timeOnPoint } from './utils/timeUtils';
 
 const Slide = cssTransition({
   enter: 'toast-in',
@@ -61,6 +60,7 @@ function App() {
     }
   }));
   // state for sub page
+  const [subGameStarted, setSubGameStarted] = useState(false);
   const [subStats, setSubStats] = useState([]);
   // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
   const [subInSelected, setSubInSelected] = useState(false);
@@ -190,8 +190,15 @@ function App() {
     setLightTeam('');
     setStatTeam('');
     setShowStatSetup(true);
+    setShowSubSetup(true);
     setPlayerStats([]);
+    setSubStats([]);
     setGameHistory([]);
+    setSubHistory([]);
+    setSubGameStarted(false);
+    setSubPlayerSelected('');
+    setSubInSelected(false);
+    setSubOutSelected(false);
     setGameTime('25:00');
     setPaused(false);
     setTestGame(false);
@@ -201,13 +208,40 @@ function App() {
     })
   }
 
+  const saveGame = (gameType) => {
+    let gameDetails = {
+        date: new Date(),
+        darkTeam: darkTeam,
+        lightTeam: lightTeam,
+        statTeam: statTeam,
+        gameLength: gameLength,
+        testGame: testGame,
+        statTaker: userID,
+    }
+    if (gameType === 'stats') {
+      gameDetails.playerStats = playerStats;
+      gameDetails.score = score;
+      gameDetails.gameHistory = gameHistory;
+    }
+    if (gameType === 'subs') {
+      gameDetails.subStats = subStats;
+      gameDetails.subHistory = subHistory;
+    }
+    let newAllHistory = [...allGameHistory];
+    newAllHistory.unshift(gameDetails);
+    setAllGameHistory(newAllHistory);
+    // update the DB
+    saveAllGames(newAllHistory);
+    resetGame();
+}
+
   const toggleOffense = () => {
     setOffense(!offense);
   }
 
   const initSubHistory = () => {
     // add the first 4 players to the subHistory
-    let newSubHistory = [...subHistory];
+    let newSubHistory = [];
     let time = new Date();
     for (let i = 0; i < 4; i++) {
       newSubHistory.push({
@@ -222,7 +256,6 @@ function App() {
         timeOnField: ''
       })
     }
-    debugger
     setSubHistory(newSubHistory);
   }
 
@@ -248,7 +281,7 @@ function App() {
       darkTeam: darkTeam,
       lightTeam: lightTeam,
       statTeam: statTeam,
-      player: playerIn,
+      player: playerOut,
       action: 'Out',
       timeOnField: timeOn
     }
@@ -281,8 +314,6 @@ function App() {
               offense={offense}
               score={score}
               setScore={setScore}
-              allGameHistory={allGameHistory}
-              setAllGameHistory={setAllGameHistory}
               gameHistory={gameHistory}
               setGameHistory={setGameHistory}
               gameTime={gameTime}
@@ -300,7 +331,7 @@ function App() {
               toggleOffense={toggleOffense}
               testGame={testGame}
               setTestGame={setTestGame}
-              saveAllGames={saveAllGames}
+              saveGame={saveGame}
               resetGame={resetGame}
             /> : <Redirect to='/' />}
         </Route>
@@ -320,7 +351,14 @@ function App() {
               gameTime={gameTime}
               startTimer={() => {
                 gameTimer.start({ startValues: { minutes: gameLength } })
-                if (!subHistory.length) initSubHistory();
+                if (!subGameStarted) {
+                  setSubGameStarted(true);
+                  gameTimer.addEventListener('targetAchieved', (e) => {
+                    console.log('Time Finished');
+                    setPaused(true);
+                  })
+                  initSubHistory();
+                }
               }}
               pauseTimer={() => gameTimer.pause()}
               stopTimer={() => gameTimer.stop()}
@@ -338,9 +376,9 @@ function App() {
               setSubOutSelected={setSubOutSelected}
               subPlayerSelected={subPlayerSelected}
               setSubPlayerSelected={setSubPlayerSelected}
-              subHistory={subHistory}
-              setSubHistory={setSubHistory}
               addSubHistory={addSubHistory}
+              resetGame={resetGame}
+              saveGame={saveGame}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/teams'>

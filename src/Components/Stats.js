@@ -154,29 +154,6 @@ export default function Stats(props) {
         }
     }
 
-    const saveGame = () => {
-        toast.dismiss();
-        toast.success('Game Saved', { autoClose: 2000 });
-        let gameDetails = {
-            date: new Date(),
-            darkTeam: props.darkTeam,
-            lightTeam: props.lightTeam,
-            statTeam: props.statTeam,
-            gameLength: props.gameLength,
-            playerStats: props.playerStats,
-            score: props.score,
-            testGame: props.testGame,
-            statTaker: props.userID,
-            gameHistory: props.gameHistory
-        }
-        let newAllHistory = [...props.allGameHistory];
-        newAllHistory.unshift(gameDetails);
-        props.setAllGameHistory(newAllHistory);
-        // update the DB
-        props.saveAllGames(newAllHistory);
-        props.resetGame();
-    }
-
     const addStatPlayer = (player) => {
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.push({
@@ -236,7 +213,12 @@ export default function Stats(props) {
                                     }
                                 }}>Exit Game</button>
                             <button className='btn opt-btn'
-                                onClick={saveGame}>Finish & Save</button>
+                                onClick={() => {
+                                    toast.dismiss();
+                                    toast.success('Game Saved', { autoClose: 2000 });
+                                    props.saveGame('stats');
+                                }
+                                }>Finish & Save</button>
                             <button className='btn opt-btn'
                                 onClick={handleUndo}>
                                 Undo<i className='material-icons md-18'>undo</i>

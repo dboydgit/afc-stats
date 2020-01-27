@@ -1,6 +1,6 @@
 export const timeToMinSec = (seconds) => {
     const mins = Math.floor(seconds / 60);
-    const secs = seconds - (mins * 60);
+    const secs = Math.round(seconds - (mins * 60));
     return `${mins.toString()}:${secs.toString().padStart(2, 0)}`
 }
 

@@ -3,7 +3,7 @@ import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
 import SubPlayerList from './SubPlayerList';
 import { toast } from 'react-toastify';
-import { timeToSecs } from '../utils/timeUtils';
+import { timeToSecs, timeToMinSec } from '../utils/timeUtils';
 
 export default function Subs(props) {
 
@@ -31,6 +31,25 @@ export default function Subs(props) {
         toast.success(`Subbed in ${playerIn} for ${playerOut}`)
     }
 
+    const finishGameSubs = () => {
+        let newSubStats = [...props.subStats];
+        // update timeOnField for 4 players on field at game end
+        for (let i = 0; i < 4; i++) {
+            let lastInSecs = timeToSecs(newSubStats[i].lastTimeIn);
+            let gameTimeSecs = timeToSecs(props.gameTime);
+            let shiftLength = lastInSecs - gameTimeSecs;
+            newSubStats[i].timeOnField += shiftLength;
+            newSubStats[i].shiftLengths.push(shiftLength);
+        }
+        for (let sub of newSubStats) {
+            sub.timeMMSS = timeToMinSec(sub.timeOnField);
+            sub.shifts = sub.shiftLengths.length;
+            sub.averageTimeOnSecs = sub.timeOnField / sub.shifts;
+            sub.averageTimeOnMMSS = timeToMinSec(sub.averageTimeOnSecs);
+        }
+        props.setSubStats(newSubStats);
+    }
+
     const handleOut = (player) => {
         if (props.subOutSelected) {
             props.setSubPlayerSelected(player.name);
@@ -56,6 +75,7 @@ export default function Subs(props) {
         props.setSubPlayerSelected(player.name);
         props.setSubInSelected(true);
     }
+
     return (
         <div className='App'>
             {!props.showStatSetup &&
@@ -81,6 +101,27 @@ export default function Subs(props) {
                         setPaused={props.setPaused}
                         forStats={false}
                     />
+                    <div className='game-options'>
+                        <button className='btn opt-btn'
+                            onClick={() => {
+                                if (window.confirm('Cancel Game? Progress will not be saved.')) {
+                                    toast.dismiss();
+                                    toast.error('Game Deleted', { autoClose: 2000 });
+                                    props.resetGame();
+                                }
+                            }}>Exit Game</button>
+                        <button className={`btn ${!props.paused ? 'btn-inactive' : ''} opt-btn`}
+                            onClick={() => {
+                                if (!props.paused) {
+                                    toast.error('Cannot finish game when timer is running', { autoClose: 2500 })
+                                    return;
+                                }
+                                finishGameSubs();
+                                toast.dismiss();
+                                toast.success('Game Saved', { autoClose: 2000 });
+                                props.saveGame('subs');
+                            }}>Finish & Save</button>
+                    </div>
                     <SubPlayerList
                         subStats={props.subStats}
                         setSubStats={props.setSubStats}

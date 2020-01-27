@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CSVLink } from 'react-csv';
 import '../styles/GameList.css';
 import StatTable from './StatTable';
+import SubStatTable from './SubStatTable';
 import { toast } from 'react-toastify';
 
 const DelToast = (props) => (
@@ -25,8 +26,10 @@ const GameCard = (props) => {
 
     let game = props.game;
     let gameDate = new Date(game.date);
-    let fileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-GAME-${game.statTeam}.csv`
-    let statFileName = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-STATS-${game.statTeam}.csv`
+
+    const generateFileName = (str) => {
+        return `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-${str}-${game.statTeam}.csv`
+    }
 
     const toggleShowStats = () => setShowStats(!showStats);
     const statHeaders = [
@@ -48,38 +51,47 @@ const GameCard = (props) => {
                 <span>{`Stat Taker: ${game.statTaker}`}</span>
             </div>
             <div className='game-list-info'>
-                <span>{`Stats For: ${game.statTeam}`}</span>
+                <span>{`${game.playerStats ? 'Stats' : 'Subs'} For: ${game.statTeam}`}</span>
                 {game.testGame && <span className='test-game'>Test Game</span>}
             </div>
             <div className='game-score'>
                 <div className='score-card score-card-games dark'>
                     <span id='team-name'>{game.darkTeam}</span>
-                    <span className='score dark'>{game.score.dark}</span>
+                    {game.score && <span className='score dark'>{game.score.dark}</span>}
                 </div>
                 <div className='score-card score-card-games light'>
                     <span id='team-name'>{game.lightTeam}</span>
-                    <span className='score light'>{game.score.light}</span>
+                    {game.score && <span className='score light'>{game.score.light}</span>}
                 </div>
             </div>
             <div className='game-list-btns'>
                 <CSVLink
                     className='btn game-list-btn'
-                    data={game.gameHistory}
-                    filename={fileName}
+                    data={game.gameHistory || game.subHistory}
+                    filename={game.gameHistory ? generateFileName('GAME') : generateFileName('SUBS')}
                     target='_blank'
                 >
-                    Game CSV
+                    {game.gameHistory ? `Game CSV` : 'Subs CSV'}
                     <i className="material-icons md-18">get_app</i>
                 </CSVLink>
-                <CSVLink
+                {game.playerStats && <CSVLink
                     className='btn game-list-btn'
                     data={game.playerStats}
                     headers={statHeaders}
-                    filename={statFileName}
+                    filename={generateFileName('STATS')}
                     target='_blank'
                 >
                     Stats CSV
-                    <i className="material-icons md-18">get_app</i></CSVLink>
+                    <i className="material-icons md-18">get_app</i></CSVLink>}
+                {game.subStats && <CSVLink
+                    className='btn game-list-btn'
+                    data={game.subStats}
+                    // headers={statHeaders}
+                    filename={generateFileName('SubStats')}
+                    target='_blank'
+                >
+                    Stats CSV
+                    <i className="material-icons md-18">get_app</i></CSVLink>}
                 {!showStats && <button
                     className='btn game-list-btn'
                     onClick={toggleShowStats}
@@ -93,7 +105,7 @@ const GameCard = (props) => {
                     Hide Stats<i className="material-icons md-18">arrow_drop_up</i>
                 </button>}
             </div>
-            {showStats &&
+            {showStats && game.playerStats &&
                 <>
                     <StatTable stats={game.playerStats} />
                     <button
@@ -104,7 +116,22 @@ const GameCard = (props) => {
                                 <DelToast
                                     game={game}
                                     toggleDeleteGame={props.toggleDeleteGame}
-                                />, {autoClose: 4000, hideProgressBar:false});
+                                />, { autoClose: 4000, hideProgressBar: false });
+                        }}>Delete Game</button>
+                </>
+            }
+            {showStats && game.subStats &&
+                <>
+                    <SubStatTable stats={game.subStats} />
+                    <button
+                        className='btn btn-del game-list-btn'
+                        onClick={() => {
+                            props.toggleDeleteGame(game.date);
+                            toast.error(
+                                <DelToast
+                                    game={game}
+                                    toggleDeleteGame={props.toggleDeleteGame}
+                                />, { autoClose: 4000, hideProgressBar: false });
                         }}>Delete Game</button>
                 </>
             }

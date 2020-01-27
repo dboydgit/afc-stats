@@ -99,21 +99,6 @@
     position: relative;
 }
 
-.opt-btn {
-    margin: 0;
-    display: flex;
-    align-items: center;
-    color: black;
-    background-color: var(--secondary);
-    border: solid 1px black;
-}
-
-.opt-btn:hover {
-    color: black;
-    background-color: var(--secondary);
-    border: solid 1px black;
-}
-
 .btn:disabled {
     background-color: var(--primary-light);
 }
