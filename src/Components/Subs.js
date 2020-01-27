@@ -106,7 +106,7 @@ export default function Subs(props) {
                             onClick={() => {
                                 if (window.confirm('Cancel Game? Progress will not be saved.')) {
                                     toast.dismiss();
-                                    toast.error('Game Deleted', { autoClose: 2000 });
+                                    toast.error('Game Deleted', { autoClose: 2500 });
                                     props.resetGame();
                                 }
                             }}>Exit Game</button>
@@ -118,7 +118,7 @@ export default function Subs(props) {
                                 }
                                 finishGameSubs();
                                 toast.dismiss();
-                                toast.success('Game Saved', { autoClose: 2000 });
+                                toast.success('Game Saved', { autoClose: 3000 });
                                 props.saveGame('subs');
                             }}>Finish & Save</button>
                     </div>
