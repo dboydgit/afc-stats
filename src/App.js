@@ -60,7 +60,7 @@ function App() {
     }
   }));
   // state for sub page
-  const [subGameStarted, setSubGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [subStats, setSubStats] = useState([]);
   // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
   const [subInSelected, setSubInSelected] = useState(false);
@@ -195,7 +195,7 @@ function App() {
     setSubStats([]);
     setGameHistory([]);
     setSubHistory([]);
-    setSubGameStarted(false);
+    setGameStarted(false);
     setSubPlayerSelected('');
     setSubInSelected(false);
     setSubOutSelected(false);
@@ -317,7 +317,16 @@ function App() {
               gameHistory={gameHistory}
               setGameHistory={setGameHistory}
               gameTime={gameTime}
-              startTimer={() => gameTimer.start({ startValues: { minutes: gameLength } })}
+              startTimer={() => {
+                gameTimer.start({ startValues: { minutes: gameLength } })
+                if (!gameStarted) {
+                  setGameStarted(true);
+                  gameTimer.addEventListener('targetAchieved', (e) => {
+                    console.log('Time Finished');
+                    setPaused(true);
+                  })
+                }
+              }}
               pauseTimer={() => gameTimer.pause()}
               stopTimer={() => gameTimer.stop()}
               resetTimer={() => {
@@ -351,8 +360,8 @@ function App() {
               gameTime={gameTime}
               startTimer={() => {
                 gameTimer.start({ startValues: { minutes: gameLength } })
-                if (!subGameStarted) {
-                  setSubGameStarted(true);
+                if (!gameStarted) {
+                  setGameStarted(true);
                   gameTimer.addEventListener('targetAchieved', (e) => {
                     console.log('Time Finished');
                     setPaused(true);

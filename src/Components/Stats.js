@@ -212,8 +212,12 @@ export default function Stats(props) {
                                         props.resetGame();
                                     }
                                 }}>Exit Game</button>
-                            <button className='btn opt-btn'
+                            <button className={`btn ${!props.paused ? 'btn-inactive' : ''} opt-btn`}
                                 onClick={() => {
+                                    if (!props.paused) {
+                                        toast.error('Cannot finish game when timer is running', { autoClose: 2500 })
+                                        return;
+                                    }
                                     toast.dismiss();
                                     toast.success('Game Saved', { autoClose: 2000 });
                                     props.saveGame('stats');
