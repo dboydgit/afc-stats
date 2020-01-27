@@ -113,7 +113,7 @@ export default function Subs(props) {
                         <button className={`btn ${!props.paused ? 'btn-inactive' : ''} opt-btn`}
                             onClick={() => {
                                 if (!props.paused) {
-                                    toast.error('Cannot finish game when timer is running', { autoClose: 2500 })
+                                    toast.error('Cannot finish game when timer is running. Pause timer to finish game early.', { autoClose: 2500 })
                                     return;
                                 }
                                 finishGameSubs();
