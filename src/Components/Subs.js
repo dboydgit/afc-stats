@@ -44,7 +44,7 @@ export default function Subs(props) {
         for (let sub of newSubStats) {
             sub.timeMMSS = timeToMinSec(sub.timeOnField);
             sub.shifts = sub.shiftLengths.length;
-            sub.averageTimeOnSecs = sub.timeOnField / sub.shifts;
+            sub.averageTimeOnSecs = sub.timeOnField / sub.shifts || 0;
             sub.averageTimeOnMMSS = timeToMinSec(sub.averageTimeOnSecs);
         }
         props.setSubStats(newSubStats);
