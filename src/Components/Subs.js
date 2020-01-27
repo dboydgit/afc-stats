@@ -22,7 +22,13 @@ export default function Subs(props) {
         // set the last time in for player in
         newSubStats[inInd].lastTimeIn = props.gameTime;
         // switch players in the subStats arr
-        [newSubStats[inInd], newSubStats[outInd]] = [newSubStats[outInd], newSubStats[inInd]];
+        // [newSubStats[inInd], newSubStats[outInd]] = [newSubStats[outInd], newSubStats[inInd]];
+        // Player on to ind0 and player out to ind[length-1]
+        let entryIn = newSubStats.splice(newSubStats.findIndex(el => el.name === playerIn), 1);
+        let entryOut = newSubStats.splice(newSubStats.findIndex(el => el.name === playerOut), 1);
+        newSubStats.unshift(entryIn[0]);
+        newSubStats.push(entryOut[0]);
+        //
         props.setSubStats(newSubStats);
         props.setSubInSelected(false);
         props.setSubOutSelected(false);
