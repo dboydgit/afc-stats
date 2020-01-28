@@ -14,11 +14,11 @@ export default function Stats(props) {
 
     const [showAddPlayer, setShowAddPlayer] = useState(false);
     const [newPlayer, setNewPlayer] = useState('');
-    let [prevEntry, setPrevEntry] = useState({
+    const [prevEntry, setPrevEntry] = useState({
         action: '',
         player: '',
         turnover: false
-    })
+    });
 
     const handleStatClick = (e, player = '', turnover = true) => {
         toast.dismiss();
@@ -27,10 +27,13 @@ export default function Stats(props) {
         let newHistory = [...props.gameHistory];
         // get the last entry and set player if available
         let lastEntry = newHistory[newHistory.length - 1] || '';
+        let secLastEntry = newHistory[newHistory.length - 2] || '';
         let lastPlayer = '';
-        // set last thrower for Point and Drop
+        let secLastPlayer = '';
+        // set last throwers for Point and Drop
         if (lastEntry && (action === 'Point' || action === 'Drop')) {
-            lastPlayer = lastEntry.player;
+            lastPlayer = lastEntry.player || '';
+            secLastPlayer=secLastEntry.player || '';
         }
         // Validate first action of a possession is a touch
         if (props.offense && action !== 'Touch' && (lastEntry.turnover || !newHistory.length)) {
@@ -42,13 +45,14 @@ export default function Stats(props) {
             toast.error('Cannot drop own throw');
             return;
         }
-        // set last thrower for touch (if not right after turnover)
+        // set last throwers for touch (if not right after turnover)
         if (action === 'Touch' && !lastEntry.turnover) {
             if (player === lastEntry.player) {
                 toast.error("Cannot touch the disc twice in a row");
                 return;
             } else {
-                lastPlayer = lastEntry.player;
+                lastPlayer = lastEntry.player || '';
+                secLastPlayer = secLastEntry.player || '';
             }
         }
         // Validate throwaway was by lastPlayer
@@ -83,13 +87,14 @@ export default function Stats(props) {
             action: action,
             player: player,
             lastPlayer: lastPlayer,
+            secLastPlayer: secLastPlayer,
             turnover: turnover,
         }
         // set new player stats
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === player) {
-                if (action === 'Drop') el.Touch++;
+                if (lastPlayer !== player && (action === 'Drop' || action === 'Point')) el.Touch++;
                 el[action]++;
             }
             if (action === 'Point' && el.name === lastPlayer) el.Assist++;
