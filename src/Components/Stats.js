@@ -33,7 +33,7 @@ export default function Stats(props) {
         // set last throwers for Point and Drop
         if (lastEntry && (action === 'Point' || action === 'Drop')) {
             lastPlayer = lastEntry.player || '';
-            secLastPlayer=secLastEntry.player || '';
+            if (!secLastEntry.turnover) secLastPlayer=secLastEntry.player || '';
         }
         // Validate first action of a possession is a touch
         if (props.offense && action !== 'Touch' && (lastEntry.turnover || !newHistory.length)) {
@@ -52,7 +52,7 @@ export default function Stats(props) {
                 return;
             } else {
                 lastPlayer = lastEntry.player || '';
-                secLastPlayer = secLastEntry.player || '';
+                if (!secLastEntry.turnover) secLastPlayer = secLastEntry.player || '';
             }
         }
         // Validate throwaway was by lastPlayer
