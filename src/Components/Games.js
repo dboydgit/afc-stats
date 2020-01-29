@@ -11,7 +11,7 @@ const DelToast = (props) => (
         <button
             className='btn toast-btn'
             onClick={() => {
-                props.toggleDeleteGame(props.game.date);
+                props.toggleDeleteGame(props.game._id);
                 props.closeToast();
             }}
         >
@@ -126,7 +126,7 @@ const GameCard = (props) => {
                     <button
                         className='btn btn-del game-list-btn'
                         onClick={() => {
-                            props.toggleDeleteGame(game.date);
+                            props.toggleDeleteGame(game._id);
                             toast.error(
                                 <DelToast
                                     game={game}
@@ -149,16 +149,24 @@ const GameList = (props) => {
 
 export default function Games(props) {
 
-    const toggleDeleteGame = (gameDate) => {
+    let db = props.localDB;
+
+    const toggleDeleteGame = (id) => {
         // update local state
         let newAllHistory = [...props.allGameHistory];
         for (let game of newAllHistory) {
-            if (game.date === gameDate) game.deleted = !game.deleted;
+            if (game._id === id) game.deleted = !game.deleted;
             continue;
         }
         props.setAllGameHistory(newAllHistory);
         // save to the DB
-        props.saveAllGames(newAllHistory)
+        db.get(id).then(doc => {
+            doc.deleted = !doc.deleted;
+            return db.put(doc);
+        }).then(res => console.log(res))
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     return (

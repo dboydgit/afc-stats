@@ -163,24 +163,6 @@ function App() {
     }
   }
 
-  // const save new game history to the db
-  const saveAllGames = (newAllHistory) => {
-    localDB.get('game-history').then(doc => {
-      doc.games = newAllHistory;
-      return localDB.put(doc);
-    }).then(res => console.log(res))
-      .catch(err => {
-        if (err.name === 'not_found') {
-          localDB.put({
-            _id: 'game-history',
-            games: newAllHistory
-          })
-        } else {
-          console.log(err)
-        }
-      })
-  }
-
   const resetGame = () => {
     setGameLength(25);
     gameTimer.stop();
@@ -405,7 +387,7 @@ function App() {
           <Games
             allGameHistory={allGameHistory}
             setAllGameHistory={setAllGameHistory}
-            saveAllGames={saveAllGames}
+            localDB={localDB}
           />
         </Route>
       </Switch>
