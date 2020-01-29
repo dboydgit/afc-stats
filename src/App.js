@@ -319,6 +319,7 @@ function App() {
               gameTime={gameTime}
               startTimer={() => {
                 gameTimer.start({ startValues: { minutes: gameLength } })
+                setPaused(false);
                 if (!gameStarted) {
                   setGameStarted(true);
                   gameTimer.addEventListener('targetAchieved', (e) => {
@@ -359,7 +360,8 @@ function App() {
               gameLength={gameLength}
               gameTime={gameTime}
               startTimer={() => {
-                gameTimer.start({ startValues: { minutes: gameLength } })
+                gameTimer.start({ startValues: { minutes: gameLength } });
+                setPaused(false);
                 if (!gameStarted) {
                   setGameStarted(true);
                   gameTimer.addEventListener('targetAchieved', (e) => {

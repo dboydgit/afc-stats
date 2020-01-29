@@ -21,6 +21,8 @@ export default function Stats(props) {
     });
 
     const handleStatClick = (e, player = '', turnover = true) => {
+        // start timer automatically if not started already
+        if (!props.gameHistory.length || props.paused) props.startTimer();
         toast.dismiss();
         let action = e.currentTarget.name;
         // set the game history
