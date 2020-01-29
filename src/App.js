@@ -191,24 +191,44 @@ function App() {
   const saveGame = (gameType) => {
     let gameDate = new Date();
     let gameDetails = {
-        _id: gameDate.toISOString(),
-        date: gameDate,
-        docType: gameType,
-        darkTeam: darkTeam,
-        lightTeam: lightTeam,
-        statTeam: statTeam,
-        gameLength: gameLength,
-        testGame: testGame,
-        statTaker: userID,
+      _id: gameDate.toISOString(),
+      date: gameDate,
+      docType: gameType,
+      darkTeam: darkTeam,
+      lightTeam: lightTeam,
+      statTeam: statTeam,
+      gameLength: gameLength,
+      testGame: testGame,
+      statTaker: userID,
     }
     if (gameType === 'stats') {
       gameDetails.playerStats = playerStats;
       gameDetails.score = score;
       gameDetails.gameHistory = gameHistory;
+      // download backup data
+      let gameData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify([[...gameHistory], [...playerStats]]));
+      let fileNameStat = `GameStats-${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}.json`;
+      let element = document.createElement('a');
+      element.setAttribute('href', gameData);
+      element.setAttribute('download', fileNameStat);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     }
     if (gameType === 'subs') {
       gameDetails.subStats = subStats;
       gameDetails.subHistory = subHistory;
+      // download backup data
+      let gameData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify([[...subHistory], [...subStats]]));
+      let fileNameStat = `SubStats-${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}.json`;
+      let element = document.createElement('a');
+      element.setAttribute('href', gameData);
+      element.setAttribute('download', fileNameStat);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     }
     let newAllHistory = [...allGameHistory];
     newAllHistory.unshift(gameDetails);
@@ -216,7 +236,7 @@ function App() {
     // add to the Database
     localDB.put(gameDetails);
     resetGame();
-}
+  }
 
   const toggleOffense = () => {
     setOffense(!offense);
