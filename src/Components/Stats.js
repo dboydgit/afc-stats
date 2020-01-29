@@ -33,7 +33,7 @@ export default function Stats(props) {
         // set last throwers for Point and Drop
         if (lastEntry && (action === 'Point' || action === 'Drop')) {
             lastPlayer = lastEntry.player || '';
-            if (!secLastEntry.turnover) secLastPlayer=secLastEntry.player || '';
+            if (!secLastEntry.turnover) secLastPlayer = secLastEntry.player || '';
         }
         // Validate first action of a possession is a touch
         if (props.offense && action !== 'Touch' && (lastEntry.turnover || !newHistory.length)) {
@@ -94,10 +94,39 @@ export default function Stats(props) {
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === player) {
-                if (lastPlayer !== player && (action === 'Drop' || action === 'Point')) el.Touch++;
+                //debugger
+                // Add touch for a drop
+                if (action === 'Drop') el.Touch++;
+                // Add touch for a point if not added already, also add to game history
+                if (action === 'Point') {
+                    if (lastPlayer !== player) {
+                        el.Touch++;
+                        let addHistEntry = {
+                            date: time.toDateString(),
+                            time: time.toTimeString(),
+                            gameTime: props.gameTime,
+                            statTeam: props.statTeam,
+                            [`${props.darkTeam}_score`]: newScore.dark,
+                            [`${props.lightTeam}_score`]: newScore.light,
+                            action: 'Touch',
+                            player: player,
+                            lastPlayer: lastPlayer,
+                            secLastPlayer: secLastPlayer,
+                            turnover: false,
+                        }
+                        newHistory.push(addHistEntry);
+                    } else if (secLastEntry.action !== 'D-Play') {
+                        historyEntry.lastPlayer = secLastPlayer;
+                        historyEntry.secLastPlayer = secLastEntry.lastPlayer;
+                    }
+                }
                 el[action]++;
             }
-            if (action === 'Point' && el.name === lastPlayer) el.Assist++;
+            // give assist to lastPlayer if not the same as current player or if Callahan goal
+            if (action === 'Point' && el.name === lastPlayer && (lastPlayer !== player ||
+                (secLastEntry.action === 'D-Play' && secLastEntry.player === player))) el.Assist++;
+            // give assist to secLastPlayer if last touch was by same player
+            else if (action === 'Point' && el.name === secLastPlayer && lastPlayer === player) el.Assist++;
         })
         props.setPlayerStats(newPlayerStats);
         // log entry to console
@@ -117,6 +146,9 @@ export default function Stats(props) {
         let newScore = { ...props.score };
         // remove last entry from game history
         let lastEntry = newHistory.pop();
+        // get the second last entry to remove the correct assist and third last to check for callahan
+        let secLastEntry = newHistory[newHistory.length - 1];
+        let thirdLastEntry = newHistory[newHistory.length - 2];
         if (!lastEntry) {
             toast.info('Nothing to undo');
             return;
@@ -126,11 +158,15 @@ export default function Stats(props) {
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
             if (el.name === lastEntry.player) {
-                if (lastEntry.action === 'Drop') el.Touch--;
+                if (lastEntry.action === 'Drop' || lastEntry.action === 'Point') el.Touch--;
                 el[lastEntry.action]--;
             }
-            if (lastEntry.action === 'Point' && lastEntry.lastPlayer === el.name) {
-                el.Assist--;
+            // remove assists and extra touch from game history for goals
+            if (lastEntry.action === 'Point') {
+                if (lastEntry.lastPlayer === el.name) {
+                    el.Assist--;
+                    newHistory.pop();
+                }
             }
         })
         props.setPlayerStats(newPlayerStats);
@@ -144,7 +180,7 @@ export default function Stats(props) {
             props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
         }
         // show undo action
-        toast.info(`UNDO: ${lastEntry.action} by ${lastEntry.player}`);
+        toast.info(`UNDO: ${lastEntry.action}${lastEntry.player ? ` by ${lastEntry.player}` : ''}`);
         // set new state
         props.setScore(newScore);
         props.setGameHistory(newHistory);
@@ -215,6 +251,11 @@ export default function Stats(props) {
                                         toast.dismiss();
                                         toast.error('Game Deleted', { autoClose: 2500 });
                                         props.resetGame();
+                                        setPrevEntry({
+                                            action: '',
+                                            player: '',
+                                            turnover: false
+                                        });
                                     }
                                 }}>Exit Game</button>
                             <button className={`btn ${!props.paused ? 'btn-inactive' : ''} opt-btn`}
