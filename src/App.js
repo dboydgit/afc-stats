@@ -75,10 +75,14 @@ function App() {
       console.log('Documents fetched');
       console.log(res);
       setLoadingDB(false);
+      let newAllHistory = [];
       res.rows.forEach(row => {
         if (row.doc._id === 'team-doc') setTeams(row.doc.teams);
-        if (row.doc._id === 'game-history') setAllGameHistory(row.doc.games);
+        if (row.doc.docType === 'stats' || row.doc.docType === 'subs') {
+          newAllHistory.unshift(row.doc);
+        }
       })
+      setAllGameHistory(newAllHistory);
     })
   }, [remoteDB])
 
@@ -88,12 +92,6 @@ function App() {
     remoteDB.info();
     getData();
   }, [remoteDB, getData])
-
-  // handle remote document update
-  const handleRemoteUpdate = (doc) => {
-    // TODO update the state on remote update.
-    console.log(doc)
-  }
 
   // Effect for handling remote DB changes
   useEffect(() => {
@@ -107,9 +105,9 @@ function App() {
       console.log('Database Change');
       console.log(e);
       let changedDoc = e.change.docs[0];
-      if (e.direction === 'pull') {
-        handleRemoteUpdate(changedDoc);
-        console.log(`Updated: ${changedDoc._id}`);
+      if (e.direction === 'pull' && changedDoc._id !== 'team-doc') {
+        getData();
+        console.log(`Remote update: ${changedDoc._id} - ${changedDoc.docType}`);
       } else {
         console.log('This was a local change');
       }
@@ -119,7 +117,7 @@ function App() {
       dbSync.cancel();
       console.log('Sync Cancelled');
     };
-  }, [loadingDB, localDB, remoteDB])
+  }, [loadingDB, localDB, remoteDB, getData])
 
   // set the game clock to initial value when gameLength changes
   useEffect(() => {
@@ -209,8 +207,11 @@ function App() {
   }
 
   const saveGame = (gameType) => {
+    let gameDate = new Date();
     let gameDetails = {
-        date: new Date(),
+        _id: gameDate.toISOString(),
+        date: gameDate,
+        docType: gameType,
         darkTeam: darkTeam,
         lightTeam: lightTeam,
         statTeam: statTeam,
@@ -230,8 +231,8 @@ function App() {
     let newAllHistory = [...allGameHistory];
     newAllHistory.unshift(gameDetails);
     setAllGameHistory(newAllHistory);
-    // update the DB
-    saveAllGames(newAllHistory);
+    // add to the Database
+    localDB.put(gameDetails);
     resetGame();
 }
 
