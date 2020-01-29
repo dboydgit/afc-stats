@@ -165,8 +165,6 @@ export default function Stats(props) {
             if (lastEntry.action === 'Point') {
                 if (lastEntry.lastPlayer === el.name) {
                     el.Assist--;
-                    el.Touch--;
-                    newHistory.pop();
                 }
             }
         })
