@@ -147,39 +147,39 @@ export default function Stats(props) {
         let newHistory = [...props.gameHistory];
         let newScore = { ...props.score };
         // remove last entry from game history
-        let lastEntry = newHistory.pop();
-        if (!lastEntry) {
+        let undoEntry = newHistory.pop();
+        if (!undoEntry) {
             toast.info('Nothing to undo');
             return;
         }
-        console.log('UNDO')
+        console.log('UNDO');
         // undo playerStats count
         let newPlayerStats = [...props.playerStats];
         newPlayerStats.forEach(el => {
-            if (el.name === lastEntry.player) {
-                if (lastEntry.action === 'Drop') el.Touch--;
-                if (lastEntry.action === 'Point' && !lastEntry.lastPlayer) el.Assist--;
-                el[lastEntry.action]--;
+            if (el.name === undoEntry.player) {
+                if (undoEntry.action === 'Drop') el.Touch--;
+                if (undoEntry.action === 'Point' && !undoEntry.lastPlayer) el.Assist--;
+                el[undoEntry.action]--;
             }
             // remove assists and extra touch from game history for goals
-            if (lastEntry.action === 'Point') {
-                if (lastEntry.lastPlayer === el.name) {
+            if (undoEntry.action === 'Point') {
+                if (undoEntry.lastPlayer === el.name) {
                     el.Assist--;
                 }
             }
         })
         props.setPlayerStats(newPlayerStats);
         // undo turnover and change buttons
-        if (lastEntry.turnover) props.toggleOffense();
+        if (undoEntry.turnover) props.toggleOffense();
         // undo points and change score
-        if (lastEntry.action === 'Point') {
+        if (undoEntry.action === 'Point') {
             props.statTeam === props.darkTeam ? newScore.dark-- : newScore.light--;
         }
-        if (lastEntry.action === 'GSO' || lastEntry.action === 'GSO-Mark') {
+        if (undoEntry.action === 'GSO' || undoEntry.action === 'GSO-Mark') {
             props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
         }
         // show undo action
-        toast.info(`UNDO: ${lastEntry.action}${lastEntry.player ? ` by ${lastEntry.player}` : ''}`);
+        toast.info(`UNDO: ${undoEntry.action}${undoEntry.player ? ` by ${undoEntry.player}` : ''}`);
         // set new state
         props.setScore(newScore);
         props.setGameHistory(newHistory);
