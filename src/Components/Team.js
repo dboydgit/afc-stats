@@ -102,6 +102,7 @@ export default function Team(props) {
     }
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
+        debugger
         let updatedTeams = [...props.teams];
         for (let team of updatedTeams) {
             if (team.name === props.team.name) {
@@ -109,6 +110,15 @@ export default function Team(props) {
             }
         }
         props.setTeams(updatedTeams);
+    }
+
+    function shouldCancelStart(e) {
+        // Cancel sorting if the event target is an anchor tag (`a`)
+        debugger
+        if (e.target.innerText.toLowerCase() === 'delete' ||
+        e.target.tagName.toLowerCase() === 'input') {
+            return true; // Return true to cancel sorting
+        }
     }
 
     return (
@@ -134,7 +144,7 @@ export default function Team(props) {
                         setTeams={props.setTeams}
                         deletePlayer={deletePlayer}
                         onSortEnd={onSortEnd}
-                        distance={1}
+                        shouldCancelStart={shouldCancelStart}
                     />
                     <button className='btn team-btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
                     <button className='btn team-btn' onClick={addPlayer}>Add Player</button>
