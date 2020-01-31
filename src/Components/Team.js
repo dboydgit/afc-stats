@@ -6,24 +6,31 @@ const DragHandle = SortableHandle(() => (
     <i className={`material-icons handle`}>drag_handle</i>)
 )
 
-const SortableList = SortableContainer(({ players, props }) => {
+const SortableList = SortableContainer(({ players, deletePlayer, props }) => {
     return (
         <div className='player-list'>
             {players.map((player, index) => (
-                <SortableItem key={`Item-${index}`} index={index} player={player} playInd={index} props={props} />
+                <SortableItem
+                    key={`Item-${index}`}
+                    index={index}
+                    player={player}
+                    playInd={index}
+                    deletePlayer={deletePlayer}
+                    props={props}
+                />
             ))}
         </div>
     )
 })
 
-const SortableItem = SortableElement(({ player, playInd, props }) => (
+const SortableItem = SortableElement(({ player, playInd, deletePlayer, props }) => (
     <Player
         player={player}
         ind={playInd}
         teams={props.teams}
         setTeams={props.setTeams}
         team={props.team}
-        deletePlayer={props.deletePlayer}
+        deletePlayer={deletePlayer}
     />
 ));
 
@@ -127,6 +134,7 @@ export default function Team(props) {
                         setTeams={props.setTeams}
                         deletePlayer={deletePlayer}
                         onSortEnd={onSortEnd}
+                        distance={1}
                     />
                     <button className='btn team-btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
                     <button className='btn team-btn' onClick={addPlayer}>Add Player</button>
