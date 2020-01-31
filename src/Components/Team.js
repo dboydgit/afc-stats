@@ -1,11 +1,37 @@
 import React, { useState } from 'react'
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
+
+const DragHandle = SortableHandle(() => (
+    <i className={`material-icons handle`}>drag_handle</i>)
+)
+
+const SortableList = SortableContainer(({ players, props }) => {
+    return (
+        <div className='player-list'>
+            {players.map((player, index) => (
+                <SortableItem key={`Item-${index}`} index={index} player={player} playInd={index} props={props} />
+            ))}
+        </div>
+    )
+})
+
+const SortableItem = SortableElement(({ player, playInd, props }) => (
+    <Player
+        player={player}
+        ind={playInd}
+        teams={props.teams}
+        setTeams={props.setTeams}
+        team={props.team}
+        deletePlayer={props.deletePlayer}
+    />
+));
 
 const Player = (props) => {
 
-    const [player, setPlayer] = useState(props.player);
+    const player = props.player;
 
     const handlePlayerChange = (e) => {
-        setPlayer(e.target.value);
         let newTeams = [...props.teams];
         let teamInd = newTeams.findIndex(el => el.name === props.team.name);
         let playerInd = parseInt(e.target.name);
@@ -15,7 +41,7 @@ const Player = (props) => {
 
     return (
         <div className='player-list-item'>
-            <i  className='material-icons player-del'
+            <i className='material-icons player-del'
                 onClick={() => {
                     props.deletePlayer(player);
                 }}>delete</i>
@@ -25,25 +51,9 @@ const Player = (props) => {
                 value={player}
                 onChange={handlePlayerChange}
             />
+            <DragHandle />
         </div>
     )
-}
-
-const PlayerList = (props) => {
-
-    let players = props.team.players;
-    const listItems = players.map((player, ind) =>
-        <Player
-            player={player}
-            ind={ind}
-            key={ind}
-            teams={props.teams}
-            setTeams={props.setTeams}
-            team={props.team}
-            deletePlayer={props.deletePlayer}
-        />
-    );
-    return <div className='player-list'>{listItems}</div>
 }
 
 export default function Team(props) {
@@ -84,6 +94,16 @@ export default function Team(props) {
         props.setTeams(newTeams);
     }
 
+    const onSortEnd = ({ oldIndex, newIndex }) => {
+        let updatedTeams = [...props.teams];
+        for (let team of updatedTeams) {
+            if (team.name === props.team.name) {
+                team.players = arrayMove(team.players, oldIndex, newIndex)
+            }
+        }
+        props.setTeams(updatedTeams);
+    }
+
     return (
         <div className='card team-card'>
             <div className='team-name'>
@@ -99,11 +119,14 @@ export default function Team(props) {
             </div>
             {showPlayers &&
                 <div className='card-players'>
-                    <PlayerList
+                    <SortableList
+                        props={props}
+                        players={props.team.players}
                         team={props.team}
                         teams={props.teams}
                         setTeams={props.setTeams}
                         deletePlayer={deletePlayer}
+                        onSortEnd={onSortEnd}
                     />
                     <button className='btn team-btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
                     <button className='btn team-btn' onClick={addPlayer}>Add Player</button>

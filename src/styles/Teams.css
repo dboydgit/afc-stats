@@ -51,7 +51,7 @@
     justify-content: center;
 }
 
-.player-del {
+.player-del, .handle {
     color: var(--primary-dark);
-    margin-right: 0.5rem;
+    margin: 0 0.5rem;
 }
