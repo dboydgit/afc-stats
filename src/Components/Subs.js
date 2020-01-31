@@ -7,6 +7,11 @@ import { timeToSecs, timeToMinSec } from '../utils/timeUtils';
 
 export default function Subs(props) {
 
+    // show warning on page reload attempt during game
+    window.onbeforeunload = (e) => {
+        if (!props.showSubSetup) e.returnValue = 'Game will not be saved.';
+    }
+
     const completeSub = (playerIn, playerOut) => {
         let newSubStats = [...props.subStats];
         let inInd = newSubStats.findIndex(el => el.name === playerIn);
