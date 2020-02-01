@@ -87,6 +87,21 @@ export default function Subs(props) {
         props.setSubInSelected(true);
     }
 
+    const resetSubs = () => {
+        if (!props.paused) {
+            toast.error('Cannot reset game when timer is running. Pause timer to reset game.', { autoClose: 2500 })
+            return;
+        }
+        if (window.confirm('Reset Game? Progress will not be saved.')) {
+            toast.dismiss();
+            toast.info('Game Reset', { autoClose: 2500 });
+            props.finishSetup(props.gameLength, props.darkTeam, props.lightTeam, props.statTeam, 'subs');
+            props.resetTimer();
+            props.pauseTimer();
+            props.setPaused(true);
+        }
+    }
+
     return (
         <div className='App'>
             {!props.showStatSetup &&
@@ -121,6 +136,8 @@ export default function Subs(props) {
                                     props.resetGame();
                                 }
                             }}>Exit Game</button>
+                        <button className={`btn ${!props.paused ? 'btn-inactive' : ''} opt-btn`}
+                            onClick={resetSubs}>Reset Game</button>
                         <button className={`btn ${!props.paused ? 'btn-inactive' : ''} opt-btn`}
                             onClick={() => {
                                 if (!props.paused) {
