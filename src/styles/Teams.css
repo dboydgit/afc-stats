@@ -54,6 +54,9 @@
 .player-del, .handle {
     color: var(--primary-dark);
     margin: 0 0.5rem;
+}
+
+.handle {
     cursor: move;
 }
 
