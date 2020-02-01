@@ -54,4 +54,12 @@
 .player-del, .handle {
     color: var(--primary-dark);
     margin: 0 0.5rem;
+    cursor: move;
+}
+
+.player-sort-btn {
+    display: flex;
+    align-items: center;
+    margin: 0 0.5rem 0 0;
+    padding: 0.25rem 0.5rem;
 }

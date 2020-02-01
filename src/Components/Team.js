@@ -82,7 +82,7 @@ export default function Team(props) {
         for (let team of newTeams) {
             if (team.name === props.team.name) {
                 team.players.push('New Player');
-                continue;
+                break;
             }
         }
         props.setTeams(newTeams);
@@ -95,14 +95,13 @@ export default function Team(props) {
             if (team.name === props.team.name) {
                 let ind = team.players.findIndex(el => el === player);
                 team.players.splice(ind, 1);
-                continue;
+                break;
             }
         }
         props.setTeams(newTeams);
     }
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
-        debugger
         let updatedTeams = [...props.teams];
         for (let team of updatedTeams) {
             if (team.name === props.team.name) {
@@ -114,11 +113,21 @@ export default function Team(props) {
 
     function shouldCancelStart(e) {
         // Cancel sorting if the event target is an anchor tag (`a`)
-        debugger
         if (e.target.innerText.toLowerCase() === 'delete' ||
-        e.target.tagName.toLowerCase() === 'input') {
+            e.target.tagName.toLowerCase() === 'input') {
             return true; // Return true to cancel sorting
         }
+    }
+
+    const sortPlayersAZ = () => {
+        let newTeams = [...props.teams];
+        for (let team of newTeams) {
+            if (team.name === props.team.name) {
+                team.players.sort();
+                break;
+            }
+        }
+        props.setTeams(newTeams);
     }
 
     return (
@@ -128,11 +137,25 @@ export default function Team(props) {
             </div>
             <div className='card-info'>
                 <span className='gm-name'>{`GM: ${props.team.gm}`}</span>
-                <span className='card-link' onClick={toggleShowPlayers}>
-                    <span>Players</span>
-                    {!showPlayers && <i className="material-icons md-18">arrow_drop_down</i>}
-                    {showPlayers && <i className="material-icons md-18">arrow_drop_up</i>}
-                </span>
+                <div className='card-link'>
+                    {showPlayers &&
+                        <button className='btn player-sort-btn' onClick={sortPlayersAZ}>
+                            <span>Sort A-Z</span>
+                            <i className="material-icons md-18">sort</i>
+                        </button>}
+                    <div onClick={toggleShowPlayers}>
+                        {!showPlayers &&
+                            <div className='card-link'>
+                                <span>Show Players</span>
+                                <i className="material-icons md-18">arrow_drop_down</i>
+                            </div>}
+                        {showPlayers &&
+                            <div className='card-link'>
+                                <span>Hide Players</span>
+                                <i className="material-icons md-18">arrow_drop_up</i>
+                            </div>}
+                    </div>
+                </div>
             </div>
             {showPlayers &&
                 <div className='card-players'>
