@@ -71,8 +71,8 @@ export default function Team(props) {
         setShowPlayers(!showPlayers);
     }
 
-    const saveTeam = () => {
-        props.saveTeams();
+    const saveTeam = (team) => {
+        props.saveTeam(team);
         toggleShowPlayers();
     }
 
@@ -169,9 +169,19 @@ export default function Team(props) {
                         onSortEnd={onSortEnd}
                         shouldCancelStart={shouldCancelStart}
                     />
-                    <button className='btn team-btn btn-del' name={props.ind} onClick={props.deleteTeam}>Delete Team</button>
-                    <button className='btn team-btn' onClick={addPlayer}>Add Player</button>
-                    <button className='btn team-btn' onClick={saveTeam}>Save Changes</button>
+                    <button 
+                        className='btn team-btn btn-del'
+                        name={props.ind}
+                        onClick={props.deleteTeam}>Delete Team
+                    </button>
+                    <button 
+                        className='btn team-btn'
+                        onClick={addPlayer}
+                    >Add Player</button>
+                    <button 
+                        className='btn team-btn'
+                        onClick={() => saveTeam(props.team)}>Save Changes
+                    </button>
                 </div>
             }
         </div>

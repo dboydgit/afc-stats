@@ -10,7 +10,7 @@ const TeamList = (props) => {
         key={team.name}
         teams={props.teams}
         setTeams={props.setTeams}
-        saveTeams={props.saveTeams}
+        saveTeam={props.saveTeam}
         deleteTeam={props.deleteTeam}
     />);
     return (
@@ -52,59 +52,49 @@ export default function Teams(props) {
         }
     }
 
-    const updateTeams = (teams) => {
-        db.get('team-doc').then(doc => {
-            doc.teams = teams;
-            return db.put(doc);
-        }).then(res => console.log(res))
-        .catch(err => {
-            if (err.name === 'not_found') {
-                db.put({
-                    _id: 'team-doc',
-                    teams: teams
-                })
-                console.log('New Team doc created')
-            } else {
-                console.log(err);
-            }
-        })
-    }
-
     const createTeam = (e) => {
         e.preventDefault();
         let newTeams = [...props.teams];
-        newTeams.push({
+        let newTeam = {
+            _id: new Date().toISOString(),
+            docType: 'team',
             name: teamName,
             gm: teamGM,
             players: teamPlayers
-        });
+        };
+        newTeams.push(newTeam);
         // update state with new teams
         props.setTeams(newTeams);
         // add teams to DB
-        updateTeams(newTeams);
+        saveTeam(newTeam);
         // clear form
         setTeamName('');
         setTeamGM('');
         setShowAddTeam(false);
     }
 
-    const saveTeams = () => {
-        console.log('Saving Teams');
-        let newTeams = [...props.teams];
-        db.get('team-doc').then(doc => {
-            doc.teams = newTeams;
-            return db.put(doc);
+    const saveTeam = (team) => {
+        db.get(team._id).then(doc => {
+            team._rev = doc._rev;
+            return db.put(team);
         }).then(res => console.log(res))
-        .catch(e => console.log(e))
+        .catch(err => {
+            if (err.name === 'not_found') {
+                db.put(team)
+                console.log('New Team Created')
+            } else {
+                console.log(err);
+            }
+        })
     }
 
     const deleteTeam = (e) => {
         let teamInd = parseInt(e.target.name);
         let newTeams = [...props.teams];
-        newTeams.splice(teamInd, 1);
+        let deletedTeamArr = newTeams.splice(teamInd, 1);
         props.setTeams(newTeams);
-        db.get('team-doc').then(doc => {
-            doc.teams = newTeams;
+        db.get(deletedTeamArr[0]._id).then(doc => {
+            doc.deleted = true;
             return db.put(doc);
         }).then(res => console.log(res))
         .catch(e => console.log(e))
@@ -116,7 +106,7 @@ export default function Teams(props) {
             <TeamList
                 teams={props.teams}
                 setTeams={props.setTeams}
-                saveTeams={saveTeams}
+                saveTeam={saveTeam}
                 deleteTeam={deleteTeam}
             />
             {!showAddTeam && 

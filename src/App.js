@@ -76,13 +76,17 @@ function App() {
       console.log(res);
       setLoadingDB(false);
       let newAllHistory = [];
+      let newTeams = [];
       res.rows.forEach(row => {
-        if (row.doc._id === 'team-doc') setTeams(row.doc.teams);
-        if (row.doc.docType === 'stats' || row.doc.docType === 'subs') {
+        if (row.doc.docType === 'team' && !row.doc.deleted) {
+          newTeams.push(row.doc);
+        };
+        if ((row.doc.docType === 'stats' || row.doc.docType === 'subs') && !row.doc.deleted) {
           newAllHistory.unshift(row.doc);
         }
       })
       setAllGameHistory(newAllHistory);
+      setTeams(newTeams);
     })
   }, [remoteDB])
 
@@ -105,8 +109,21 @@ function App() {
       console.log('Database Change');
       console.log(e);
       let changedDoc = e.change.docs[0];
-      if (e.direction === 'pull' && changedDoc._id !== 'team-doc') {
-        getData();
+      if (e.direction === 'pull') {
+        if (changedDoc.docType === 'stats' || changedDoc.docType === 'subs') {
+          let newAllHistory = [...allGameHistory];
+          let gameInd = newAllHistory.findIndex(game => game._id === changedDoc._id);
+          if (gameInd === -1) newAllHistory.push(changedDoc);
+          else newAllHistory[gameInd] = changedDoc;
+          setAllGameHistory(newAllHistory);
+        }
+        if (changedDoc.docType === 'team') {
+          let newTeams = [...teams];
+          let teamInd = newTeams.findIndex(team => team._id === changedDoc._id);
+          if (teamInd === -1) newTeams.push(changedDoc);
+          else newTeams[teamInd] = changedDoc;
+          setTeams(newTeams);
+        }
         console.log(`Remote update: ${changedDoc._id} - ${changedDoc.docType}`);
       } else {
         console.log('This was a local change');
@@ -117,7 +134,7 @@ function App() {
       dbSync.cancel();
       console.log('Sync Cancelled');
     };
-  }, [loadingDB, localDB, remoteDB, getData])
+  }, [loadingDB, localDB, remoteDB, allGameHistory, teams])
 
   // set the game clock to initial value when gameLength changes
   useEffect(() => {
