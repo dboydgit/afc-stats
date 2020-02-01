@@ -23,6 +23,7 @@ const DelToast = (props) => (
 const GameCard = (props) => {
 
     const [showStats, setShowStats] = useState(false);
+    const [showNoteInput, setShowNoteInput] = useState(false);
 
     let game = props.game;
     let gameDate = new Date(game.date);
@@ -43,6 +44,13 @@ const GameCard = (props) => {
         { label: 'GSO', key: 'GSO' },
         { label: 'GSO-Mark', key: 'GSO-Mark' },
     ]
+
+    const NoteList = (props) => {
+        const notes = props.notes.map(note =>
+            <li>{note}</li>
+        );
+        return <ul>{notes}</ul>
+    }
 
     return (
         <div className='card game-list-card'>
@@ -123,16 +131,40 @@ const GameCard = (props) => {
             {showStats && game.subStats &&
                 <>
                     <SubStatTable stats={game.subStats} />
-                    <button
-                        className='btn btn-del game-list-btn'
-                        onClick={() => {
-                            props.toggleDeleteGame(game._id);
-                            toast.error(
-                                <DelToast
-                                    game={game}
-                                    toggleDeleteGame={props.toggleDeleteGame}
-                                />, { autoClose: 4000, hideProgressBar: false });
-                        }}>Delete Game</button>
+                    {game.notes && <NoteList notes={game.notes} />}
+                    <div className='game-card-btns'>
+                        <button
+                            className='btn btn-del game-list-btn'
+                            onClick={() => {
+                                props.toggleDeleteGame(game._id);
+                                toast.error(
+                                    <DelToast
+                                        game={game}
+                                        toggleDeleteGame={props.toggleDeleteGame}
+                                    />, { autoClose: 4000, hideProgressBar: false });
+                            }}>Delete Game</button>
+                        {!showNoteInput && <button
+                            className='btn game-list-btn'
+                            onClick={() => {
+                                setShowNoteInput(true);
+                            }}>Add Note</button>}
+                    </div>
+                    {showNoteInput &&
+                        <div>
+                            <textarea className='note-input'></textarea>
+                            <div className='game-card-btns'>
+                                <button className='btn game-list-btn' onClick={() => setShowNoteInput(false)}>Cancel</button>
+                                <button
+                                    className='btn game-list-btn'
+                                    onClick={() => {
+                                        // TODO - Add note to game from textarea value
+                                        // pass updated game to updateGame function
+                                        props.updateGame(game._id);
+                                        setShowNoteInput(false);
+                                    }}
+                                >Save</button>
+                            </div>
+                        </div>}
                 </>
             }
         </div>
@@ -142,7 +174,12 @@ const GameCard = (props) => {
 const GameList = (props) => {
     const showGames = props.games.filter(game => !game.deleted);
     const games = showGames.map((game) =>
-        <GameCard key={game.date} game={game} toggleDeleteGame={props.toggleDeleteGame} />
+        <GameCard
+            key={game.date}
+            game={game}
+            updateGame={props.updateGame}
+            toggleDeleteGame={props.toggleDeleteGame}
+        />
     )
     return <div className='team-list'>{games}</div>
 }
@@ -169,11 +206,22 @@ export default function Games(props) {
             })
     }
 
+    const updateGame = (game) => {
+        console.log('Updating game ' + game)
+        return;
+        let newGames = [...props.allGameHistory];
+        let gameInd = newGames.findIndex(el => el._id === game._id);
+        newGames[gameInd] = game;
+        props.setAllGameHistory(newGames);
+        // TODO save the updated game to the DB
+    }
+
     return (
         <div className='App'>
             <h1 className='page-header'>Recorded Games</h1>
             <GameList
                 games={props.allGameHistory}
+                updateGame={updateGame}
                 toggleDeleteGame={toggleDeleteGame}
             />
         </div>

@@ -27,7 +27,7 @@
 .game-list-btn {
     display: flex;
     align-self: center;
-    margin: 0.25rem;
+    margin: 0.5rem 0.25rem 0.25rem 0.25rem;
     font-size: 12px;
     align-items: center;
 }
@@ -49,4 +49,17 @@
     .stat-table {
         font-size: x-small;
     }
+}
+
+.game-card-btns {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.note-input {
+    border-color: var(--primary);
+    border-radius: 4px;
+    width: 80%;
+    height: 4rem;
+    margin-top: 0.25rem;
 }
