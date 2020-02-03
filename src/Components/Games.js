@@ -128,6 +128,32 @@ const GameCard = (props) => {
                                     toggleDeleteGame={props.toggleDeleteGame}
                                 />, { autoClose: 4000, hideProgressBar: false });
                         }}>Delete Game</button>
+                    {!showNoteInput && <button
+                        className='btn game-list-btn'
+                        onClick={() => {
+                            setShowNoteInput(true);
+                        }}>Add Note</button>}
+                    {showNoteInput &&
+                        <div>
+                            <textarea
+                                className='note-input'
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                            />
+                            <div className='game-card-btns'>
+                                <button className='btn game-list-btn' onClick={() => setShowNoteInput(false)}>Cancel</button>
+                                <button
+                                    className='btn game-list-btn'
+                                    onClick={() => {
+                                        if (!props.game.notes) props.game.notes = [];
+                                        props.game.notes.push(note);
+                                        props.updateGame(game);
+                                        setShowNoteInput(false);
+                                        setNote('');
+                                    }}
+                                >Save</button>
+                            </div>
+                        </div>}
                 </>
             }
             {showStats && game.subStats &&
@@ -153,7 +179,7 @@ const GameCard = (props) => {
                     </div>
                     {showNoteInput &&
                         <div>
-                            <textarea 
+                            <textarea
                                 className='note-input'
                                 value={note}
                                 onChange={(e) => setNote(e.target.value)}
