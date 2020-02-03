@@ -24,6 +24,7 @@ const GameCard = (props) => {
 
     const [showStats, setShowStats] = useState(false);
     const [showNoteInput, setShowNoteInput] = useState(false);
+    const [note, setNote] = useState('');
 
     let game = props.game;
     let gameDate = new Date(game.date);
@@ -46,10 +47,11 @@ const GameCard = (props) => {
     ]
 
     const NoteList = (props) => {
-        const notes = props.notes.map(note =>
-            <li>{note}</li>
+        const notes = props.notes.map((note, index) =>
+            <p className='card-note' key={index}>{note}</p>
         );
-        return <ul>{notes}</ul>
+        notes.unshift(<p className='card-note-title' key='note-title'>Notes</p>)
+        return <div className='card-notes'>{notes}</div>
     }
 
     return (
@@ -151,16 +153,21 @@ const GameCard = (props) => {
                     </div>
                     {showNoteInput &&
                         <div>
-                            <textarea className='note-input'></textarea>
+                            <textarea 
+                                className='note-input'
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                            />
                             <div className='game-card-btns'>
                                 <button className='btn game-list-btn' onClick={() => setShowNoteInput(false)}>Cancel</button>
                                 <button
                                     className='btn game-list-btn'
                                     onClick={() => {
-                                        // TODO - Add note to game from textarea value
-                                        // pass updated game to updateGame function
-                                        props.updateGame(game._id);
+                                        if (!props.game.notes) props.game.notes = [];
+                                        props.game.notes.push(note);
+                                        props.updateGame(game);
                                         setShowNoteInput(false);
+                                        setNote('');
                                     }}
                                 >Save</button>
                             </div>
@@ -208,12 +215,16 @@ export default function Games(props) {
 
     const updateGame = (game) => {
         console.log('Updating game ' + game)
-        return;
         let newGames = [...props.allGameHistory];
         let gameInd = newGames.findIndex(el => el._id === game._id);
         newGames[gameInd] = game;
         props.setAllGameHistory(newGames);
-        // TODO save the updated game to the DB
+        db.get(game._id).then(doc => {
+            doc.notes = game.notes;
+            return db.put(doc);
+        }).then(res => console.log(res)).catch(err => {
+            console.log(err);
+        })
     }
 
     return (
