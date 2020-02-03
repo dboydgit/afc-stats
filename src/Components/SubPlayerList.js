@@ -1,13 +1,33 @@
 import React from 'react'
 import '../styles/Subs.css';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { timeToMinSec, timeOnPoint } from '../utils/timeUtils';
+import arrayMove from 'array-move';
 
-export default function SubPlayerList(props) {
+const DragHandle = SortableHandle(() => (
+    <i className={`material-icons handle`}>drag_handle</i>)
+)
 
-    const subStats = props.subStats;
+const SortableList = SortableContainer(({ props }) => {
+    return (
+        <div className='player-list sub-list'>
+            {props.subStats.map((player, index) =>
+                <SortableItem
+                    player={player}
+                    ind={index}
+                    index={index}
+                    key={index}
+                    props={props}
+                    disabled={index < 4 ? true : false}
+                />
+            )}
+        </div>
+    )
+})
 
-    const list = subStats.map((player, ind) =>
-        <div key={player.name} className='player-input sub-player'>
+const SortableItem = SortableElement(({ player, ind, props }) => {
+    return (
+        <div className='player-input sub-player'>
             <div
                 className={`player-name sub-name ${props.darkTeam === props.statTeam ? 'dark' : ''}`}
             >
@@ -23,14 +43,28 @@ export default function SubPlayerList(props) {
 
                 >Sub Out</button>}
             {ind >= 4 &&
-                <button
-                    className={`btn sub-btn ${props.subPlayerSelected === player.name ? 'btn-sec' : ''}`}
-                    onClick={() => props.handleIn(player)}>Sub In</button>}
+                <>
+                    <DragHandle />
+                    <button
+                        className={`btn sub-btn ${props.subPlayerSelected === player.name ? 'btn-sec' : ''}`}
+                        onClick={() => props.handleIn(player)}>Sub In</button>
+                </>
+            }
         </div>
     )
+})
+
+export default function SubPlayerList(props) {
+
+    const onSortEnd = ({ oldIndex, newIndex }) => {
+        let updatedStats = arrayMove(props.subStats, oldIndex, newIndex)
+        props.setSubStats(updatedStats);
+    }
+
     return (
-        <>
-            <div className='player-list sub-list'>{list}</div>
-        </>
+        <SortableList
+            props={props}
+            onSortEnd={onSortEnd}
+        />
     )
 }
