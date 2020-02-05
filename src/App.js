@@ -86,6 +86,10 @@ function App() {
           newAllHistory.unshift(row.doc);
         }
       })
+      newAllHistory.sort((a, b) => {
+        let diff = new Date(b.date) - new Date(a.date);
+        return diff;
+      })
       setAllGameHistory(newAllHistory);
       setTeams(newTeams);
     })
@@ -114,7 +118,7 @@ function App() {
         if (changedDoc.docType === 'stats' || changedDoc.docType === 'subs') {
           let newAllHistory = [...allGameHistory];
           let gameInd = newAllHistory.findIndex(game => game._id === changedDoc._id);
-          if (gameInd === -1) newAllHistory.push(changedDoc);
+          if (gameInd === -1) newAllHistory.unshift(changedDoc);
           else newAllHistory[gameInd] = changedDoc;
           setAllGameHistory(newAllHistory);
         }
