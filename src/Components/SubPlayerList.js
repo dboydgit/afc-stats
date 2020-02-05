@@ -57,6 +57,7 @@ const SortableItem = SortableElement(({ player, ind, props }) => {
 export default function SubPlayerList(props) {
 
     const onSortEnd = ({ oldIndex, newIndex }) => {
+        if (newIndex < 4) return;
         let updatedStats = arrayMove(props.subStats, oldIndex, newIndex)
         props.setSubStats(updatedStats);
     }
@@ -65,6 +66,7 @@ export default function SubPlayerList(props) {
         <SortableList
             props={props}
             onSortEnd={onSortEnd}
+            useDragHandle
         />
     )
 }
