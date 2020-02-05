@@ -118,6 +118,7 @@ const GameCard = (props) => {
             {showStats && game.playerStats &&
                 <>
                     <StatTable stats={game.playerStats} />
+                    {game.notes && <NoteList notes={game.notes} />}
                     <div className='game-card-btns'>
                         <button
                             className='btn btn-del game-list-btn'
