@@ -5,13 +5,15 @@ import Header from './Header';
 
 export default function Home(props) {
 
-    const [userVal, setUserVal] = useState('');
+    const [userVal, setUserVal] = useState(localStorage.getItem('userID') || '');
+    const [showChange, setShowChange] = useState(false);
 
     // set the userID on form submit
     const handleSubmit = (e) => {
         e.preventDefault();
         props.setUserID(userVal);
         localStorage.setItem('userID', userVal);
+        setShowChange(false);
     }
 
     // update state on form change
@@ -27,14 +29,26 @@ export default function Home(props) {
                     <div className='home-form'>
                         <p>Who is taking stats?</p>
                         <form onSubmit={handleSubmit}>
-                            <input id='home-input' type='text' value={userVal} onChange={handleChange} />
+                            <input className='home-input' type='text' value={userVal} onChange={handleChange} />
                             <button className='btn' type='submit'>Start</button>
                         </form>
                     </div>
                 }
                 {props.userID &&
-                    <div>
-                        <p>{`Welcome, ${props.userID}`}</p>
+                    <>
+                        {!showChange &&
+                            <>
+                                <p>{`Welcome, ${props.userID}`}</p>
+                                <p className='change-username-link'
+                                    onClick={() => setShowChange(true)}
+                                >Change Name</p>
+                            </>}
+                        {showChange &&
+                            <form onSubmit={handleSubmit}>
+                                <input className='home-input' type='text' value={userVal} onChange={handleChange} />
+                                <button className='btn' type='submit'>Save</button>
+                            </form>
+                        }
                         <div className="home-btn-group">
                             <Link
                                 className='btn'
@@ -53,7 +67,7 @@ export default function Home(props) {
                                 to='/games'>Past Games
                             </Link>
                         </div>
-                    </div>
+                    </>
                 }
             </div>
         </div>

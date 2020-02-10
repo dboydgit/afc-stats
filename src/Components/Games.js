@@ -96,7 +96,6 @@ const GameCard = (props) => {
                 {game.subStats && <CSVLink
                     className='btn game-list-btn'
                     data={game.subStats}
-                    // headers={statHeaders}
                     filename={generateFileName('SubStats')}
                     target='_blank'
                 >
