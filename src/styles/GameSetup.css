@@ -1,5 +1,5 @@
 .game-setup {
-    width: 80%;
+    width: calc(95% - 2rem);
     align-items: center;
     margin-top: 1rem;
 }
