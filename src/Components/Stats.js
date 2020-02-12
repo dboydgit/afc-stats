@@ -73,7 +73,7 @@ export default function Stats(props) {
         if (action === 'Point') {
             props.statTeam === props.darkTeam ? newScore.dark++ : newScore.light++;
         }
-        if (action === 'GSO' || action === 'GSO-Mark') {
+        if (action === 'GSO') {
             props.statTeam === props.darkTeam ? newScore.light++ : newScore.dark++;
         }
         props.setScore(newScore);
@@ -175,7 +175,7 @@ export default function Stats(props) {
         if (undoEntry.action === 'Point') {
             props.statTeam === props.darkTeam ? newScore.dark-- : newScore.light--;
         }
-        if (undoEntry.action === 'GSO' || undoEntry.action === 'GSO-Mark') {
+        if (undoEntry.action === 'GSO') {
             props.statTeam === props.darkTeam ? newScore.light-- : newScore.dark--;
         }
         // show undo action
@@ -205,7 +205,6 @@ export default function Stats(props) {
             Drop: 0,
             'D-Play': 0,
             GSO: 0,
-            'GSO-Mark': 0
         })
         props.setPlayerStats(newPlayerStats);
         setShowAddPlayer(false);

@@ -18,13 +18,6 @@ export default function DefenceButtons(props) {
                 GSO
                     <div className='score-badge'>{props.player.GSO}</div>
             </button>
-            <button
-                className='btn stat-btn'
-                name='GSO-Mark'
-                onClick={(e) => props.handleStatClick(e, props.player.name)}>
-                GSO-Mark
-                    <div className='score-badge'>{props.player['GSO-Mark']}</div>
-            </button>
         </div>
     )
 }

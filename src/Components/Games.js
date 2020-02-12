@@ -14,7 +14,6 @@ const statHeaders = [
     { label: 'Drops', key: 'Drop' },
     { label: 'Throwaways', key: 'T-Away' },
     { label: 'GSO', key: 'GSO' },
-    { label: 'GSO-Mark', key: 'GSO-Mark' },
 ];
 
 const combinedFileName = (str, date) => {
@@ -243,7 +242,6 @@ const CombinedCSV = (props) => {
         { label: 'Drops', key: 'Drop' },
         { label: 'Throwaways', key: 'T-Away' },
         { label: 'GSO', key: 'GSO' },
-        { label: 'GSO-Mark', key: 'GSO-Mark' },
     ];
 
     let dateOptions = new Set();

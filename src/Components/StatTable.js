@@ -12,7 +12,6 @@ export default function StatTable(props) {
         { Header: 'TAway', accessor: 'T-Away', sortDescFirst: true },
         { Header: 'Drop', accessor: 'Drop', sortDescFirst: true },
         { Header: 'GSO', accessor: 'GSO', sortDescFirst: true },
-        { Header: 'GSO-Mark', accessor: 'GSO-Mark', sortDescFirst: true },
     ], [])
 
     const data = useMemo(() => props.stats, [props.stats])

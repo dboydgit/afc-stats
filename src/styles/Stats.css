@@ -92,10 +92,13 @@
 }
 
 .stat-btn {
+    flex: 0 1 5rem;
+    max-height: 2rem;
     margin: 0.4rem 0.3rem;
     white-space: nowrap;
     display: flex;
     align-items: center;
+    justify-content: center;
     position: relative;
 }
 
