@@ -17,7 +17,7 @@ const statHeaders = [
     { label: 'GSO-Mark', key: 'GSO-Mark' },
 ];
 
-const combinedFileName = (str, date)=> {
+const combinedFileName = (str, date) => {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${str}.csv`
 }
 
@@ -228,7 +228,23 @@ const GameList = (props) => {
 const CombinedCSV = (props) => {
 
     const [CSVDate, setCSVDate] = useState('');
+    const [wkNum, setWkNum] = useState('');
     const [combinedStats, setCombinedStats] = useState([]);
+
+    const combinedHeaders = [
+        { label: 'Name', key: 'name' },
+        { label: 'GM', key: 'GM' },
+        { label: 'Vs', key: 'VS' },
+        { label: 'Week', key: 'Week' },
+        { label: 'Touches', key: 'Touch' },
+        { label: 'Points', key: 'Point' },
+        { label: 'Assists', key: 'Assist' },
+        { label: 'D-Plays', key: 'D-Play' },
+        { label: 'Drops', key: 'Drop' },
+        { label: 'Throwaways', key: 'T-Away' },
+        { label: 'GSO', key: 'GSO' },
+        { label: 'GSO-Mark', key: 'GSO-Mark' },
+    ];
 
     let dateOptions = new Set();
 
@@ -254,8 +270,22 @@ const CombinedCSV = (props) => {
         for (let game of props.games) {
             let gameDate = new Date(game.date).toDateString();
             if (gameDate === e.target.value && game.playerStats) {
-                for (let stat of game.playerStats) newCombinedStats.push(stat);
+                for (let stat of game.playerStats) {
+                    if (!stat.GM) stat.GM = '';
+                    if (!stat.VS) stat.VS = '';
+                    stat.Week = wkNum;
+                    newCombinedStats.push(stat);
+                }
             }
+        }
+        setCombinedStats(newCombinedStats);
+    }
+
+    const handleWkNumChange = (e) => {
+        setWkNum(e.target.value);
+        let newCombinedStats = [...combinedStats];
+        for (let stat of newCombinedStats) {
+            stat.Week = e.target.value;
         }
         setCombinedStats(newCombinedStats);
     }
@@ -267,15 +297,20 @@ const CombinedCSV = (props) => {
                 <DateOptions options={dateOptions} />
             </select>
             {CSVDate &&
-            <CSVLink 
-                className='btn game-list-btn'
-                data={combinedStats}
-                headers={statHeaders}
-                filename={combinedFileName('Combined-playerStats', new Date(CSVDate))}
-            >
-                Combined Stats
-                <i className="material-icons md-18">get_app</i>
-            </CSVLink>}
+                <>
+                    <div className='select-title'>Enter Week Number</div>
+                    <input value={wkNum} onChange={handleWkNumChange} />
+                    <CSVLink
+                        className='btn game-list-btn'
+                        data={combinedStats}
+                        headers={combinedHeaders}
+                        filename={combinedFileName('Combined-playerStats', new Date(CSVDate))}
+                    >
+                        Combined Stats
+                        <i className="material-icons md-18">get_app</i>
+                    </CSVLink>
+                </>
+            }
         </div>
     )
 }
@@ -334,7 +369,7 @@ export default function Games(props) {
                 </button>
             </h1>
             {showCombinedCSV &&
-                <CombinedCSV games={props.allGameHistory} />
+                <CombinedCSV games={props.allGameHistory} teams={props.teams} />
             }
             <GameList
                 games={props.allGameHistory}

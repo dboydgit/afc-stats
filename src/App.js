@@ -152,6 +152,8 @@ function App() {
     setDarkTeam(dark);
     setLightTeam(light);
     setStatTeam(statTeam);
+    let opponent = statTeam === dark ? light : dark;
+    let opponentTeam = teams.find(team => team.name === opponent);
     offense === 'subs' ? setShowSubSetup(false) : setShowStatSetup(false);
     let findTeam = teams.find(team => team.name === statTeam)
     if (offense === 'subs') {
@@ -171,6 +173,8 @@ function App() {
       for (let player of findTeam.players) {
         initPlayerStats.push({
           name: player,
+          GM: findTeam.gm || '',
+          VS: opponentTeam.gm || '',
           Touch: 0,
           Assist: 0,
           Point: 0,
@@ -435,6 +439,7 @@ function App() {
             allGameHistory={allGameHistory}
             setAllGameHistory={setAllGameHistory}
             localDB={localDB}
+            teams={teams}
           />
         </Route>
       </Switch>
