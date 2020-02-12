@@ -46,6 +46,14 @@ export default function GameSetup(props) {
     return (
         <div className='game-setup card'>
             <h3 id='setup-title'>Game Setup</h3>
+            <div className='stat-reminder'>
+                <div className='stat-reminder-title'>
+                    <span>Check Roster!</span>
+                </div>
+                <div>
+                    <span>Confirm roster is correct on the teams page before setting up your game.</span>
+                </div>
+            </div>
             <label htmlFor='game-length'>Game Length (mins)</label>
             <input name='game-length' type='number' min='1' max='120'
                 value={time} onChange={(e) => setTime(e.target.value)} />

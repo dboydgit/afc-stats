@@ -48,9 +48,12 @@ const Player = (props) => {
 
     return (
         <div className='player-list-item'>
+            <DragHandle />
             <i className='material-icons player-del'
                 onClick={() => {
-                    props.deletePlayer(player);
+                    if (window.confirm(`Delete Player (${player})?`)) {
+                        props.deletePlayer(player);
+                    }
                 }}>delete</i>
             <input
                 className='player-card'
@@ -58,7 +61,6 @@ const Player = (props) => {
                 value={player}
                 onChange={handlePlayerChange}
             />
-            <DragHandle />
         </div>
     )
 }
@@ -169,16 +171,16 @@ export default function Team(props) {
                         onSortEnd={onSortEnd}
                         shouldCancelStart={shouldCancelStart}
                     />
-                    <button 
+                    <button
                         className='btn team-btn btn-del'
                         name={props.ind}
                         onClick={props.deleteTeam}>Delete Team
                     </button>
-                    <button 
+                    <button
                         className='btn team-btn'
                         onClick={addPlayer}
                     >Add Player</button>
-                    <button 
+                    <button
                         className='btn team-btn'
                         onClick={() => saveTeam(props.team)}>Save Changes
                     </button>
