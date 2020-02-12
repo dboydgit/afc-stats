@@ -5,6 +5,23 @@ import StatTable from './StatTable';
 import SubStatTable from './SubStatTable';
 import { toast } from 'react-toastify';
 
+const statHeaders = [
+    { label: 'Name', key: 'name' },
+    { label: 'Touches', key: 'Touch' },
+    { label: 'Points', key: 'Point' },
+    { label: 'Assists', key: 'Assist' },
+    { label: 'D-Plays', key: 'D-Play' },
+    { label: 'Drops', key: 'Drop' },
+    { label: 'Throwaways', key: 'T-Away' },
+    { label: 'GSO', key: 'GSO' },
+    { label: 'GSO-Mark', key: 'GSO-Mark' },
+];
+
+const combinedFileName = (str, date)=> {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${str}.csv`
+}
+
+
 const DelToast = (props) => (
     <>
         <span>Game Deleted...</span>
@@ -30,21 +47,10 @@ const GameCard = (props) => {
     let gameDate = new Date(game.date);
 
     const generateFileName = (str) => {
-        return `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDay()}-${game.darkTeam}-vs-${game.lightTeam}-${str}-${game.statTeam}.csv`
+        return `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}-${game.darkTeam}-vs-${game.lightTeam}-${str}-${game.statTeam}.csv`
     }
 
     const toggleShowStats = () => setShowStats(!showStats);
-    const statHeaders = [
-        { label: 'Name', key: 'name' },
-        { label: 'Touches', key: 'Touch' },
-        { label: 'Points', key: 'Point' },
-        { label: 'Assists', key: 'Assist' },
-        { label: 'D-Plays', key: 'D-Play' },
-        { label: 'Drops', key: 'Drop' },
-        { label: 'Throwaways', key: 'T-Away' },
-        { label: 'GSO', key: 'GSO' },
-        { label: 'GSO-Mark', key: 'GSO-Mark' },
-    ]
 
     const NoteList = (props) => {
         const notes = props.notes.map((note, index) =>
@@ -219,7 +225,64 @@ const GameList = (props) => {
     return <div className='team-list'>{games}</div>
 }
 
+const CombinedCSV = (props) => {
+
+    const [CSVDate, setCSVDate] = useState('');
+    const [combinedStats, setCombinedStats] = useState([]);
+
+    let dateOptions = new Set();
+
+    dateOptions.add('');
+
+    for (let game of props.games) {
+        if (!game.playerStats) continue;
+        let gameDate = new Date(game.date);
+        dateOptions.add(gameDate.toDateString());
+    }
+
+    const DateOptions = (props) => {
+        let options = [];
+        for (let option of props.options) {
+            options.push(<option key={option} value={option}>{option}</option>)
+        }
+        return options;
+    }
+
+    const handleSelect = (e) => {
+        setCSVDate(e.target.value);
+        let newCombinedStats = [];
+        for (let game of props.games) {
+            let gameDate = new Date(game.date).toDateString();
+            if (gameDate === e.target.value && game.playerStats) {
+                for (let stat of game.playerStats) newCombinedStats.push(stat);
+            }
+        }
+        setCombinedStats(newCombinedStats);
+    }
+
+    return (
+        <div className='combined-csv-options'>
+            <div className='select-title'>Select Date</div>
+            <select value={CSVDate} onChange={handleSelect}>
+                <DateOptions options={dateOptions} />
+            </select>
+            {CSVDate &&
+            <CSVLink 
+                className='btn game-list-btn'
+                data={combinedStats}
+                headers={statHeaders}
+                filename={combinedFileName('Combined-playerStats', new Date(CSVDate))}
+            >
+                Combined Stats
+                <i className="material-icons md-18">get_app</i>
+            </CSVLink>}
+        </div>
+    )
+}
+
 export default function Games(props) {
+
+    const [showCombinedCSV, setShowCombinedCSV] = useState(false);
 
     let db = props.localDB;
 
@@ -255,9 +318,24 @@ export default function Games(props) {
         })
     }
 
+    const toggleCombinedCSV = () => {
+        setShowCombinedCSV(!showCombinedCSV);
+    }
+
     return (
         <div className='App'>
-            <h1 className='page-header'>Recorded Games</h1>
+            <h1 className='page-header'>
+                <div>Recorded Games</div>
+                <button className='btn game-list-btn combined-csv-btn'
+                    onClick={toggleCombinedCSV}>
+                    Combined CSV
+                    {!showCombinedCSV && <i className="material-icons md-18">arrow_drop_down</i>}
+                    {showCombinedCSV && <i className="material-icons md-18">arrow_drop_up</i>}
+                </button>
+            </h1>
+            {showCombinedCSV &&
+                <CombinedCSV games={props.allGameHistory} />
+            }
             <GameList
                 games={props.allGameHistory}
                 updateGame={updateGame}

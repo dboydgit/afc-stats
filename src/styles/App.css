@@ -30,6 +30,9 @@ html, body, #root {
 
 .page-header {
   margin: 0.75rem;
+  display: flex;
+  align-items: center;
+  width: 90%;
 }
 
 .bottom-nav {
@@ -68,6 +71,10 @@ input, select {
   margin: 0.25rem;
   max-width: 15rem;
   background-color: white;
+}
+
+.select-title {
+  margin: 0.25rem;
 }
 
 .btn {
