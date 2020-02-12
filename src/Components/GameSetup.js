@@ -51,7 +51,7 @@ export default function GameSetup(props) {
                     <span>Check Roster!</span>
                 </div>
                 <div>
-                    <span>Confirm roster is correct on the teams page before setting up your game.</span>
+                    <span>Confirm roster on the Teams page before setting up your game.</span>
                 </div>
             </div>
             <label htmlFor='game-length'>Game Length (mins)</label>
