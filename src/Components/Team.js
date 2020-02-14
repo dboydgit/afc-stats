@@ -170,6 +170,7 @@ export default function Team(props) {
                         deletePlayer={deletePlayer}
                         onSortEnd={onSortEnd}
                         shouldCancelStart={shouldCancelStart}
+                        useDragHandle
                     />
                     <button
                         className='btn team-btn btn-del'
