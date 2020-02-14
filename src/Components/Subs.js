@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GameSetup from './GameSetup';
 import GameInfo from './GameInfo';
 import SubPlayerList from './SubPlayerList';
@@ -6,6 +6,9 @@ import { toast } from 'react-toastify';
 import { timeToSecs, timeToMinSec } from '../utils/timeUtils';
 
 export default function Subs(props) {
+
+    const [showAddPlayer, setShowAddPlayer] = useState(false);
+    const [newPlayer, setNewPlayer] = useState('');
 
     // show warning on page reload attempt during game
     window.onbeforeunload = (e) => {
@@ -102,6 +105,19 @@ export default function Subs(props) {
         }
     }
 
+    const addSubPlayer = (player) => {
+        let newSubStats = [...props.subStats];
+        newSubStats.push({
+            name: player,
+            timeOnField: 0,
+            lastTimeIn: `${props.gameTime}:00`,
+            shiftLengths: [],
+        })
+        props.setSubStats(newSubStats);
+        setShowAddPlayer(false);
+        setNewPlayer('');
+    }
+
     return (
         <div className='App'>
             {!props.showStatSetup &&
@@ -162,6 +178,23 @@ export default function Subs(props) {
                         gameLength={props.gameLength}
                         gameTime={props.gameTime}
                     />
+                    {!showAddPlayer && <button
+                        className='btn stat-btn stat-btn-after'
+                        onClick={() => setShowAddPlayer(true)}
+                    >Add Player</button>}
+                    {showAddPlayer &&
+                        <div className='add-player-input'>
+                            <i className='material-icons'
+                                onClick={() => setShowAddPlayer(false)}>close</i>
+                            <input
+                                placeholder='player name'
+                                onChange={(e) => setNewPlayer(e.target.value)}
+                                value={newPlayer}></input>
+                            <button
+                                className='btn stat-btn stat-btn-after'
+                                onClick={() => addSubPlayer(newPlayer)}>Save</button>
+                        </div>
+                    }
                 </div>}
         </div>
     )
