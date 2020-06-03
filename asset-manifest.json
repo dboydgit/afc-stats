@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/ultimate-stats/static/css/main.1f1af1ba.chunk.css",
-    "main.js": "/ultimate-stats/static/js/main.0b561007.chunk.js",
-    "main.js.map": "/ultimate-stats/static/js/main.0b561007.chunk.js.map",
-    "runtime-main.js": "/ultimate-stats/static/js/runtime-main.8f6ea8e6.js",
-    "runtime-main.js.map": "/ultimate-stats/static/js/runtime-main.8f6ea8e6.js.map",
-    "static/css/2.5dbdccff.chunk.css": "/ultimate-stats/static/css/2.5dbdccff.chunk.css",
-    "static/js/2.0736211e.chunk.js": "/ultimate-stats/static/js/2.0736211e.chunk.js",
-    "static/js/2.0736211e.chunk.js.map": "/ultimate-stats/static/js/2.0736211e.chunk.js.map",
-    "index.html": "/ultimate-stats/index.html",
-    "precache-manifest.10f3eea7ac064f61995b27fca479849d.js": "/ultimate-stats/precache-manifest.10f3eea7ac064f61995b27fca479849d.js",
-    "service-worker.js": "/ultimate-stats/service-worker.js",
-    "static/css/2.5dbdccff.chunk.css.map": "/ultimate-stats/static/css/2.5dbdccff.chunk.css.map",
-    "static/css/main.1f1af1ba.chunk.css.map": "/ultimate-stats/static/css/main.1f1af1ba.chunk.css.map",
-    "static/js/2.0736211e.chunk.js.LICENSE": "/ultimate-stats/static/js/2.0736211e.chunk.js.LICENSE"
+    "main.css": "/afc-stats/static/css/main.1f1af1ba.chunk.css",
+    "main.js": "/afc-stats/static/js/main.e5de72f4.chunk.js",
+    "main.js.map": "/afc-stats/static/js/main.e5de72f4.chunk.js.map",
+    "runtime-main.js": "/afc-stats/static/js/runtime-main.e04484d6.js",
+    "runtime-main.js.map": "/afc-stats/static/js/runtime-main.e04484d6.js.map",
+    "static/css/2.5dbdccff.chunk.css": "/afc-stats/static/css/2.5dbdccff.chunk.css",
+    "static/js/2.c050b050.chunk.js": "/afc-stats/static/js/2.c050b050.chunk.js",
+    "static/js/2.c050b050.chunk.js.map": "/afc-stats/static/js/2.c050b050.chunk.js.map",
+    "index.html": "/afc-stats/index.html",
+    "precache-manifest.e71581bdfd0d5d526466fd8c1696bdc3.js": "/afc-stats/precache-manifest.e71581bdfd0d5d526466fd8c1696bdc3.js",
+    "service-worker.js": "/afc-stats/service-worker.js",
+    "static/css/2.5dbdccff.chunk.css.map": "/afc-stats/static/css/2.5dbdccff.chunk.css.map",
+    "static/css/main.1f1af1ba.chunk.css.map": "/afc-stats/static/css/main.1f1af1ba.chunk.css.map",
+    "static/js/2.c050b050.chunk.js.LICENSE": "/afc-stats/static/js/2.c050b050.chunk.js.LICENSE"
   },
   "entrypoints": [
-    "static/js/runtime-main.8f6ea8e6.js",
+    "static/js/runtime-main.e04484d6.js",
     "static/css/2.5dbdccff.chunk.css",
-    "static/js/2.0736211e.chunk.js",
+    "static/js/2.c050b050.chunk.js",
     "static/css/main.1f1af1ba.chunk.css",
-    "static/js/main.0b561007.chunk.js"
+    "static/js/main.e5de72f4.chunk.js"
   ]
 }
