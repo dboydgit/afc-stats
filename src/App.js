@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
@@ -29,6 +29,8 @@ import ServiceWorkerToast from './Components/Toasts/ServiceWorkerToast';
 
 // assets
 import defaultProfile from './assets/profile-avatars/050.svg';
+
+const Timestamp = firebase.firestore.Timestamp;
 
 const Slide = cssTransition({
   enter: 'toast-in',
@@ -78,9 +80,6 @@ db.enablePersistence()
 function App() {
 
   // set state (global)
-  const [activePoint, setActivePoint] = useState(localStorage.getItem('activePoint') === 'true');
-  const [activeTimeOut, setActiveTimeOut] = useState(localStorage.getItem('activeTimeOut') === 'true');
-  const [activeGame, setActiveGame] = useState(localStorage.getItem('activeGame') === 'true');
   const [gameTime, setGameTime] = useState(localStorage.getItem('gameTime') || '00:00');
   const [gameTimeSecs, setGameTimeSecs] = useState(localStorage.getItem('gameTimeSecs') || 0);
   const [darkTeam, setDarkTeam] = useState(localStorage.getItem('darkTeam') || '') //test str Dark
@@ -93,7 +92,6 @@ function App() {
   const [lightTeam, setLightTeam] = useState(localStorage.getItem('lightTeam') || ''); // test str Light Team
   const [offense, setOffense] = useState(localStorage.getItem('offense') === 'true');
   const [playerStats, setPlayerStats] = useState(JSON.parse(localStorage.getItem('playerStats')) || []);
-  // hardcode playerStats for testing {"name":"Luke","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player2","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player3","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player4","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player5","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player6","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player7","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player8","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player9","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player10","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0}
   const [score, setScore] = useState(JSON.parse(localStorage.getItem('score')) || {
     'dark': 0,
     'light': 0
@@ -101,16 +99,13 @@ function App() {
   const [statTeam, setStatTeam] = useState(localStorage.getItem('statTeam') || ''); //test str Dark or Light
   const [testGame, setTestGame] = useState(localStorage.getItem('testGame') === 'true');
 
-  // don't need? const [loadingDB, setLoadingDB] = useState(true);
   const [paused, setPaused] = useState(localStorage.getItem('paused') === 'true');
   const [showStatSetup, setShowStatSetup] = useState(localStorage.getItem('showStatSetup') === 'true'); //set false for testing
   const [showSubSetup, setShowSubSetup] = useState(localStorage.getItem('showSubSetup') === 'true'); ////set false for testing
-  const [teams, setTeams] = useState(JSON.parse(localStorage.getItem('teams')) || []);
-  // don't need? const [userID, setUserID] = useState(localStorage.getItem('userID') || '');
+  const [teams, setTeams] = useState([]);
 
   // state for sub page
   const [subStats, setSubStats] = useState(JSON.parse(localStorage.getItem('subStats')) || []);
-  // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
   const [subInSelected, setSubInSelected] = useState(localStorage.getItem('subInSelected') === 'true');
   const [subOutSelected, setSubOutSelected] = useState(localStorage.getItem('subOutSelected') === 'true');
   const [subPlayerSelected, setSubPlayerSelected] = useState(localStorage.getItem('subPlayerSelected') || '');
@@ -140,7 +135,7 @@ function App() {
 
   // allow user to update site when service worker changes and no active game
   useEffect(() => {
-    if (!activeGame && serviceWorkerReg && serviceWorkerReg.waiting) {
+    if (!gameStarted && serviceWorkerReg && serviceWorkerReg.waiting) {
       toast.info(
         <ServiceWorkerToast
           serviceWorkerReg={serviceWorkerReg}
@@ -151,13 +146,14 @@ function App() {
         }
       );
     }
-  }, [activeGame, serviceWorkerReg])
+  }, [gameStarted, serviceWorkerReg])
 
   const gameTimer = useRef(new Timer({
+    countdown: true,
     callback: (timer) => {
       let newTime = (timer.getTimeValues().toString(['minutes', 'seconds']));
       let newTimeSecs = (timer.getTotalTimeValues().seconds);
-      localStorage.setItem('currentGameTime', newTime);
+      localStorage.setItem('gameTime', newTime);
       localStorage.setItem('curTimeSecs', newTimeSecs);
       setGameTime(newTime);
       setGameTimeSecs(newTimeSecs);
@@ -169,6 +165,7 @@ function App() {
     if (localStorage.getItem('dbUser') !== 'null' && localStorage.getItem('dbUser') !== 'undefined') {
       return
     }
+    if (!user.uid) return;
     // get the user from the db and load into state
     // add the user to the database if doesn't exist
     db.collection('users').doc(user.uid)
@@ -180,7 +177,6 @@ function App() {
           console.log('User fetched from database')
         } else {
           let newDbUser = {
-            creationTime: user.createdAt,
             email: user.email,
             name: user.displayName || '',
             profileURL: user.photoURL || defaultProfile,
@@ -194,46 +190,74 @@ function App() {
       .catch(error => console.error('Error loading User', error))
   }, [user]);
 
-  // listen for realtime updates to dbUser if loaded
+  // load games on first load
   useEffect(() => {
-    // get the teams
-    let newTeams = [];
+    if (!user) return;
     let newGames = [];
-    db.collection('teams').get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          newTeams.push(doc.data());
-        })
-        setTeams(newTeams);
-      })
-    db.collection('games').limit(20).get()
+    db.collection('games').orderBy('date', 'desc').limit(20).get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
           newGames.push(doc.data());
         })
         setFetchedGames(newGames);
+        console.log('First 20 Games Loaded')
       })
+  }, [user])
+
+  // listen for realtime updates to dbUser and teams if loaded
+  useEffect(() => {
     // add listeners
     let updateUser = null;
     let updateTeams = null;
-    let updateGames = null;
     if (user) {
       console.log('Adding snapshot listeners')
       updateTeams = db.collection('teams')
-        .onSnapshot(snapShot => {
-          snapShot.docChanges().forEach(change => {
-            if (change.type === 'added') console.log(`${change.doc.id} - added`)
-            if (change.type === 'modified') console.log(`${change.doc.id} - changed`)
-            if (change.type === 'removed') console.log(`${change.doc.id} - removed`)
+        .onSnapshot(querySnapShot => {
+          let newTeams = [...teams];
+          querySnapShot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              let addedTeam = change.doc.data();
+              // add to teams if not included
+              if (newTeams.findIndex(team => team._id === addedTeam._id) === -1) {
+                if (!addedTeam.deleted) {
+                  newTeams.push(addedTeam);
+                  setTeams(newTeams);
+                  console.log(`${addedTeam.name} - added`)
+                }
+              }
+            }
+            if (change.type === 'modified') {
+              let changedTeam = change.doc.data();
+              let newTeams = [...teams];
+              let changeInd = newTeams.findIndex(team => team._id === changedTeam._id);
+              // check if deleted and remove from state
+              if (changedTeam.deleted) {
+                if (changeInd !== -1) {
+                  newTeams.splice(changeInd, 1);
+                  setTeams(newTeams);
+                }
+              } else { // update the team info for other changes
+                // add to state if not included
+                if (changeInd === -1) {
+                  newTeams.push(changedTeam);
+                } else {
+                  newTeams[changeInd] = changedTeam;
+                }
+                setTeams(newTeams);
+              }
+              console.log(`${change.doc.id} - changed`)
+            }
+            if (change.type === 'removed') {
+              let changedTeam = change.doc.data();
+              let changeInd = newTeams.findIndex(team => team._id === changedTeam._id);
+              newTeams.splice(changeInd, 1);
+              setTeams(newTeams);
+              console.log(`${change.doc.id} - removed`)
+            }
           })
-        })
-      updateGames = db.collection('games')
-        .onSnapshot(snapShot => {
-          console.log('Games Changed')
         })
       updateUser = db.collection('users').doc(user.uid)
         .onSnapshot((doc) => {
-          console.log('firestore snapshot read')
           setDbUser(doc.data())
         })
     }
@@ -241,11 +265,10 @@ function App() {
       if (updateUser !== null) {
         console.log('Removing snapshot listeners')
         updateUser();
-        updateGames();
         updateTeams();
       }
     }
-  }, [user])
+  }, [user, teams])
 
   useEffect(() => {
     // show toast for successful update
@@ -283,9 +306,6 @@ function App() {
 
   // save game variables to localstorage to allow continuation of games on page reload
   useEffect(() => {
-    localStorage.setItem('activePoint', activePoint);
-    localStorage.setItem('activeTimeOut', activeTimeOut);
-    localStorage.setItem('activeGame', activeGame);
     localStorage.setItem('gameTime', gameTime);
     localStorage.setItem('gameTimeSecs', gameTimeSecs);
     localStorage.setItem('darkTeam', darkTeam);
@@ -304,48 +324,40 @@ function App() {
     localStorage.setItem('paused', paused);
     localStorage.setItem('showStatSetup', showStatSetup);
     localStorage.setItem('showSubSetup', showSubSetup);
-    localStorage.setItem('teams', JSON.stringify(teams));
     localStorage.setItem('subStats', JSON.stringify(subStats));
     localStorage.setItem('subInSelected', subInSelected);
     localStorage.setItem('subOutSelected', subOutSelected);
     localStorage.setItem('subPlayerSelected', subPlayerSelected);
     localStorage.setItem('subHistory', JSON.stringify(subHistory));
-  }, [activeGame,
-      activePoint,
-      activeTimeOut,
-      darkTeam,
-      dbUser,
-      fetchedGames,
-      gameFinished,
-      gameHistory,
-      gameLength,
-      gameStarted, 
-      gameTime,
-      gameTimeSecs,
-      lightTeam,
-      offense,
-      paused,
-      playerStats,
-      score,
-      showStatSetup,
-      showSubSetup,
-      statTeam,
-      subHistory,
-      subInSelected,
-      subOutSelected,
-      subPlayerSelected,
-      subStats,
-      teams,
-      testGame]);
-
-  // set the game clock to initial value when gameLength changes
-  useEffect(() => {
-    setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
-  }, [gameLength])
+  }, [
+    darkTeam,
+    dbUser,
+    fetchedGames,
+    gameFinished,
+    gameHistory,
+    gameLength,
+    gameStarted,
+    gameTime,
+    gameTimeSecs,
+    lightTeam,
+    offense,
+    paused,
+    playerStats,
+    score,
+    showStatSetup,
+    showSubSetup,
+    statTeam,
+    subHistory,
+    subInSelected,
+    subOutSelected,
+    subPlayerSelected,
+    subStats,
+    testGame]);
 
   // finish the game setup and set state for stat taking
   const finishSetup = (time, dark, light, statTeam, offense) => {
     setGameLength(parseInt(time));
+    setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
     setDarkTeam(dark);
     setLightTeam(light);
     setStatTeam(statTeam);
@@ -390,7 +402,6 @@ function App() {
     toast.dismiss();
     localStorage.removeItem('activePoint');
     localStorage.removeItem('activeTimeOut');
-    localStorage.removeItem('activeGame');
     localStorage.removeItem('gameTime');
     localStorage.removeItem('gameTimeSecs');
     localStorage.removeItem('darkTeam');
@@ -418,6 +429,7 @@ function App() {
 
   const resetGame = () => {
     setGameLength(25);
+    setGameTimeSecs(0);
     gameTimer.current.stop();
     setDarkTeam('');
     setLightTeam('');
@@ -433,7 +445,6 @@ function App() {
     setSubPlayerSelected('');
     setSubInSelected(false);
     setSubOutSelected(false);
-    setGameTime('25:00');
     setPaused(false);
     setTestGame(false);
     setScore({
@@ -446,7 +457,7 @@ function App() {
     let gameDate = new Date();
     let gameDetails = {
       _id: gameDate.toISOString(),
-      date: gameDate,
+      date: Timestamp.fromDate(gameDate),
       docType: gameType,
       darkTeam: darkTeam,
       lightTeam: lightTeam,
@@ -578,7 +589,12 @@ function App() {
               gameTime={gameTime}
               startTimer={() => {
                 if (gameFinished) return;
-                gameTimer.current.start({ startValues: { minutes: gameLength } })
+                gameTimer.current.start({
+                  startValues: {
+                    minutes: parseInt(gameTime.split(':')[0]),
+                    seconds: parseInt(gameTime.split(':')[1])
+                  }
+                })
                 setPaused(false);
                 if (!gameStarted && !gameFinished) {
                   setGameStarted(true);

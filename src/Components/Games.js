@@ -43,7 +43,7 @@ const GameCard = (props) => {
     const [note, setNote] = useState('');
 
     let game = props.game;
-    let gameDate = new Date(game.date);
+    let gameDate = game.date.toDate();
 
     const generateFileName = (str) => {
         return `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}-${game.darkTeam}-vs-${game.lightTeam}-${str}-${game.statTeam}.csv`
@@ -62,7 +62,7 @@ const GameCard = (props) => {
     return (
         <div className='card game-list-card'>
             <div className='game-list-info'>
-                <span>{new Date(game.date).toDateString()}</span>
+                <span>{game.date.toDate().toDateString()}</span>
                 <span>{`Stat Taker: ${game.statTaker}`}</span>
             </div>
             <div className='game-list-info'>
@@ -250,7 +250,7 @@ const CombinedCSV = (props) => {
 
     for (let game of props.games) {
         if (!game.playerStats) continue;
-        let gameDate = new Date(game.date);
+        let gameDate = game.date.toDate();
         dateOptions.add(gameDate.toDateString());
     }
 
@@ -266,7 +266,7 @@ const CombinedCSV = (props) => {
         setCSVDate(e.target.value);
         let newCombinedStats = [];
         for (let game of props.games) {
-            let gameDate = new Date(game.date).toDateString();
+            let gameDate = game.date.toDate().toDateString();
             if (gameDate === e.target.value && game.playerStats) {
                 for (let stat of game.playerStats) {
                     if (!stat.GM) stat.GM = '';
@@ -329,11 +329,6 @@ export default function Games(props) {
         props.setAllGameHistory(newAllHistory);
         // save to the DB
         let gameRef = db.collection('games').doc(id);
-
-        gameRef.get().then(doc => {
-          if (doc.exists) console.log(doc.data);
-          else console.log('No document');
-        }).catch(err => console.log(err));
 
         gameRef.update({
             deleted: true
