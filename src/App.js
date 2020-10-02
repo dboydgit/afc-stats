@@ -129,7 +129,7 @@ function App() {
   // show service worker toast on first install
   useEffect(() => {
     if (serviceWorkerInit) {
-      toast.success('App available for offline use.')
+      console.log('App available for offline use.')
     }
   }, [serviceWorkerInit]);
 
