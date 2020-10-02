@@ -2,7 +2,7 @@
   "name": "afc-stats",
   "version": "1.0.0",
   "private": true,
-  "homepage": "/",
+  "homepage": "https://afc-stats.netlify.app",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
