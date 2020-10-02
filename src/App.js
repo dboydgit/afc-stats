@@ -680,12 +680,12 @@ function App() {
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/games'>
-          <Games
+          {user ? <Games
             allGameHistory={fetchedGames}
             setAllGameHistory={setFetchedGames}
             db={db}
             teams={teams}
-          />
+          /> : <Redirect to='/' />}
         </Route>
       </Switch>
       <div className='bottom-nav'>
