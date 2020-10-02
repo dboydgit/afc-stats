@@ -2,7 +2,7 @@
   "name": "afc-stats",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://dboydgit.github.io/afc-stats/",
+  "homepage": "/",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
