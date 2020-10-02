@@ -127,7 +127,7 @@ const GameCard = (props) => {
                         <button
                             className='btn btn-del game-list-btn'
                             onClick={() => {
-                                props.toggleDeleteGame(game.date);
+                                props.toggleDeleteGame(game._id);
                                 toast.error(
                                     <DelToast
                                         game={game}
@@ -317,7 +317,7 @@ export default function Games(props) {
 
     const [showCombinedCSV, setShowCombinedCSV] = useState(false);
 
-    let db = props.localDB;
+    let db = props.db;
 
     const toggleDeleteGame = (id) => {
         // update local state
@@ -328,13 +328,18 @@ export default function Games(props) {
         }
         props.setAllGameHistory(newAllHistory);
         // save to the DB
-        db.get(id).then(doc => {
-            doc.deleted = !doc.deleted;
-            return db.put(doc);
-        }).then(res => console.log(res))
-            .catch(err => {
-                console.log(err);
-            })
+        let gameRef = db.collection('games').doc(id);
+
+        gameRef.get().then(doc => {
+          if (doc.exists) console.log(doc.data);
+          else console.log('No document');
+        }).catch(err => console.log(err));
+
+        gameRef.update({
+            deleted: true
+          })
+          .then(_ => console.log('Game Deleted'))
+          .catch(err => console.log(err))
     }
 
     const updateGame = (game) => {
@@ -343,6 +348,10 @@ export default function Games(props) {
         let gameInd = newGames.findIndex(el => el._id === game._id);
         newGames[gameInd] = game;
         props.setAllGameHistory(newGames);
+        db.collection('games').doc(game._id)
+          .update({
+            notes: game.notes
+          })
         db.get(game._id).then(doc => {
             doc.notes = game.notes;
             return db.put(doc);

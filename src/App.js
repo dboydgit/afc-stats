@@ -86,16 +86,15 @@ function App() {
   const [darkTeam, setDarkTeam] = useState(localStorage.getItem('darkTeam') || '') //test str Dark
   const [dbUser, setDbUser] = useState(null);
   const [fetchedGames, setFetchedGames] = useState([]);
-  const [fetchedTeams, setFetchedTeams] = useState([]);
   const [gameFinished, setGameFinished] = useState(localStorage.getItem('gameFinished') === 'true');
   const [gameLength, setGameLength] = useState(localStorage.getItem('gameLength') || 25); //1 for testing
   const [gameStarted, setGameStarted] = useState(localStorage.getItem('gameStarted') === 'true');
-  const [gameHistory, setGameHistory] = useState(localStorage.getItem('gameHistory') || []);
+  const [gameHistory, setGameHistory] = useState(JSON.parse(localStorage.getItem('gameHistory')) || []);
   const [lightTeam, setLightTeam] = useState(localStorage.getItem('lightTeam') || ''); // test str Light Team
   const [offense, setOffense] = useState(localStorage.getItem('offense') === 'true');
-  const [playerStats, setPlayerStats] = useState(localStorage.getItem('playerStats') || []);
+  const [playerStats, setPlayerStats] = useState(JSON.parse(localStorage.getItem('playerStats')) || []);
   // hardcode playerStats for testing {"name":"Luke","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player2","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player3","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player4","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player5","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player6","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player7","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player8","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player9","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0},{"name":"Player10","Touch":0,"Assist":0,"Point":0,"T-Away":0,"Drop":0,"D-Play":0,"GSO":0,"GSO-Mark":0}
-  const [score, setScore] = useState(localStorage.getItem('score') || {
+  const [score, setScore] = useState(JSON.parse(localStorage.getItem('score')) || {
     'dark': 0,
     'light': 0
   });
@@ -110,7 +109,7 @@ function App() {
   // don't need? const [userID, setUserID] = useState(localStorage.getItem('userID') || '');
 
   // state for sub page
-  const [subStats, setSubStats] = useState(localStorage.getItem('subStats') || []);
+  const [subStats, setSubStats] = useState(JSON.parse(localStorage.getItem('subStats')) || []);
   // hardcode subStats for testing {"name":"Luke","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player2","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player3","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player4","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player5","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player6","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player7","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player8","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player9","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false},{"name":"Player10","timeOnField":0,"lastTimeIn":null,"chosen":false,"selected":false}
   const [subInSelected, setSubInSelected] = useState(localStorage.getItem('subInSelected') === 'true');
   const [subOutSelected, setSubOutSelected] = useState(localStorage.getItem('subOutSelected') === 'true');
@@ -167,7 +166,7 @@ function App() {
 
   const loadUser = useCallback(() => {
     // get user from localStorage if loaded already
-    if (localStorage.getItem('dbUser') !== 'null') {
+    if (localStorage.getItem('dbUser') !== 'null' && localStorage.getItem('dbUser') !== 'undefined') {
       return
     }
     // get the user from the db and load into state
@@ -181,7 +180,7 @@ function App() {
           console.log('User fetched from database')
         } else {
           let newDbUser = {
-            creationTime: user.metadata.creationTime,
+            creationTime: user.createdAt,
             email: user.email,
             name: user.displayName || '',
             profileURL: user.photoURL || defaultProfile,
@@ -197,9 +196,41 @@ function App() {
 
   // listen for realtime updates to dbUser if loaded
   useEffect(() => {
+    // get the teams
+    let newTeams = [];
+    let newGames = [];
+    db.collection('teams').get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          newTeams.push(doc.data());
+        })
+        setTeams(newTeams);
+      })
+    db.collection('games').limit(20).get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          newGames.push(doc.data());
+        })
+        setFetchedGames(newGames);
+      })
+    // add listeners
     let updateUser = null;
+    let updateTeams = null;
+    let updateGames = null;
     if (user) {
-      console.log('Adding snapshot listener')
+      console.log('Adding snapshot listeners')
+      updateTeams = db.collection('teams')
+        .onSnapshot(snapShot => {
+          snapShot.docChanges().forEach(change => {
+            if (change.type === 'added') console.log(`${change.doc.id} - added`)
+            if (change.type === 'modified') console.log(`${change.doc.id} - changed`)
+            if (change.type === 'removed') console.log(`${change.doc.id} - removed`)
+          })
+        })
+      updateGames = db.collection('games')
+        .onSnapshot(snapShot => {
+          console.log('Games Changed')
+        })
       updateUser = db.collection('users').doc(user.uid)
         .onSnapshot((doc) => {
           console.log('firestore snapshot read')
@@ -208,8 +239,10 @@ function App() {
     }
     return () => {
       if (updateUser !== null) {
-        console.log('Removing snapshot listener')
+        console.log('Removing snapshot listeners')
         updateUser();
+        updateGames();
+        updateTeams();
       }
     }
   }, [user])
@@ -233,7 +266,7 @@ function App() {
         setUser(user);
         setDbUser(null);
         setFetchedGames([]);
-        setFetchedTeams([]);
+        setTeams([]);
         removeLocalGame();
       }
     })
@@ -258,7 +291,6 @@ function App() {
     localStorage.setItem('darkTeam', darkTeam);
     localStorage.setItem('dbUser', JSON.stringify(dbUser));
     localStorage.setItem('fetchedGames', JSON.stringify(fetchedGames))
-    localStorage.setItem('fetchedTeams', JSON.stringify(fetchedTeams))
     localStorage.setItem('gameFinished', gameFinished)
     localStorage.setItem('gameLength', gameLength)
     localStorage.setItem('gameStarted', gameStarted)
@@ -284,7 +316,6 @@ function App() {
       darkTeam,
       dbUser,
       fetchedGames,
-      fetchedTeams,
       gameFinished,
       gameHistory,
       gameLength,
@@ -547,21 +578,21 @@ function App() {
               gameTime={gameTime}
               startTimer={() => {
                 if (gameFinished) return;
-                gameTimer.start({ startValues: { minutes: gameLength } })
+                gameTimer.current.start({ startValues: { minutes: gameLength } })
                 setPaused(false);
                 if (!gameStarted && !gameFinished) {
                   setGameStarted(true);
-                  gameTimer.addEventListener('targetAchieved', (e) => {
+                  gameTimer.current.addEventListener('targetAchieved', (e) => {
                     console.log('Time Finished');
                     setPaused(true);
                     setGameFinished(true);
                   })
                 }
               }}
-              pauseTimer={() => gameTimer.pause()}
-              stopTimer={() => gameTimer.stop()}
+              pauseTimer={() => gameTimer.current.pause()}
+              stopTimer={() => gameTimer.current.stop()}
               resetTimer={() => {
-                gameTimer.reset()
+                gameTimer.current.reset()
                 setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
               }}
               paused={paused}
@@ -591,11 +622,11 @@ function App() {
               gameTime={gameTime}
               startTimer={() => {
                 if (gameFinished) return;
-                gameTimer.start({ startValues: { minutes: gameLength } });
+                gameTimer.current.start({ startValues: { minutes: gameLength } });
                 setPaused(false);
                 if (!gameStarted && !gameFinished) {
                   setGameStarted(true);
-                  gameTimer.addEventListener('targetAchieved', (e) => {
+                  gameTimer.current.addEventListener('targetAchieved', (e) => {
                     console.log('Time Finished');
                     setPaused(true);
                     setGameFinished(true);
@@ -603,10 +634,10 @@ function App() {
                   initSubHistory();
                 }
               }}
-              pauseTimer={() => gameTimer.pause()}
-              stopTimer={() => gameTimer.stop()}
+              pauseTimer={() => gameTimer.current.pause()}
+              stopTimer={() => gameTimer.current.stop()}
               resetTimer={() => {
-                gameTimer.reset()
+                gameTimer.current.reset()
                 setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
               }}
               paused={paused}
@@ -629,14 +660,14 @@ function App() {
             <Teams
               teams={teams}
               setTeams={setTeams}
-              localDB={db}
+              db={db}
             /> : <Redirect to='/' />}
         </Route>
         <Route path='/games'>
           <Games
             allGameHistory={fetchedGames}
             setAllGameHistory={setFetchedGames}
-            localDB={db}
+            db={db}
             teams={teams}
           />
         </Route>
