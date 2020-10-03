@@ -38,7 +38,7 @@ const Slide = cssTransition({
   duration: [500, 100]
 })
 
-const firebaseConfig = {
+let firebaseConfig = {
   apiKey: "AIzaSyCrkAF4y3mmQsutAmonYLVmJbhUQiYHe98",
   authDomain: "afcpl-stats.firebaseapp.com",
   databaseURL: "https://afcpl-stats.firebaseio.com",
@@ -48,6 +48,19 @@ const firebaseConfig = {
   appId: "1:776486237669:web:cc37c431513793409feb0c",
   measurementId: "G-CC84WXERHT"
 };
+
+if (process.env.REACT_APP_ENV === 'staging') {
+  firebaseConfig = {
+    apiKey: "AIzaSyDR3HjhpgdbByApMwFsMhN4pqbapKXOk9o",
+    authDomain: "afcpl-stats-staging.firebaseapp.com",
+    databaseURL: "https://afcpl-stats-staging.firebaseio.com",
+    projectId: "afcpl-stats-staging",
+    storageBucket: "afcpl-stats-staging.appspot.com",
+    messagingSenderId: "929297586839",
+    appId: "1:929297586839:web:e82366ea65c8a457b7e7d2",
+    measurementId: "G-X5EY3MEEL8"
+  }
+}
 
 const uiConfig = {
   signInOptions: [
