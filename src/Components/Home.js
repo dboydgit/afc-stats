@@ -18,7 +18,6 @@ export default function Home(props) {
         {props.dbUser &&
           <>
             <p>{`Welcome, ${props.dbUser.name || props.dbUser.email}`}</p>
-            <p>Test Staging...</p>
             <div className="home-btn-group">
               <Link
                 className='btn'
