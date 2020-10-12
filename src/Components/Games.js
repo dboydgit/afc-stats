@@ -319,6 +319,32 @@ export default function Games(props) {
 
     let db = props.db;
 
+    const getGames = () => {
+      let newGames = [...props.allGameHistory];
+      db.collection('games').orderBy('date').startAfter(props.allGameHistory[0].date)
+        .get()
+        .then(results => results.forEach(res => {
+          newGames.unshift(res.data());
+        }))
+        .then(props.setAllGameHistory(newGames));
+    }
+
+    const loadMoreGames = () => {
+      let newGames = [...props.allGameHistory];
+      db.collection('games').orderBy('date', 'desc')
+        .startAfter(props.lastGame)
+        .limit(10)
+        .get()
+        .then(snap => {
+          snap.forEach(doc => {
+            newGames.push(doc.data());
+          })
+          snap.docs.length === 10 ? props.setLastGame(snap.docs[snap.docs.length - 1]) :
+            props.setLastGame(null);
+          props.setAllGameHistory(newGames);
+        })
+    }
+
     const toggleDeleteGame = (id) => {
         // update local state
         let newAllHistory = [...props.allGameHistory];
@@ -363,12 +389,15 @@ export default function Games(props) {
         <div className='App'>
             <h1 className='page-header'>
                 <div>Recorded Games</div>
-                <button className='btn game-list-btn combined-csv-btn'
+                <button className='btn game-list-btn header-btn'
                     onClick={toggleCombinedCSV}>
                     Combined CSV
                     {!showCombinedCSV && <i className="material-icons md-18">arrow_drop_down</i>}
                     {showCombinedCSV && <i className="material-icons md-18">arrow_drop_up</i>}
                 </button>
+                <button className='btn game-list-btn header-btn'
+                  onClick={getGames}
+                >Refresh <i className="material-icons md-18">autorenew</i></button>
             </h1>
             {showCombinedCSV &&
                 <CombinedCSV games={props.allGameHistory} teams={props.teams} />
@@ -378,6 +407,12 @@ export default function Games(props) {
                 updateGame={updateGame}
                 toggleDeleteGame={toggleDeleteGame}
             />
+            {props.lastGame && 
+              <button className='btn game-list-btn'
+                onClick={loadMoreGames}
+                style={{marginBottom: '1rem'}}
+              >Load More <i className='material-icons md-18'>get_app</i></button>
+            }
         </div>
     )
 }
