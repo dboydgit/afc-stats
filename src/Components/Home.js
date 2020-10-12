@@ -10,7 +10,7 @@ export default function Home(props) {
 
   return (
     <div className='App'>
-      <Header />
+      <Header firebaseApp={props.firebaseApp}/>
       <div className='home-content'>
         {!props.dbUser &&
           <StyledFirebaseAuth uiConfig={props.uiConfig} firebaseAuth={props.firebaseApp.auth()} />
