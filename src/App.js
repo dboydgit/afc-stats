@@ -102,6 +102,7 @@ function App() {
   const [gameLength, setGameLength] = useState(localStorage.getItem('gameLength') || 25); //1 for testing
   const [gameStarted, setGameStarted] = useState(localStorage.getItem('gameStarted') === 'true');
   const [gameHistory, setGameHistory] = useState(JSON.parse(localStorage.getItem('gameHistory')) || []);
+  const [lastGame, setLastGame] = useState(null);
   const [lightTeam, setLightTeam] = useState(localStorage.getItem('lightTeam') || ''); // test str Light Team
   const [offense, setOffense] = useState(localStorage.getItem('offense') === 'true');
   const [playerStats, setPlayerStats] = useState(JSON.parse(localStorage.getItem('playerStats')) || []);
@@ -207,13 +208,14 @@ function App() {
   useEffect(() => {
     if (!user) return;
     let newGames = [];
-    db.collection('games').orderBy('date', 'desc').limit(20).get()
+    db.collection('games').orderBy('date', 'desc').limit(10).get()
       .then(querySnapshot => {
+        if (querySnapshot.docs.length === 10) setLastGame(querySnapshot.docs[querySnapshot.docs.length - 1]);
         querySnapshot.forEach(doc => {
           newGames.push(doc.data());
         })
         setFetchedGames(newGames);
-        console.log('First 20 Games Loaded');
+        console.log('First 10 Games Loaded');
       })
   }, [user])
 
@@ -696,7 +698,9 @@ function App() {
           {user ? <Games
             allGameHistory={fetchedGames}
             db={db}
+            lastGame={lastGame}
             setAllGameHistory={setFetchedGames}
+            setLastGame={setLastGame}
             teams={teams}
           /> : <Redirect to='/' />}
         </Route>
