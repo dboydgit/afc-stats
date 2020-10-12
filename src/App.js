@@ -213,7 +213,7 @@ function App() {
           newGames.push(doc.data());
         })
         setFetchedGames(newGames);
-        console.log('First 20 Games Loaded')
+        console.log('First 20 Games Loaded');
       })
   }, [user])
 
@@ -695,8 +695,8 @@ function App() {
         <Route path='/games'>
           {user ? <Games
             allGameHistory={fetchedGames}
-            setAllGameHistory={setFetchedGames}
             db={db}
+            setAllGameHistory={setFetchedGames}
             teams={teams}
           /> : <Redirect to='/' />}
         </Route>
