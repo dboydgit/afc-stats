@@ -1,7 +1,16 @@
 h1 {
   font-size: 1.5rem;
+  text-align: initial;
+  margin-left: 1rem;
 }
 
 .app-header {
+  width: 100%;
   justify-self: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.logout-btn {
+  align-self: flex-end;
 }
