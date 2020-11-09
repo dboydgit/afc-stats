@@ -1,89 +1,89 @@
 .combined-csv-options {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
 }
 
 .game-list-card {
-    padding: 0.5rem;
+  padding: 0.5rem;
 }
 
 .game-list-info {
-    display: flex;
-    justify-content: space-between;
-    margin: 0.2rem;
+  display: flex;
+  justify-content: space-between;
+  margin: 0.2rem;
 }
 
 .game-score {
-    display: flex;
-    justify-content: space-evenly;
-    margin: 0.5rem 0;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0.5rem 0;
 }
 
 .score-card-games {
-    margin: 0 0.5rem;
+  margin: 0 0.5rem;
 }
 
 .game-list-btns {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: stretch;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: stretch;
 }
 
 .game-list-btn {
-    display: flex;
-    align-self: center;
-    margin: 0.5rem 0.25rem 0.25rem 0.25rem;
-    font-size: 12px;
-    align-items: center;
+  display: flex;
+  align-self: center;
+  margin: 0.5rem 0.25rem 0.25rem 0.25rem;
+  font-size: 12px;
+  align-items: center;
 }
 
 .header-btn {
-    margin: 0;
+  margin: 0;
 }
 
 .stat-table-title {
-    margin: 1rem 0 0.5rem 0;
-    font-weight: bold;
-    text-decoration: underline;
+  margin: 1rem 0 0.5rem 0;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .stat-table tr:nth-child(even) {
-    background-color: #eee;
+  background-color: #eee;
 }
 
 @media screen and (max-width: 600px) {
-    .game-list-card {
-        font-size: small;
-    }
-    .stat-table {
-        font-size: x-small;
-    }
+  .game-list-card {
+    font-size: small;
+  }
+  .stat-table {
+    font-size: x-small;
+  }
 }
 
 .game-card-btns {
-    display: flex;
-    justify-content: space-evenly;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .note-input {
-    border-color: var(--primary);
-    border-radius: 4px;
-    width: 80%;
-    height: 4rem;
-    margin-top: 0.25rem;
+  border-color: var(--primary);
+  border-radius: 4px;
+  width: 80%;
+  height: 4rem;
+  margin-top: 0.25rem;
 }
 
 .card-notes {
-    text-align: left;
-    padding: 0.25rem;
+  text-align: left;
+  padding: 0.25rem;
 }
 
 .card-note-title {
-    text-decoration: underline;
-    font-weight: bold;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .card-note {
-    margin: 0.5rem 0;
+  margin: 0.5rem 0;
 }

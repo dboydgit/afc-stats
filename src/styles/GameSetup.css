@@ -1,48 +1,47 @@
 .game-setup {
-    width: calc(95% - 2rem);
-    align-items: center;
-    margin-top: 1rem;
+  width: calc(95% - 2rem);
+  align-items: center;
+  margin-top: 1rem;
 }
 
 .game-setup > label {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .stat-reminder {
-    background-color: var(--secondary-light);
-    padding: 0.5rem;
-    border: 1px solid black;
-    border-radius: 8px;
-    margin: 0.5rem;
-    font-weight: bold;
+  background-color: var(--secondary-light);
+  padding: 0.5rem;
+  border: 1px solid black;
+  border-radius: 8px;
+  margin: 0.5rem;
+  font-weight: bold;
 }
 
 .stat-reminder-title {
-    text-decoration: underline;
-    margin-bottom: 0.25rem;
+  text-decoration: underline;
+  margin-bottom: 0.25rem;
 }
 
 .form-err {
-    color: var(--delete);
-    
+  color: var(--delete);
 }
 
 #setup-title {
-    color: var(--primary);
-    margin: 0.5rem 0 0 0;
+  color: var(--primary);
+  margin: 0.5rem 0 0 0;
 }
 
 label {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 select {
-    height: 2rem;
-    min-width: 50%;
+  height: 2rem;
+  min-width: 50%;
 }
 
 #test-game-checkbox {
-    display: flex;
-    align-items: center;
-    margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
 }

@@ -1,13 +1,13 @@
 :root {
-    max-width: 750px;
-    margin: auto;
-    /* Colors */
-    --primary: #2962ff;
-    --primary-dark: #0039cb;
-    --primary-light: #768fff;
-    --secondary: #ffd600;
-    --secondary-dark: #c7a500;
-    --secondary-light: #ffff52;
-    --delete: #c62828;
-    --main-bg: #fafafa;
-  }
+  max-width: 750px;
+  margin: auto;
+  /* Colors */
+  --primary: #2962ff;
+  --primary-dark: #0039cb;
+  --primary-light: #768fff;
+  --secondary: #ffd600;
+  --secondary-dark: #c7a500;
+  --secondary-light: #ffff52;
+  --delete: #c62828;
+  --main-bg: #fafafa;
+}
