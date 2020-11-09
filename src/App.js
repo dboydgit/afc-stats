@@ -98,6 +98,7 @@ function App() {
   const [dbUser, setDbUser] = useState(null);
   const [fetchedGames, setFetchedGames] = useState([]);
   const [gameFinished, setGameFinished] = useState(localStorage.getItem('gameFinished') === 'true');
+  const [gameFormat, setGameFormat] = useState(6); // number of players per team, default 6
   const [gameLength, setGameLength] = useState(localStorage.getItem('gameLength') || 25); //1 for testing
   const [gameStarted, setGameStarted] = useState(localStorage.getItem('gameStarted') === 'true');
   const [gameHistory, setGameHistory] = useState(
@@ -348,6 +349,7 @@ function App() {
     localStorage.setItem('dbUser', JSON.stringify(dbUser));
     localStorage.setItem('fetchedGames', JSON.stringify(fetchedGames));
     localStorage.setItem('gameFinished', gameFinished);
+    localStorage.setItem('gameFormat', gameFormat);
     localStorage.setItem('gameLength', gameLength);
     localStorage.setItem('gameStarted', gameStarted);
     localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
@@ -370,6 +372,7 @@ function App() {
     dbUser,
     fetchedGames,
     gameFinished,
+    gameFormat,
     gameHistory,
     gameLength,
     gameStarted,
@@ -392,12 +395,13 @@ function App() {
   ]);
 
   // finish the game setup and set state for stat taking
-  const finishSetup = (time, dark, light, statTeam, offense) => {
+  const finishSetup = (time, dark, light, statTeam, offense, gameFormat) => {
     setGameLength(parseInt(time));
     setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
     setDarkTeam(dark);
     setLightTeam(light);
     setStatTeam(statTeam);
+    setGameFormat(parseInt(gameFormat[0]));
     let opponent = statTeam === dark ? light : dark;
     let opponentTeam = teams.find((team) => team.name === opponent);
     offense === 'subs' ? setShowSubSetup(false) : setShowStatSetup(false);
@@ -443,6 +447,7 @@ function App() {
     localStorage.removeItem('gameTimeSecs');
     localStorage.removeItem('darkTeam');
     localStorage.removeItem('gameFinished');
+    localStorage.removeItem('gameFormat');
     localStorage.removeItem('gameLength');
     localStorage.removeItem('gameStarted');
     localStorage.removeItem('gameHistory');
@@ -676,6 +681,7 @@ function App() {
               setTestGame={setTestGame}
               showSubSetup={showSubSetup}
               showStatSetup={showStatSetup}
+              gameFormat={gameFormat}
               gameLength={gameLength}
               gameTime={gameTime}
               startTimer={() => {

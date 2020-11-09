@@ -16,7 +16,7 @@ const SortableList = SortableContainer(({ props }) => {
           index={index}
           key={index}
           props={props}
-          disabled={index < 4 ? true : false}
+          disabled={index < props.numPlayers ? true : false}
         />
       ))}
     </div>
@@ -24,11 +24,15 @@ const SortableList = SortableContainer(({ props }) => {
 });
 
 const SortableItem = SortableElement(({ player, ind, props }) => {
+  const numPlayers = props.numPlayers;
   return (
-    <div className="player-input sub-player">
+    <div
+      className={`player-input sub-player`}
+      style={ind === numPlayers - 1 ? { marginBottom: '3rem' } : {}}
+    >
       <div className={`player-name sub-name ${props.darkTeam === props.statTeam ? 'dark' : ''}`}>
         <span className="player-text">{player.name}</span>
-        {ind < 4 ? (
+        {ind < numPlayers ? (
           <span>{`Point: ${
             player.lastTimeIn ? timeOnPoint(player.lastTimeIn, props.gameTime) : '0:00'
           }`}</span>
@@ -36,7 +40,7 @@ const SortableItem = SortableElement(({ player, ind, props }) => {
           <span>{`Total: ${timeToMinSec(player.timeOnField)}`}</span>
         )}
       </div>
-      {ind < 4 && (
+      {ind < numPlayers && (
         <button
           className={`btn sub-btn ${props.subPlayerSelected === player.name ? 'btn-sec' : ''}`}
           onClick={() => props.handleOut(player)}
@@ -44,7 +48,7 @@ const SortableItem = SortableElement(({ player, ind, props }) => {
           Sub Out
         </button>
       )}
-      {ind >= 4 && (
+      {ind >= numPlayers && (
         <>
           <DragHandle />
           <button
@@ -61,7 +65,7 @@ const SortableItem = SortableElement(({ player, ind, props }) => {
 
 export default function SubPlayerList(props) {
   const onSortEnd = ({ oldIndex, newIndex }) => {
-    if (newIndex < 4) return;
+    if (newIndex < props.numPlayers) return;
     let updatedStats = arrayMove(props.subStats, oldIndex, newIndex);
     props.setSubStats(updatedStats);
   };

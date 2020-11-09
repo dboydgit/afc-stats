@@ -203,6 +203,7 @@ export default function Subs(props) {
             subPlayerSelected={props.subPlayerSelected}
             gameLength={props.gameLength}
             gameTime={props.gameTime}
+            numPlayers={props.gameFormat}
           />
           {!showAddPlayer && (
             <button className="btn stat-btn stat-btn-after" onClick={() => setShowAddPlayer(true)}>

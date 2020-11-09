@@ -8,6 +8,7 @@ export default function GameSetup(props) {
   const [statTeam, setStatTeam] = useState('');
   const [offence, setOffence] = useState('');
   const [error, setError] = useState('');
+  const [gameFormat, setGameFormat] = useState('6v6');
 
   let teamNames = [<option value="" key=""></option>];
   for (let team of props.teams) {
@@ -39,7 +40,7 @@ export default function GameSetup(props) {
     } else {
       offenceBool = 'subs';
     }
-    props.finishSetup(time, dark, light, statTeam, offenceBool);
+    props.finishSetup(time, dark, light, statTeam, offenceBool, gameFormat);
   };
 
   const handleCheck = (e) => {
@@ -88,6 +89,18 @@ export default function GameSetup(props) {
             <option></option>
             <option>{`${dark}`}</option>
             <option>{`${light}`}</option>
+          </select>
+        </>
+      )}
+      {!props.forStats && (
+        <>
+          <label htmlFor="game-format">Game Format</label>
+          <select name="game-format" value={gameFormat} onChange={(e) => setGameFormat(e.target.value)}>
+            <option>{`3v3`}</option>
+            <option>{`4v4`}</option>
+            <option>{`5v5`}</option>
+            <option>{`6v6`}</option>
+            <option>{`7v7`}</option>
           </select>
         </>
       )}
