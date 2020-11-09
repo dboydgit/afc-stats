@@ -1,68 +1,69 @@
 .add-team-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .team-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .team-name {
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    font-size: x-large;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-size: x-large;
 }
 
 .card-info {
-    margin-top: 0.5rem;;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--primary);
-    font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--primary);
+  font-size: 0.9rem;
 }
 
 .card-link {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .card-link > i {
-    margin: 0.5rem;
+  margin: 0.5rem;
 }
 
 .nmt {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .team-btn {
-    margin: 0.5rem;
+  margin: 0.5rem;
 }
 
 .player-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.player-del, .handle {
-    color: var(--primary-dark);
-    margin: 0 0.5rem;
+.player-del,
+.handle {
+  color: var(--primary-dark);
+  margin: 0 0.5rem;
 }
 
 .handle {
-    cursor: move;
+  cursor: move;
 }
 
 .player-sort-btn {
-    display: flex;
-    align-items: center;
-    margin: 0 0.5rem 0 0;
-    padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  margin: 0 0.5rem 0 0;
+  padding: 0.25rem 0.5rem;
 }

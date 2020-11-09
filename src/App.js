@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-  NavLink
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect, NavLink } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import Timer from 'easytimer.js';
 import { ToastContainer, cssTransition, toast } from 'react-toastify';
@@ -35,31 +29,31 @@ const Timestamp = firebase.firestore.Timestamp;
 const Slide = cssTransition({
   enter: 'toast-in',
   exit: 'toast-out',
-  duration: [500, 100]
-})
+  duration: [500, 100],
+});
 
 let firebaseConfig = {
-  apiKey: "AIzaSyCrkAF4y3mmQsutAmonYLVmJbhUQiYHe98",
-  authDomain: "afcpl-stats.firebaseapp.com",
-  databaseURL: "https://afcpl-stats.firebaseio.com",
-  projectId: "afcpl-stats",
-  storageBucket: "afcpl-stats.appspot.com",
-  messagingSenderId: "776486237669",
-  appId: "1:776486237669:web:cc37c431513793409feb0c",
-  measurementId: "G-CC84WXERHT"
+  apiKey: 'AIzaSyCrkAF4y3mmQsutAmonYLVmJbhUQiYHe98',
+  authDomain: 'afcpl-stats.firebaseapp.com',
+  databaseURL: 'https://afcpl-stats.firebaseio.com',
+  projectId: 'afcpl-stats',
+  storageBucket: 'afcpl-stats.appspot.com',
+  messagingSenderId: '776486237669',
+  appId: '1:776486237669:web:cc37c431513793409feb0c',
+  measurementId: 'G-CC84WXERHT',
 };
 
 if (process.env.REACT_APP_ENV === 'staging') {
   firebaseConfig = {
-    apiKey: "AIzaSyDR3HjhpgdbByApMwFsMhN4pqbapKXOk9o",
-    authDomain: "afcpl-stats-staging.firebaseapp.com",
-    databaseURL: "https://afcpl-stats-staging.firebaseio.com",
-    projectId: "afcpl-stats-staging",
-    storageBucket: "afcpl-stats-staging.appspot.com",
-    messagingSenderId: "929297586839",
-    appId: "1:929297586839:web:e82366ea65c8a457b7e7d2",
-    measurementId: "G-X5EY3MEEL8"
-  }
+    apiKey: 'AIzaSyDR3HjhpgdbByApMwFsMhN4pqbapKXOk9o',
+    authDomain: 'afcpl-stats-staging.firebaseapp.com',
+    databaseURL: 'https://afcpl-stats-staging.firebaseio.com',
+    projectId: 'afcpl-stats-staging',
+    storageBucket: 'afcpl-stats-staging.appspot.com',
+    messagingSenderId: '929297586839',
+    appId: '1:929297586839:web:e82366ea65c8a457b7e7d2',
+    measurementId: 'G-X5EY3MEEL8',
+  };
 }
 
 const uiConfig = {
@@ -72,9 +66,9 @@ const uiConfig = {
   signInFlow: 'popup',
   callbacks: {
     // Avoid redirects after sign-in.
-    signInSuccessWithAuthResult: () => false
-  }
-}
+    signInSuccessWithAuthResult: () => false,
+  },
+};
 
 // Instantiate a Firebase app and database
 const firebaseApp = firebase.initializeApp(firebaseConfig);
@@ -82,48 +76,69 @@ export const db = firebaseApp.firestore();
 // enable the offline database capability
 db.enablePersistence()
   .then(() => console.log('Offline Database Active'))
-  .catch(err => {
+  .catch((err) => {
     if (err.code === 'failed-precondition') {
-      console.error('Multiple tabs open, persistence can only be enabled in one tab at a a time.', err)
+      console.error(
+        'Multiple tabs open, persistence can only be enabled in one tab at a a time.',
+        err
+      );
     } else if (err.code === 'unimplemented') {
-      console.error('The current browser does not support all of the features required to enable persistence', err)
+      console.error(
+        'The current browser does not support all of the features required to enable persistence',
+        err
+      );
     }
-  })
+  });
 
 function App() {
-
   // set state (global)
   const [gameTime, setGameTime] = useState(localStorage.getItem('gameTime') || '00:00');
   const [gameTimeSecs, setGameTimeSecs] = useState(localStorage.getItem('gameTimeSecs') || 0);
-  const [darkTeam, setDarkTeam] = useState(localStorage.getItem('darkTeam') || '') //test str Dark
+  const [darkTeam, setDarkTeam] = useState(localStorage.getItem('darkTeam') || ''); //test str Dark
   const [dbUser, setDbUser] = useState(null);
   const [fetchedGames, setFetchedGames] = useState([]);
   const [gameFinished, setGameFinished] = useState(localStorage.getItem('gameFinished') === 'true');
   const [gameLength, setGameLength] = useState(localStorage.getItem('gameLength') || 25); //1 for testing
   const [gameStarted, setGameStarted] = useState(localStorage.getItem('gameStarted') === 'true');
-  const [gameHistory, setGameHistory] = useState(JSON.parse(localStorage.getItem('gameHistory')) || []);
+  const [gameHistory, setGameHistory] = useState(
+    JSON.parse(localStorage.getItem('gameHistory')) || []
+  );
   const [lastGame, setLastGame] = useState(null);
   const [lightTeam, setLightTeam] = useState(localStorage.getItem('lightTeam') || ''); // test str Light Team
   const [offense, setOffense] = useState(localStorage.getItem('offense') === 'true');
-  const [playerStats, setPlayerStats] = useState(JSON.parse(localStorage.getItem('playerStats')) || []);
-  const [score, setScore] = useState(JSON.parse(localStorage.getItem('score')) || {
-    'dark': 0,
-    'light': 0
-  });
+  const [playerStats, setPlayerStats] = useState(
+    JSON.parse(localStorage.getItem('playerStats')) || []
+  );
+  const [score, setScore] = useState(
+    JSON.parse(localStorage.getItem('score')) || {
+      dark: 0,
+      light: 0,
+    }
+  );
   const [statTeam, setStatTeam] = useState(localStorage.getItem('statTeam') || ''); //test str Dark or Light
   const [testGame, setTestGame] = useState(localStorage.getItem('testGame') === 'true');
 
   const [paused, setPaused] = useState(localStorage.getItem('paused') === 'true');
-  const [showStatSetup, setShowStatSetup] = useState(localStorage.getItem('showStatSetup') === 'true'); //set false for testing
+  const [showStatSetup, setShowStatSetup] = useState(
+    localStorage.getItem('showStatSetup') === 'true'
+  ); //set false for testing
   const [showSubSetup, setShowSubSetup] = useState(localStorage.getItem('showSubSetup') === 'true'); ////set false for testing
   const [teams, setTeams] = useState([]);
 
   // state for sub page
   const [subStats, setSubStats] = useState(JSON.parse(localStorage.getItem('subStats')) || []);
-  const [subInSelected, setSubInSelected] = useState(localStorage.getItem('subInSelected') === 'true');
-  const [subOutSelected, setSubOutSelected] = useState(localStorage.getItem('subOutSelected') === 'true');
-  const [subPlayerSelected, setSubPlayerSelected] = useState(localStorage.getItem('subPlayerSelected') || '');
-  const [subHistory, setSubHistory] = useState(JSON.parse(localStorage.getItem('subHistory')) || []);
+  const [subInSelected, setSubInSelected] = useState(
+    localStorage.getItem('subInSelected') === 'true'
+  );
+  const [subOutSelected, setSubOutSelected] = useState(
+    localStorage.getItem('subOutSelected') === 'true'
+  );
+  const [subPlayerSelected, setSubPlayerSelected] = useState(
+    localStorage.getItem('subPlayerSelected') || ''
+  );
+  const [subHistory, setSubHistory] = useState(
+    JSON.parse(localStorage.getItem('subHistory')) || []
+  );
 
   const [serviceWorkerInit, setServiceWorkerInit] = useState(false);
   const [serviceWorkerReg, setServiceWorkerReg] = useState(null);
@@ -135,7 +150,7 @@ function App() {
   // Learn more about service workers: https://bit.ly/CRA-PWA
   serviceWorker.register({
     onSuccess: () => setServiceWorkerInit(true),
-    onUpdate: reg => {
+    onUpdate: (reg) => {
       setServiceWorkerReg(reg);
     },
   });
@@ -143,81 +158,85 @@ function App() {
   // show service worker toast on first install
   useEffect(() => {
     if (serviceWorkerInit) {
-      console.log('App available for offline use.')
+      console.log('App available for offline use.');
     }
   }, [serviceWorkerInit]);
 
   // allow user to update site when service worker changes and no active game
   useEffect(() => {
     if (!gameStarted && serviceWorkerReg && serviceWorkerReg.waiting) {
-      toast.info(
-        <ServiceWorkerToast
-          serviceWorkerReg={serviceWorkerReg}
-        />,
-        {
-          closeOnClick: false,
-          autoClose: false
-        }
-      );
+      toast.info(<ServiceWorkerToast serviceWorkerReg={serviceWorkerReg} />, {
+        closeOnClick: false,
+        autoClose: false,
+      });
     }
-  }, [gameStarted, serviceWorkerReg])
+  }, [gameStarted, serviceWorkerReg]);
 
-  const gameTimer = useRef(new Timer({
-    countdown: true,
-    callback: (timer) => {
-      let newTime = (timer.getTimeValues().toString(['minutes', 'seconds']));
-      let newTimeSecs = (timer.getTotalTimeValues().seconds);
-      localStorage.setItem('gameTime', newTime);
-      localStorage.setItem('curTimeSecs', newTimeSecs);
-      setGameTime(newTime);
-      setGameTimeSecs(newTimeSecs);
-    }
-  }))
+  const gameTimer = useRef(
+    new Timer({
+      countdown: true,
+      callback: (timer) => {
+        let newTime = timer.getTimeValues().toString(['minutes', 'seconds']);
+        let newTimeSecs = timer.getTotalTimeValues().seconds;
+        localStorage.setItem('gameTime', newTime);
+        localStorage.setItem('curTimeSecs', newTimeSecs);
+        setGameTime(newTime);
+        setGameTimeSecs(newTimeSecs);
+      },
+    })
+  );
 
   const loadUser = useCallback(() => {
     // get user from localStorage if loaded already
-    if (localStorage.getItem('dbUser') !== 'null' && localStorage.getItem('dbUser') !== 'undefined') {
-      return
+    if (
+      localStorage.getItem('dbUser') !== 'null' &&
+      localStorage.getItem('dbUser') !== 'undefined'
+    ) {
+      return;
     }
     if (!user.uid) return;
     // get the user from the db and load into state
     // add the user to the database if doesn't exist
-    db.collection('users').doc(user.uid)
+    db.collection('users')
+      .doc(user.uid)
       .get()
-      .then(doc => {
+      .then((doc) => {
         if (doc.exists) {
           let newDbUser = doc.data();
           setDbUser(newDbUser);
-          console.log('User fetched from database')
+          console.log('User fetched from database');
         } else {
           let newDbUser = {
             email: user.email,
             name: user.displayName || '',
             profileURL: user.photoURL || defaultProfile,
             uid: user.uid,
-          }
-          db.collection('users').doc(user.uid)
-            .set(newDbUser);
-          setDbUser(newDbUser)
+          };
+          db.collection('users').doc(user.uid).set(newDbUser);
+          setDbUser(newDbUser);
         }
       })
-      .catch(error => console.error('Error loading User', error))
+      .catch((error) => console.error('Error loading User', error));
   }, [user]);
 
   // load games on first load
   useEffect(() => {
     if (!user) return;
     let newGames = [];
-    db.collection('games').orderBy('date', 'desc').limit(10).get()
-      .then(querySnapshot => {
-        if (querySnapshot.docs.length === 10) setLastGame(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        querySnapshot.forEach(doc => {
+    db.collection('games')
+      .orderBy('date', 'desc')
+      .limit(10)
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.docs.length === 10)
+          setLastGame(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        querySnapshot.forEach((doc) => {
           newGames.push(doc.data());
-        })
+        });
         setFetchedGames(newGames);
         console.log('First 10 Games Loaded');
-      })
-  }, [user])
+      });
+  }, [user]);
 
   // listen for realtime updates to dbUser and teams if loaded
   useEffect(() => {
@@ -225,65 +244,67 @@ function App() {
     let updateUser = null;
     let updateTeams = null;
     if (user) {
-      console.log('Adding snapshot listeners')
-      updateTeams = db.collection('teams')
-        .onSnapshot(querySnapShot => {
-          let newTeams = [...teams];
-          querySnapShot.docChanges().forEach(change => {
-            if (change.type === 'added') {
-              let addedTeam = change.doc.data();
-              // add to teams if not included
-              if (newTeams.findIndex(team => team._id === addedTeam._id) === -1) {
-                if (!addedTeam.deleted) {
-                  newTeams.push(addedTeam);
-                  setTeams(newTeams);
-                  console.log(`${addedTeam.name} - added`)
-                }
+      console.log('Adding snapshot listeners');
+      updateTeams = db.collection('teams').onSnapshot((querySnapShot) => {
+        let newTeams = [...teams];
+        querySnapShot.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            let addedTeam = change.doc.data();
+            // add to teams if not included
+            if (newTeams.findIndex((team) => team._id === addedTeam._id) === -1) {
+              if (!addedTeam.deleted) {
+                newTeams.push(addedTeam);
+                setTeams(newTeams);
+                console.log(`${addedTeam.name} - added`);
               }
             }
-            if (change.type === 'modified') {
-              let changedTeam = change.doc.data();
-              let newTeams = [...teams];
-              let changeInd = newTeams.findIndex(team => team._id === changedTeam._id);
-              // check if deleted and remove from state
-              if (changedTeam.deleted) {
-                if (changeInd !== -1) {
-                  newTeams.splice(changeInd, 1);
-                  setTeams(newTeams);
-                }
-              } else { // update the team info for other changes
-                // add to state if not included
-                if (changeInd === -1) {
-                  newTeams.push(changedTeam);
-                } else {
-                  newTeams[changeInd] = changedTeam;
-                }
+          }
+          if (change.type === 'modified') {
+            let changedTeam = change.doc.data();
+            let newTeams = [...teams];
+            let changeInd = newTeams.findIndex((team) => team._id === changedTeam._id);
+            // check if deleted and remove from state
+            if (changedTeam.deleted) {
+              if (changeInd !== -1) {
+                newTeams.splice(changeInd, 1);
                 setTeams(newTeams);
               }
-              console.log(`${change.doc.id} - changed`)
-            }
-            if (change.type === 'removed') {
-              let changedTeam = change.doc.data();
-              let changeInd = newTeams.findIndex(team => team._id === changedTeam._id);
-              newTeams.splice(changeInd, 1);
+            } else {
+              // update the team info for other changes
+              // add to state if not included
+              if (changeInd === -1) {
+                newTeams.push(changedTeam);
+              } else {
+                newTeams[changeInd] = changedTeam;
+              }
               setTeams(newTeams);
-              console.log(`${change.doc.id} - removed`)
             }
-          })
-        })
-      updateUser = db.collection('users').doc(user.uid)
+            console.log(`${change.doc.id} - changed`);
+          }
+          if (change.type === 'removed') {
+            let changedTeam = change.doc.data();
+            let changeInd = newTeams.findIndex((team) => team._id === changedTeam._id);
+            newTeams.splice(changeInd, 1);
+            setTeams(newTeams);
+            console.log(`${change.doc.id} - removed`);
+          }
+        });
+      });
+      updateUser = db
+        .collection('users')
+        .doc(user.uid)
         .onSnapshot((doc) => {
-          setDbUser(doc.data())
-        })
+          setDbUser(doc.data());
+        });
     }
     return () => {
       if (updateUser !== null) {
-        console.log('Removing snapshot listeners')
+        console.log('Removing snapshot listeners');
         updateUser();
         updateTeams();
       }
-    }
-  }, [user, teams])
+    };
+  }, [user, teams]);
 
   useEffect(() => {
     // show toast for successful update
@@ -292,7 +313,7 @@ function App() {
       localStorage.setItem('serviceWorkerUpdated', 'false');
     }
     // listen for auth state changes
-    const unsubscribe = firebaseApp.auth().onAuthStateChanged(user => {
+    const unsubscribe = firebaseApp.auth().onAuthStateChanged((user) => {
       if (user) {
         // user signed in
         setUser(user);
@@ -307,9 +328,9 @@ function App() {
         setTeams([]);
         removeLocalGame();
       }
-    })
+    });
     // unsubscribe to the listener when unmounting
-    return () => unsubscribe()
+    return () => unsubscribe();
     // eslint-disable-next-line
   }, []);
 
@@ -325,12 +346,12 @@ function App() {
     localStorage.setItem('gameTimeSecs', gameTimeSecs);
     localStorage.setItem('darkTeam', darkTeam);
     localStorage.setItem('dbUser', JSON.stringify(dbUser));
-    localStorage.setItem('fetchedGames', JSON.stringify(fetchedGames))
-    localStorage.setItem('gameFinished', gameFinished)
-    localStorage.setItem('gameLength', gameLength)
-    localStorage.setItem('gameStarted', gameStarted)
-    localStorage.setItem('gameHistory', JSON.stringify(gameHistory))
-    localStorage.setItem('lightTeam', lightTeam)
+    localStorage.setItem('fetchedGames', JSON.stringify(fetchedGames));
+    localStorage.setItem('gameFinished', gameFinished);
+    localStorage.setItem('gameLength', gameLength);
+    localStorage.setItem('gameStarted', gameStarted);
+    localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
+    localStorage.setItem('lightTeam', lightTeam);
     localStorage.setItem('offense', offense);
     localStorage.setItem('playerStats', JSON.stringify(playerStats));
     localStorage.setItem('score', JSON.stringify(score));
@@ -367,7 +388,8 @@ function App() {
     subOutSelected,
     subPlayerSelected,
     subStats,
-    testGame]);
+    testGame,
+  ]);
 
   // finish the game setup and set state for stat taking
   const finishSetup = (time, dark, light, statTeam, offense) => {
@@ -377,9 +399,9 @@ function App() {
     setLightTeam(light);
     setStatTeam(statTeam);
     let opponent = statTeam === dark ? light : dark;
-    let opponentTeam = teams.find(team => team.name === opponent);
+    let opponentTeam = teams.find((team) => team.name === opponent);
     offense === 'subs' ? setShowSubSetup(false) : setShowStatSetup(false);
-    let findTeam = teams.find(team => team.name === statTeam)
+    let findTeam = teams.find((team) => team.name === statTeam);
     if (offense === 'subs') {
       let initSubsStats = [];
       for (let player of findTeam.players) {
@@ -388,7 +410,7 @@ function App() {
           timeOnField: 0,
           lastTimeIn: `${time}:00`,
           shiftLengths: [],
-        })
+        });
       }
       setSubStats(initSubsStats);
     } else {
@@ -406,12 +428,12 @@ function App() {
           Drop: 0,
           'D-Play': 0,
           GSO: 0,
-          'GSO-Mark': 0
-        })
+          'GSO-Mark': 0,
+        });
       }
       setPlayerStats(initPlayerStats);
     }
-  }
+  };
 
   const removeLocalGame = () => {
     toast.dismiss();
@@ -440,7 +462,7 @@ function App() {
     localStorage.setItem('paused', 'true');
     // reset the state variables
     resetGame();
-  }
+  };
 
   const resetGame = () => {
     setGameLength(25);
@@ -463,10 +485,10 @@ function App() {
     setPaused(false);
     setTestGame(false);
     setScore({
-      'dark': 0,
-      'light': 0
-    })
-  }
+      dark: 0,
+      light: 0,
+    });
+  };
 
   const saveGame = (gameType) => {
     let gameDate = new Date();
@@ -480,14 +502,18 @@ function App() {
       gameLength: gameLength,
       testGame: testGame,
       statTaker: dbUser.email,
-    }
+    };
     if (gameType === 'stats') {
       gameDetails.playerStats = playerStats;
       gameDetails.score = score;
       gameDetails.gameHistory = gameHistory;
       // download backup data
-      let gameData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify([[...gameHistory], [...playerStats]]));
-      let fileNameStat = `GameStats-${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}.json`;
+      let gameData =
+        'data:text/json;charset=utf-8,' +
+        encodeURIComponent(JSON.stringify([[...gameHistory], [...playerStats]]));
+      let fileNameStat = `GameStats-${gameDate.getFullYear()}-${
+        gameDate.getMonth() + 1
+      }-${gameDate.getDate()}.json`;
       let element = document.createElement('a');
       element.setAttribute('href', gameData);
       element.setAttribute('download', fileNameStat);
@@ -500,8 +526,12 @@ function App() {
       gameDetails.subStats = subStats;
       gameDetails.subHistory = subHistory;
       // download backup data
-      let gameData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify([[...subHistory], [...subStats]]));
-      let fileNameStat = `SubStats-${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}.json`;
+      let gameData =
+        'data:text/json;charset=utf-8,' +
+        encodeURIComponent(JSON.stringify([[...subHistory], [...subStats]]));
+      let fileNameStat = `SubStats-${gameDate.getFullYear()}-${
+        gameDate.getMonth() + 1
+      }-${gameDate.getDate()}.json`;
       let element = document.createElement('a');
       element.setAttribute('href', gameData);
       element.setAttribute('download', fileNameStat);
@@ -514,14 +544,13 @@ function App() {
     newFetchedGames.unshift(gameDetails);
     setFetchedGames(newFetchedGames);
     // add to the Database
-    db.collection('games').doc(gameDetails._id)
-      .set(gameDetails);
+    db.collection('games').doc(gameDetails._id).set(gameDetails);
     resetGame();
-  }
+  };
 
   const toggleOffense = () => {
     setOffense(!offense);
-  }
+  };
 
   const initSubHistory = () => {
     // add the first 4 players to the subHistory
@@ -537,11 +566,11 @@ function App() {
         statTeam: statTeam,
         player: subStats[i].name,
         action: 'In',
-        timeOnField: ''
-      })
+        timeOnField: '',
+      });
     }
     setSubHistory(newSubHistory);
-  }
+  };
 
   const addSubHistory = (playerIn, playerOut, timeOn) => {
     // add an entry to the subHistory
@@ -556,7 +585,7 @@ function App() {
       statTeam: statTeam,
       player: playerIn,
       action: 'In',
-      timeOnField: ''
+      timeOnField: '',
     };
     let outEntry = {
       date: time.toDateString(),
@@ -567,25 +596,20 @@ function App() {
       statTeam: statTeam,
       player: playerOut,
       action: 'Out',
-      timeOnField: timeOn
-    }
+      timeOnField: timeOn,
+    };
     newSubHistory.push(outEntry, inEntry);
     setSubHistory(newSubHistory);
-  }
+  };
 
   return (
     <Router>
       <Switch>
-        <Route path='/' exact>
-          <Home
-            db={db}
-            firebaseApp={firebaseApp}
-            uiConfig={uiConfig}
-            dbUser={dbUser}
-          />
+        <Route path="/" exact>
+          <Home db={db} firebaseApp={firebaseApp} uiConfig={uiConfig} dbUser={dbUser} />
         </Route>
-        <Route path='/stats'>
-          {user ?
+        <Route path="/stats">
+          {user ? (
             <Stats
               userID={user.email}
               teams={teams}
@@ -607,9 +631,9 @@ function App() {
                 gameTimer.current.start({
                   startValues: {
                     minutes: parseInt(gameTime.split(':')[0]),
-                    seconds: parseInt(gameTime.split(':')[1])
-                  }
-                })
+                    seconds: parseInt(gameTime.split(':')[1]),
+                  },
+                });
                 setPaused(false);
                 if (!gameStarted && !gameFinished) {
                   setGameStarted(true);
@@ -617,14 +641,14 @@ function App() {
                     console.log('Time Finished');
                     setPaused(true);
                     setGameFinished(true);
-                  })
+                  });
                 }
               }}
               pauseTimer={() => gameTimer.current.pause()}
               stopTimer={() => gameTimer.current.stop()}
               resetTimer={() => {
-                gameTimer.current.reset()
-                setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
+                gameTimer.current.reset();
+                setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
               }}
               paused={paused}
               setPaused={setPaused}
@@ -635,10 +659,13 @@ function App() {
               setTestGame={setTestGame}
               saveGame={saveGame}
               resetGame={resetGame}
-            /> : <Redirect to='/' />}
+            />
+          ) : (
+            <Redirect to="/" />
+          )}
         </Route>
-        <Route path='/subs'>
-          {user ?
+        <Route path="/subs">
+          {user ? (
             <Subs
               userID={user.email}
               teams={teams}
@@ -661,15 +688,15 @@ function App() {
                     console.log('Time Finished');
                     setPaused(true);
                     setGameFinished(true);
-                  })
+                  });
                   initSubHistory();
                 }
               }}
               pauseTimer={() => gameTimer.current.pause()}
               stopTimer={() => gameTimer.current.stop()}
               resetTimer={() => {
-                gameTimer.current.reset()
-                setGameTime(`${gameLength.toString().padStart(2, 0)}:00`)
+                gameTimer.current.reset();
+                setGameTime(`${gameLength.toString().padStart(2, 0)}:00`);
               }}
               paused={paused}
               setPaused={setPaused}
@@ -684,36 +711,48 @@ function App() {
               addSubHistory={addSubHistory}
               resetGame={resetGame}
               saveGame={saveGame}
-            /> : <Redirect to='/' />}
+            />
+          ) : (
+            <Redirect to="/" />
+          )}
         </Route>
-        <Route path='/teams'>
-          {user ?
-            <Teams
-              teams={teams}
-              setTeams={setTeams}
+        <Route path="/teams">
+          {user ? <Teams teams={teams} setTeams={setTeams} db={db} /> : <Redirect to="/" />}
+        </Route>
+        <Route path="/games">
+          {user ? (
+            <Games
+              allGameHistory={fetchedGames}
               db={db}
-            /> : <Redirect to='/' />}
-        </Route>
-        <Route path='/games'>
-          {user ? <Games
-            allGameHistory={fetchedGames}
-            db={db}
-            lastGame={lastGame}
-            setAllGameHistory={setFetchedGames}
-            setLastGame={setLastGame}
-            teams={teams}
-          /> : <Redirect to='/' />}
+              lastGame={lastGame}
+              setAllGameHistory={setFetchedGames}
+              setLastGame={setLastGame}
+              teams={teams}
+            />
+          ) : (
+            <Redirect to="/" />
+          )}
         </Route>
       </Switch>
-      <div className='bottom-nav'>
-        <NavLink className='nav-link' to='/' exact activeClassName='nav-active'>Home</NavLink>
-        <NavLink className='nav-link' to='/stats' activeClassName='nav-active'>Stats</NavLink>
-        <NavLink className='nav-link' to='/subs' activeClassName='nav-active'>Subs</NavLink>
-        <NavLink className='nav-link' to='/teams' activeClassName='nav-active'>Teams</NavLink>
-        <NavLink className='nav-link' to='/games' activeClassName='nav-active'>Games</NavLink>
+      <div className="bottom-nav">
+        <NavLink className="nav-link" to="/" exact activeClassName="nav-active">
+          Home
+        </NavLink>
+        <NavLink className="nav-link" to="/stats" activeClassName="nav-active">
+          Stats
+        </NavLink>
+        <NavLink className="nav-link" to="/subs" activeClassName="nav-active">
+          Subs
+        </NavLink>
+        <NavLink className="nav-link" to="/teams" activeClassName="nav-active">
+          Teams
+        </NavLink>
+        <NavLink className="nav-link" to="/games" activeClassName="nav-active">
+          Games
+        </NavLink>
       </div>
       <ToastContainer
-        position='bottom-center'
+        position="bottom-center"
         transition={Slide}
         autoClose={false}
         hideProgressBar
