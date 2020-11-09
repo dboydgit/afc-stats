@@ -2,19 +2,21 @@
 @import './material.css';
 @import './animations.css';
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
-#root>div.Toastify>div>div {
-    min-height: 3rem;
+#root > div.Toastify > div > div {
+  min-height: 3rem;
 }
 
 #root > div.Toastify > div > div > div {
-    display: flex;
-    padding: 0 1rem;;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  padding: 0 1rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .App {
@@ -46,7 +48,8 @@ html, body, #root {
   justify-content: space-evenly;
 }
 
-.nav-link, .nav-link:visited {
+.nav-link,
+.nav-link:visited {
   text-decoration: none;
   padding: 0.5rem;
   display: flex;
@@ -63,7 +66,8 @@ html, body, #root {
   color: black !important;
 }
 
-input, select {
+input,
+select {
   border-radius: 4px;
   height: 1.5rem;
   border: 1px solid var(--primary-light);
@@ -89,7 +93,7 @@ input, select {
   text-decoration: none;
 }
 
-.btn>i {
+.btn > i {
   margin-left: 0.5rem;
 }
 
@@ -120,21 +124,28 @@ input, select {
   border: solid 1px black;
 }
 
-.btn-del, .btn-del:hover {
+.btn-del,
+.btn-del:hover {
   background-color: var(--delete);
 }
 
-.btn:focus, input:focus, select:focus {
+.btn:focus,
+input:focus,
+select:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--secondary);
 }
 
-.btn-sec, .btn-sec:hover, .btn-sec:focus {
+.btn-sec,
+.btn-sec:hover,
+.btn-sec:focus {
   background-color: var(--secondary);
   color: black;
 }
 
-.btn-inactive, .btn-inactive:hover, .btn-inactive:focus {
+.btn-inactive,
+.btn-inactive:hover,
+.btn-inactive:focus {
   background-color: #bdbdbd;
   box-shadow: none;
 }
@@ -152,7 +163,8 @@ input[type='checkbox']:focus {
   margin: 0.5rem;
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);}
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);
+}
 
 .score-card {
   display: flex;
@@ -163,5 +175,5 @@ input[type='checkbox']:focus {
   padding: 0.5rem;
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, .08), 0 0 6px rgba(0, 0, 0, .05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0, 0, 0, 0.05);
 }

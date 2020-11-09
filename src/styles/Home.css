@@ -12,12 +12,12 @@ form {
 }
 
 .home-form {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .home-input {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
 .home-btn-group {
